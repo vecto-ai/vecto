@@ -1,0 +1,37 @@
+language: python
+
+sudo: false
+
+dist: trusty
+
+python:
+- '3.6'
+
+os:
+- linux
+
+install:
+  - pip install -U coveralls
+  - pip install -U coverage
+  - pip install -U pylint
+  - pip install -U -r test_requirements.txt
+
+before_script: # configure a headless display to test plot generation
+- "export DISPLAY=:99.0"
+- "sh -e /etc/init.d/xvfb start"
+- sleep 3 # give xvfb some time to start
+
+script:
+- python -m unittest discover
+- python -m coverage run --branch --source . -m unittest discover --verbose
+
+after_success:
+  - python -m pylint --load-plugins=pylint.extensions.mccabe --docstring-min-length 5 --no-docstring-rgx "^(test)?_|.*Tests$" --unsafe-load-any-extension y --output-format colorized  --reports y $(find . -name "*.py")
+  - python -m coverage report --show-missing
+  - coveralls
+
+notifications:
+  slack:
+    secure: "puTQcrixRvzNTmV4MZw1WJdzGG9VVDffUAwuBpnCmCzG6Ox6iDAG6NqmdGCR/SWp7W1K8kn0DiS7GniWnRJyvgyH3IfBtz6nXdu0ELtmWRba1i9RFYPcUE8cwiarPoPqmWVW4BPEDXX9zugjR5ni32+hZqVnTsAMP6wPCU+o401p+ky3a3HKQFvxZAVvH7P2kVozaVcEGeHdym0fXSTGYgHPTLF4N8UPaax1oNblf8zWr2yP0ubKC/OMfLP61M/47jQ4EDrwjF1r3tdHJmi/tT1YXXhtaSY4HxhX3fxCtadccHDoAJJU82IXMGZQwhOV7Js/TYWNGKsgTF1iIkxwFABi1Px681ntBCcltVb+SSy9qa2KfQxiMoi6P3chJ1gk1BJwIc8iCKSI4AeHAwwTW6GXdgUW7W6512ykjArDQmH5SXbNBSZun23JTdDsj31Tno/4wy7unwlZblr0XG8Xc9sOBgu1v29pKD6Ce1LRf7KWtKq7u2clyZTysWLeAmeYHBELqHUN8xZQYxvqMzhGbDmw6Z2c+UF9NUh9VqGpjwR+Q0xHYagsmWUjZUMy2RSGrvqU9Nmt2B8hdG8QIxMdoB4lJTSL4p90jGsSAC0FE9VS3I096brp+5pXYtztTZ5taBVvy0hdF8OlZ3xxAz1N4bqbyRnIG1xGwPiF7V9cioA="
+  on_success: always
+  email: false
