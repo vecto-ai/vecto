@@ -1,6 +1,11 @@
 vecto
 *****
 
+.. image:: https://api.travis-ci.org/vecto-ai/vecto.svg?branch=master
+    :target: https://travis-ci.org/vecto-ai/vecto
+    :alt: build status from Travis CI
+
+
 vecto helps to perform a range of tasks within a framework of vector space models of computational linguistics.
 
 What functionality is included
