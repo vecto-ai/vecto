@@ -19,3 +19,10 @@ What functionality is included
 * importing and exporting from a banch of popular formats of word embeddings and providing unified access to word-vectors
 * perfroming a range of downstream tasks / benchmarks on embeddings
 * visualising embeddings
+
+How do I get set up?
+====================
+
+* ``pip3 install vecto`` for stable version
+* ``pip3 install git+https://github.com/vecto-ai/vecto.git`` for latest dev version
+* Python 3.5 or later is required
