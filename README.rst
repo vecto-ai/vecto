@@ -5,6 +5,10 @@ vecto
     :target: https://travis-ci.org/vecto-ai/vecto
     :alt: build status from Travis CI
 
+.. image:: https://coveralls.io/repos/github/vecto-ai/vecto/badge.svg?branch=master
+    :target: https://coveralls.io/github/vecto-ai/vecto?branch=master
+    :alt: coveralls badge
+
 
 vecto helps to perform a range of tasks within a framework of vector space models of computational linguistics.
 
