@@ -9,6 +9,10 @@ vecto
     :target: https://coveralls.io/github/vecto-ai/vecto?branch=master
     :alt: coveralls badge
 
+.. image:: https://badge.fury.io/py/vecto.svg
+    :target: https://badge.fury.io/py/vecto
+    :alt: pypi version
+
 
 vecto helps to perform a range of tasks within a framework of vector space models of computational linguistics.
 
