@@ -26,13 +26,13 @@ class Tests(unittest.TestCase):
         model.vocabulary.get_id("apple")
         print(model.name)
 
-#    def test_save(self):
-#        path = "./tests/data/embeddings/text/plain_with_file_header/"
-#        model = vsmlib.model.load_from_dir(path)
-#        path_save = "/tmp/vsmlib/saved"
-#        model.save_to_dir(path_save)
-#        model = vsmlib.model.load_from_dir(path_save)
-#        print(model.matrix.shape)
+    def test_save(self):
+        path = "./tests/data/embeddings/text/plain_with_file_header/"
+        model = vecto.embeddings.load_from_dir(path)
+        path_save = "/tmp/vsmlib/saved"
+        model.save_to_dir(path_save)
+        model = vecto.embeddings.load_from_dir(path_save)
+        print(model.matrix.shape)
 
 #    def test_load_numpy(self):
 #        path = "./tests/data/embeddings/npy/"
