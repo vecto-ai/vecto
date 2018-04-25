@@ -8,6 +8,7 @@ from vecto.vocabulary import Vocabulary
 path_vocab = "./tests/data/vocabs/plain"
 path_text = "./tests/data/corpora/plain"
 path_gzipped = "./tests/data/corpora/gzipped"
+path_bzipped = "./tests/data/corpora/bzipped"
 path_text_file = "./tests/data/corpora/plain/sense_small.txt"
 
 
@@ -40,5 +41,11 @@ class Tests(unittest.TestCase):
     def test_dir_iter_gzipped(self):
         cnt = 0
         for w in (DirTokenIterator(path_gzipped)):
+            cnt += 1
+        print(cnt, "words read")
+
+    def test_dir_iter_bzipped(self):
+        cnt = 0
+        for w in (DirTokenIterator(path_bzipped)):
             cnt += 1
         print(cnt, "words read")
