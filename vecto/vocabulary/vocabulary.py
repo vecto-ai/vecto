@@ -158,15 +158,6 @@ class Vocabulary_cooccurrence(Vocabulary_simple):
                 cnt_words, countof_fmt(cnt_words)))
 
 
-# def report_rare():
-        # for f in range(6):
-            # cnt=0
-            # for i in l_frequencies:
-            # if i==f: cnt+=1
-            # print ("words of frequency {}: {} of total {} - {:0.2f}%".format(f,countof_fmt(cnt), countof_fmt(len(l_frequencies)),100*cnt/len(l_frequencies)))
-
-        # most_frequent = np.argsort(l_frequencies)[-10:]
-
 def _create_from_iterator(iterator, min_frequency=0):
     t_start = time.time()
     dic_freqs = {}

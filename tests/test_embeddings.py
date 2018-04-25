@@ -2,6 +2,7 @@
 
 import unittest
 import logging
+import vecto
 from vecto.embeddings import Model, ModelDense
 logging.basicConfig(level=logging.DEBUG)
 
@@ -12,18 +13,18 @@ class Tests(unittest.TestCase):
         model = ModelDense()
         self.assertIsInstance(model, Model)
 
-#    def test_load_plain_text(self):
-#        model = ModelDense()
-#        path = "./tests/data/embeddings/text/plain_with_file_header/emb.txt"
-#        model.load_from_text(path)
-#       print(model.matrix.shape)
+    def test_load_plain_text(self):
+        model = ModelDense()
+        path = "./tests/data/embeddings/text/plain_with_file_header/emb.txt"
+        model.load_from_text(path)
+        print(model.matrix.shape)
 
-#    def test_load(self):
-#        path = "./tests/data/embeddings/text/plain_with_file_header/"
-#        model = vsmlib.model.load_from_dir(path)
-#        self.assertIsInstance(model, Model)
-#        model.vocabulary.get_id("apple")
-#        print(model.name)
+    def test_load(self):
+        path = "./tests/data/embeddings/text/plain_with_file_header/"
+        model = vecto.embeddings.load_from_dir(path)
+        self.assertIsInstance(model, Model)
+        model.vocabulary.get_id("apple")
+        print(model.name)
 
 #    def test_save(self):
 #        path = "./tests/data/embeddings/text/plain_with_file_header/"
