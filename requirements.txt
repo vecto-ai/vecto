@@ -1,5 +1,7 @@
 # requrements for vecto
 numpy
+matplotlib
+brewer2mpl
 system-query
 tables
 
