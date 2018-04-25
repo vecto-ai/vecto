@@ -71,7 +71,3 @@ def load_file_as_ids(path, vocabulary, gzipped=None, downcase=True, re_pattern=r
             w = w.lower()
         result.append(vocabulary.get_id(w))
     return np.array(result, dtype=np.int32)
-
-
-def main():
-    print("test")
