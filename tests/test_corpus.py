@@ -34,7 +34,7 @@ class Tests(unittest.TestCase):
         v = Vocabulary()
         v.load(path_vocab)
         doc = load_file_as_ids(path_text_file, v)
-        print(doc.shape)
+        print("test load as ids:", doc.shape)
         print(doc[:10])
 
     def test_dir_iter_gzipped(self):
