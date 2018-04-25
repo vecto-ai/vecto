@@ -46,3 +46,8 @@ class Tests(unittest.TestCase):
         model = vecto.embeddings.load_from_dir(path)
         filtered = model.filter_by_vocab(["apple"])
         filtered.save_to_dir("/tmp/vsmlib/filtered")
+
+    def test_functions(self):
+        path = "./tests/data/embeddings/text/plain_with_file_header/"
+        model = vecto.embeddings.load_from_dir(path)
+        model.cmp_words("apple", "banana")
