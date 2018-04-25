@@ -58,7 +58,11 @@ class DirTokenIterator:
                     yield(token)
 
 
+<<<<<<< HEAD
 def load_file_as_ids(path, vocabulary, gzipped=None, downcase=True, re_pattern=_default_tokenizer_patter):
+=======
+def load_file_as_ids(path, vocabulary, gzipped=None, downcase=True, re_pattern=r"[\w\-']+|[.,!?…]"):
+>>>>>>> 695d3cc... add corpus module
     # use proper tokenizer from cooc
     # options to ignore sentence bounbdaries
     # specify what to do with missing words
@@ -71,3 +75,10 @@ def load_file_as_ids(path, vocabulary, gzipped=None, downcase=True, re_pattern=_
             w = w.lower()
         result.append(vocabulary.get_id(w))
     return np.array(result, dtype=np.int32)
+<<<<<<< HEAD
+=======
+
+
+def main():
+    print("test")
+>>>>>>> 695d3cc... add corpus module
