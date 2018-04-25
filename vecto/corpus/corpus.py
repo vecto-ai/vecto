@@ -58,7 +58,7 @@ class DirTokenIterator:
                     yield(token)
 
 
-def load_file_as_ids(path, vocabulary, gzipped=None, downcase=True, re_pattern=r"[\w\-']+|[.,!?…]"):
+def load_file_as_ids(path, vocabulary, gzipped=None, downcase=True, re_pattern=_default_tokenizer_patter):
     # use proper tokenizer from cooc
     # options to ignore sentence bounbdaries
     # specify what to do with missing words
