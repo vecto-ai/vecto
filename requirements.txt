@@ -4,4 +4,4 @@ matplotlib
 brewer2mpl
 system-query
 tables
-
+scipy
