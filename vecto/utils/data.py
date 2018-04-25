@@ -5,7 +5,7 @@ import bz2
 
 def detect_archive_format_and_open(path):
     if path.endswith(".bz2"):
-        return bz2.open(path)
+        return bz2.open(path, mode='rt')
     if path.endswith(".gz"):
         return gzip.open(path, mode='rt')
     return open(path)
