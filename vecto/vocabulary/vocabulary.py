@@ -2,10 +2,10 @@ import os
 import numpy as np
 import time
 import datetime
-from vsmlib._version import VERSION
-from vsmlib.misc.formathelper import countof_fmt
-from vsmlib.misc.data import save_json, load_json
-from vsmlib.corpus import DirTokenIterator, FileTokenIterator
+from vecto._version import VERSION
+from vecto.utils.formathelper import countof_fmt
+from vecto.utils.data import save_json, load_json
+from vecto.corpus import DirTokenIterator, FileTokenIterator
 import logging
 
 logger = logging.getLogger(__name__)
