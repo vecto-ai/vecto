@@ -2,4 +2,4 @@
 numpy
 system-query
 tables
-
+scipy
