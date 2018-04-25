@@ -1,0 +1,6 @@
+{
+    "cnt_words": 142,
+    "min_frequency": 10,
+    "path_source": "./test/data/corpora/plain",
+    "vsmlib_version": "0.1.6"
+}
