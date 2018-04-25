@@ -2,7 +2,7 @@ import numpy as np
 import scipy
 import os
 import time
-from vsmlib.misc.formathelper import countof_fmt, sizeof_fmt
+from vecto.utils.formathelper import countof_fmt, sizeof_fmt
 
 
 def load_int_from_file(name):
