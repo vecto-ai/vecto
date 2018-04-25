@@ -51,3 +51,4 @@ class Tests(unittest.TestCase):
         path = "./tests/data/embeddings/text/plain_with_file_header/"
         model = vecto.embeddings.load_from_dir(path)
         model.cmp_words("apple", "banana")
+        model.get_most_similar_words("apple")

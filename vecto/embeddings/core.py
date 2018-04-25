@@ -31,8 +31,8 @@ class Model(object):
         self.name = ""
         self.metadata = {}
 
-    def get_x_label(self, i):
-        return self.vocabulary.get_word_by_id(i)
+    # def get_x_label(self, i):
+        # return self.vocabulary.get_word_by_id(i)
 
     def get_most_informative_columns(self, rows, width):
         xdim = rows.shape[1]
