@@ -402,16 +402,6 @@ class ModelNumbered(ModelDense):
             plt.legend()
 
 
-class ModelLevy(ModelNumbered):
-    """This is deprecated and will be removed soon.
-    """
-    def load_from_dir(self, path):
-        self.name = "Levi_" + os.path.basename(os.path.normpath(path))
-        self.matrix = np.load(os.path.join(path, "sgns.contexts.npy"))
-        self.vocabulary = vecto.vocabulary.Vocabulary_simple()
-        self.vocabulary.load_from_list(os.path.join(path, "sgns.words.vocab"))
-
-
 class Model_svd_scipy(ModelNumbered):
     def __init__(self, original, cnt_singular_vectors, power):
         ut, s_ev, _vt = scipy.sparse.linalg.svds(
