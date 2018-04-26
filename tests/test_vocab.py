@@ -52,4 +52,5 @@ class Tests(unittest.TestCase):
         with contextlib.redirect_stderr(sio):
             with self.assertRaises(SystemExit):
                 run_module('vecto.vocabulary', '-garbage')
-        # _LOG.info('%s', sio.getvalue())
+        run_module('vecto.vocabulary', '--path_corpus=tests/data/corpora/plain/', '--path_out=/tmp/vecto/vocab')
+         # _LOG.info('%s', sio.getvalue())
