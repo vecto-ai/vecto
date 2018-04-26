@@ -3,6 +3,7 @@
 import unittest
 import runpy
 import io
+import os
 import sys
 import contextlib
 from vecto.vocabulary import create_from_dir, create_from_file, create_from_annotated_dir, create_ngram_tokens_from_dir, Vocabulary
@@ -34,19 +35,15 @@ class Tests(unittest.TestCase):
     def test_create_from_annotated_dir(self):
         for representation in ['word', 'pos', 'deps']:
             vocab = create_from_annotated_dir(annotated_text, min_frequency=10, representation=representation)
-            print("the:", vocab.get_id("the"))
-            assert vocab.get_id("the") >= 0
-            vocab.save_to_dir("/tmp/vecto/vocab_annotated/")
-            vocab = create_from_file(path_text_file, min_frequency=10)
-            assert vocab.get_id("the") >= 0
+            print("the/det:", vocab.get_id("the/det"))
+            assert vocab.get_id("the") >= 0 or vocab.get_id("the/det") >= 0 or vocab.get_id("the/+det")
+            vocab.save_to_dir(os.path.join("/tmp/vecto/vocab_annotated/", representation))
 
     def test_create_ngram_tokens_from_dir(self):
         vocab = create_ngram_tokens_from_dir(path_text, 1, 3, min_frequency=10)
         print("the:", vocab.get_id("the"))
         assert vocab.get_id("the") >= 0
-        vocab.save_to_dir("/tmp/vecto/vocab")
-        vocab = create_from_file(path_text_file, min_frequency=10)
-        assert vocab.get_id("the") >= 0
+        vocab.save_to_dir("/tmp/vecto/vocab_ngram/")
 
     def test_load_from_dir(self):
         vocab = Vocabulary()
