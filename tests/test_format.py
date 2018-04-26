@@ -9,7 +9,11 @@ class Tests(unittest.TestCase):
     def test_sizeof(self):
         val = 12345667
         print("sizeof:", sizeof_fmt(val))
+        val = 12345667000
+        print("sizeof:", sizeof_fmt(val))
 
     def test_countof(self):
         val = 12345667
+        print("countof:", countof_fmt(val))
+        val = 12345667000
         print("countof:", countof_fmt(val))
