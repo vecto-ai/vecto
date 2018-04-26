@@ -25,10 +25,7 @@ def parse_args():
     return args
 
 
-
-def main():
-    args = parse_args()
-    v = None
+def run(args):
     if args.type == "normal":
         v = create_from_dir(args.path_corpus, args.min_frequency)
         v.save_to_dir(os.path.join(args.path_out, args.type))
@@ -38,6 +35,11 @@ def main():
     if args.type == "ngram_tokens":
         v = create_ngram_tokens_from_dir(args.path_corpus, args.min_ngram, args.max_ngram, args.min_frequency)
         v.save_to_dir(os.path.join(args.path_out, args.type, str(args.min_ngram), str(args.max_ngram)))
+
+
+def main():
+    args = parse_args()
+    run(args)
 
 
 if __name__ == "__main__":
