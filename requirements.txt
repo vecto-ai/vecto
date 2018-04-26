@@ -1,3 +1,5 @@
 # requrements for vecto
 numpy
-
+system-query
+tables
+scipy
