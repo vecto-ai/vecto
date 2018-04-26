@@ -6,7 +6,8 @@ import io
 import os
 import sys
 import contextlib
-from vecto.vocabulary import create_from_dir, create_from_file, create_from_annotated_dir, create_ngram_tokens_from_dir, Vocabulary
+from vecto.vocabulary import create_from_dir, create_from_file, create_from_annotated_dir, create_ngram_tokens_from_dir, \
+    Vocabulary
 
 path_text = "./tests/data/corpora/plain"
 annotated_text = "./tests/data/corpora/annotated/"
@@ -67,5 +68,7 @@ class Tests(unittest.TestCase):
         sio = io.StringIO()
         with contextlib.redirect_stderr(sio):
             with self.assertRaises(SystemExit):
-                run_module('vecto.vocabulary', '-garbage')
+                run_module('vecto.vocabulary', '--type normal')
+                run_module('vecto.vocabulary', '--type annotated')
+                run_module('vecto.vocabulary', '--type ngram_tokens')
         # _LOG.info('%s', sio.getvalue())
