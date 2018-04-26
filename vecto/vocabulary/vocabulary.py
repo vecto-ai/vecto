@@ -259,7 +259,7 @@ def create_from_annotated_dir(path, min_frequency=0, representation='word'): # t
     for token in DirTokenIterator(path, re_pattern = r"[^\s]+"):
         words = get_words_from_annotated_token(token, representation)
         for w in words:
-            print(w)
+            # print(w)
             if w in dic_freqs:
                 dic_freqs[w] += 1
             else:
