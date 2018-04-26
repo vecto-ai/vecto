@@ -5,9 +5,11 @@ import runpy
 import io
 import sys
 import contextlib
-from vecto.vocabulary import create_from_dir, create_from_file, Vocabulary
+from vecto.vocabulary import create_from_dir, create_from_file, create_from_annotated_dir, Vocabulary
 
 path_text = "./tests/data/corpora/plain"
+annotated_text = "./tests/data/corpora/annotated/"
+
 path_text_file = "./tests/data/corpora/plain/sense_small.txt"
 path_vocab = "./tests/data/vocabs/plain"
 
@@ -29,10 +31,19 @@ class Tests(unittest.TestCase):
         vocab = create_from_file(path_text_file, min_frequency=10)
         assert vocab.get_id("the") >= 0
 
+    def test_create_from_annotated_dir(self):
+        vocab = create_from_annotated_dir(annotated_text, min_frequency=10)
+        print("the:", vocab.get_id("the"))
+        assert vocab.get_id("the") >= 0
+        vocab.save_to_dir("/tmp/vecto/vocab_annotated/")
+        vocab = create_from_file(path_text_file, min_frequency=10)
+        assert vocab.get_id("the") >= 0
+
     def test_load_from_dir(self):
         vocab = Vocabulary()
         vocab.load(path_vocab)
         print("the:", vocab.get_id("the"))
+
 
     def test_tokens_to_ids(self):
         vocab = Vocabulary()
