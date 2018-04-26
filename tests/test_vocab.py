@@ -50,6 +50,6 @@ class Tests(unittest.TestCase):
     def test_cli(self):
         sio = io.StringIO()
         with contextlib.redirect_stderr(sio):
-            with self.assertRaises(ValueError):
-                run_module('version_query', '-p', '-i', '.')
+            with self.assertRaises(SystemExit):
+                run_module('vecto.vocabulary', '-garbage')
         # _LOG.info('%s', sio.getvalue())
