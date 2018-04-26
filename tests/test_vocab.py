@@ -44,7 +44,6 @@ class Tests(unittest.TestCase):
         vocab.load(path_vocab)
         print("the:", vocab.get_id("the"))
 
-
     def test_tokens_to_ids(self):
         vocab = Vocabulary()
         vocab.load(path_vocab)
