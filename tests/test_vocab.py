@@ -16,7 +16,7 @@ path_text_file = "./tests/data/corpora/plain/sense_small.txt"
 path_vocab = "./tests/data/vocabs/plain"
 
 
-def run_module(name: str, *args, run_name: str = '__main__') -> None:
+def run_module(name: str, args, run_name: str = '__main__') -> None:
     backup_sys_argv = sys.argv
     sys.argv = [name + '.py'] + list(args)
     runpy.run_module(name, run_name=run_name)
@@ -67,8 +67,8 @@ class Tests(unittest.TestCase):
     def test_cli(self):
         sio = io.StringIO()
         with contextlib.redirect_stderr(sio):
-            with self.assertRaises(SystemExit):
-                run_module('vecto.vocabulary', '--type normal')
-                run_module('vecto.vocabulary', '--type annotated')
-                run_module('vecto.vocabulary', '--type ngram_tokens')
+            # with self.assertRaises(SystemExit):
+            run_module('vecto.vocabulary', ['--type', 'normal', '--path_corpus', path_text, '--path_out', '/tmp/vecto/vocabulary/main/normal'])
+            run_module('vecto.vocabulary', ['--type', 'annotated', '--path_corpus', annotated_text, '--path_out', '/tmp/vecto/vocabulary/main/annotated'])
+            run_module('vecto.vocabulary', ['--type', 'ngram_tokens', '--path_corpus', path_text, '--path_out', '/tmp/vecto/vocabulary/main/ngram_tokens'])
         # _LOG.info('%s', sio.getvalue())

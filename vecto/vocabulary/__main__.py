@@ -26,6 +26,7 @@ def parse_args():
 
 
 def run(args):
+    print(args.type)
     if args.type == "normal":
         v = create_from_dir(args.path_corpus, args.min_frequency)
         v.save_to_dir(os.path.join(args.path_out, args.type))
@@ -39,6 +40,7 @@ def run(args):
 
 def main():
     args = parse_args()
+    # print(args)
     run(args)
 
 
