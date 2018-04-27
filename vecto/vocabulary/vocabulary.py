@@ -101,8 +101,6 @@ class Vocabulary(object):
                 self.load_from_list(os.path.join(path, f))
 
 
-class Vocabulary_simple(Vocabulary):
-
     def load_dic_from_file(self, filename):
         rdic = {}
         f = open(os.path.join(self.dir_root, filename),
@@ -133,14 +131,15 @@ class Vocabulary_simple(Vocabulary):
             self.lst_words[np.int64(tokens[-1])] = tokens[0]
         f.close()
 
-    def load(self, path, verbose=False):
-        self.dir_root = path
-        self.dic_words_ids = self.load_dic_from_file("ids")
-        self.load_list_from_file("ids", len(self.dic_words_ids))
-        if os.path.isfile(os.path.join(path, "freq_per_id")):
-            f = open(os.path.join(self.dir_root, "freq_per_id"))
-            self.lst_frequencies = np.fromfile(f, dtype=np.uint64)
-            f.close()
+    # legacy vsmlib format,
+    # def load_legacy(self, path, verbose=False):
+    #     self.dir_root = path
+    #     self.dic_words_ids = self.load_dic_from_file("ids")
+    #     self.load_list_from_file("ids", len(self.dic_words_ids))
+    #     if os.path.isfile(os.path.join(path, "freq_per_id")):
+    #         f = open(os.path.join(self.dir_root, "freq_per_id"))
+    #         self.lst_frequencies = np.fromfile(f, dtype=np.uint64)
+    #         f.close()
 
 
 def _create_from_iterator(iterator, min_frequency=0):
@@ -151,7 +150,7 @@ def _create_from_iterator(iterator, min_frequency=0):
             dic_freqs[w] += 1
         else:
             dic_freqs[w] = 1
-    v = Vocabulary_simple()
+    v = Vocabulary()
     v.lst_frequencies = []
     for i, word in enumerate(sorted(dic_freqs, key=dic_freqs.get, reverse=True)):
         frequency = dic_freqs[word]
@@ -249,7 +248,7 @@ def create_from_annotated_dir(path, min_frequency=0, representation='word'): # t
                 dic_freqs[w] += 1
             else:
                 dic_freqs[w] = 1
-    v = Vocabulary_simple()
+    v = Vocabulary()
     v.lst_frequencies = []
     for i, word in enumerate(sorted(dic_freqs, key=dic_freqs.get, reverse=True)):
         frequency = dic_freqs[word]
@@ -286,7 +285,7 @@ def create_ngram_tokens_from_dir(path, min_gram, max_gram, min_frequency=0):
                     dic_freqs[nt] += 1
                 else:
                     dic_freqs[nt] = 1
-    v = Vocabulary_simple()
+    v = Vocabulary()
     v.lst_frequencies = []
     for i, word in enumerate(sorted(dic_freqs, key=dic_freqs.get, reverse=True)):
         frequency = dic_freqs[word]
