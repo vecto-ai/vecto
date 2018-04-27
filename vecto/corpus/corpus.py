@@ -39,12 +39,8 @@ class DirCorpus(Corpus):
     def __init__(self, path):
         super.__init__()
 
-    def get_token_iterator(self, tokenizer, verbose=False):
-        return TokenIterator(
-            TokenizedSequenceIterator(
-                FileLineIterator(
-                    DirIterator(self.path, verbose=verbose)),
-                tokenizer=tokenizer))
+    def get_line_iterator(self, tokenizer, verbose=False):
+        return FileLineIterator(DirIterator(self.path, verbose=verbose))
 
 ## old code below ----------------------------------
 
