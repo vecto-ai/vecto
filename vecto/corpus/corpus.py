@@ -1,73 +1,76 @@
-import numpy as np
 import fnmatch
 import os
-import re
-from vecto.utils.data import detect_archive_format_and_open
+import abc
+
+from vecto.utils.metadata import WithMetaData
+from vecto.utils.tqdm_utils import get_tqdm
 import logging
 
 logger = logging.getLogger(__name__)
 
-_default_tokenizer_patter = r"[\w\-']+|[.,!?…]"
 
-
-class LineTokenizer:
-
-    def __init__(self, re_pattern=_default_tokenizer_patter):
-        self.re_token = re.compile(re_pattern)
-
-    def __call__(self, s):
-        tokens = self.re_token.findall(s)
-        return tokens
-
-
-class FileTokenIterator:
-
-    def __init__(self, path, re_pattern=_default_tokenizer_patter):
-        self.path = path
-        self.tokenizer = LineTokenizer(re_pattern)
+class BaseCorpus(WithMetaData):
+    def __init__(self, verbose=1, **metadata_kwargs):
+        super(BaseCorpus, self).__init__(**metadata_kwargs)
+        self._verbose = verbose
 
     def __iter__(self):
-        return self.next()
+        for s in self._generate_samples_outer():
+            yield s
 
-    def next(self):
-        with detect_archive_format_and_open(self.path) as f:
-            for line in f:
-                s = line.strip().lower()
-                # todo lower should be parameter
-                tokens = self.tokenizer(s)
-                for token in tokens:
-                    yield token
+    def __len__(self):
+        return self.metadata.get('samples_count', 0)
 
+    def _generate_samples_outer(self):
+        gen = self._generate_samples()
+        if self._verbose > 0:
+            cur_len = len(self)
+            if cur_len is None:
+                return get_tqdm(gen)
+            else:
+                return get_tqdm(gen, total=cur_len)
+        else:
+            return gen
 
-class DirTokenIterator:
-    def __init__(self, path, re_pattern=_default_tokenizer_patter):
-        self.path = path
-        self.__gen__ = self.gen(re_pattern)
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return next(self.__gen__)
-
-    def gen(self, re_pattern):
-        for root, dir, files in os.walk(self.path, followlinks=True):
-            for items in fnmatch.filter(files, "*"):
-                logger.info("processing " + os.path.join(root, items))
-                for token in FileTokenIterator(os.path.join(root, items), re_pattern=re_pattern):
-                    yield(token)
+    @abc.abstractmethod
+    def _generate_samples(self):
+        pass
 
 
-def load_file_as_ids(path, vocabulary, gzipped=None, downcase=True, re_pattern=_default_tokenizer_patter):
-    # use proper tokenizer from cooc
-    # options to ignore sentence bounbdaries
-    # specify what to do with missing words
-    # replace numbers with special tokens
-    result = []
-    ti = FileTokenIterator(path, re_pattern=re_pattern)
-    for token in ti:
-        w = token    # specify what to do with missing words
-        if downcase:
-            w = w.lower()
-        result.append(vocabulary.get_id(w))
-    return np.array(result, dtype=np.int32)
+class FileCorpus(BaseCorpus):
+    def __init__(self, filename, verbose=1):
+        super(FileCorpus, self).__init__(base_path=filename,
+                                         verbose=verbose)
+        self.filename = filename
+
+    def _generate_samples(self):
+        yield self.filename
+
+
+class DirCorpus(BaseCorpus):
+    def __init__(self, dirname, verbose=1):
+        super(DirCorpus, self).__init__(base_path=dirname,
+                                        verbose=verbose)
+        self.dirname = dirname
+
+    def _generate_samples(self):
+        for root, _, files in os.walk(self.dirname, followlinks=True):
+            for good_fname in fnmatch.filter(files, "*"):
+                logger.info("processing " + os.path.join(root, good_fname))
+                yield good_fname
+
+
+class LimitedCorpus(BaseCorpus):
+    def __init__(self, base, limit=1000, verbose=1):
+        super(LimitedCorpus, self).__init__(base=base.meta,
+                                            verbose=verbose)
+        self.samples = []
+        for i, s in enumerate(base):
+            if i >= limit:
+                break
+            self.samples.append(s)
+        self.metadata['samples_count'] = len(self.samples)
+
+    def _generate_samples(self):
+        for s in self.samples:
+            yield s
