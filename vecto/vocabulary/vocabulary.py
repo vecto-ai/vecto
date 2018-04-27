@@ -162,11 +162,13 @@ def _create_from_iterator(iterator, min_frequency=0):
         v.dic_words_ids[word] = i
     v.cnt_words = len(v.lst_words)
     v.metadata["min_frequency"] = min_frequency
-    v.metadata["vecto_version"] = VERSION
     v.metadata["cnt_words"] = v.cnt_words
     t_end = time.time()
     v.metadata["execution_time"] = t_end - t_start
     v.metadata["timestamp"] = datetime.datetime.now().isoformat()
+    iter_metadata = getattr(iterator, 'metadata', None)
+    if iter_metadata is not None:
+        v.metadata['source'] = iter_metadata
     return v
 
 
@@ -177,7 +179,6 @@ def create_from_dir(path, min_frequency=0):
         raise RuntimeError("source directory does not exist")
     iter = DirTokenCorpus(path)
     v = _create_from_iterator(iter, min_frequency)
-    v.metadata["path_source"] = path
     return v
 
 
@@ -188,7 +189,6 @@ def create_from_file(path, min_frequency=0):
         raise RuntimeError("source file does not exist")
     iter = FileTokenCorpus(path)
     v = _create_from_iterator(iter, min_frequency)
-    v.metadata["path_source"] = path
     return v
 
 
@@ -241,7 +241,8 @@ def create_from_annotated_dir(path, min_frequency=0, representation='word'): # t
     dic_freqs = {}
     if not os.path.isdir(path):
         raise RuntimeError("source directory does not exist")
-    for token in DirTokenCorpus(path, tokenizer=ANNOTATED_TEXT_TOKENIZER):
+    source_corpus = DirTokenCorpus(path, tokenizer=ANNOTATED_TEXT_TOKENIZER)
+    for token in source_corpus:
         words = get_words_from_annotated_token(token, representation)
         for w in words:
             # print(w)
@@ -249,6 +250,7 @@ def create_from_annotated_dir(path, min_frequency=0, representation='word'): # t
                 dic_freqs[w] += 1
             else:
                 dic_freqs[w] = 1
+    # TODO: does it really differs from _create_from_iterator? maybe merge?
     v = Vocabulary()
     v.lst_frequencies = []
     for i, word in enumerate(sorted(dic_freqs, key=dic_freqs.get, reverse=True)):
@@ -259,14 +261,13 @@ def create_from_annotated_dir(path, min_frequency=0, representation='word'): # t
         v.lst_words.append(word)
         v.dic_words_ids[word] = i
     v.cnt_words = len(v.lst_words)
-    v.metadata["path_source"] = path
     v.metadata["min_frequency"] = min_frequency
-    v.metadata["vecto_version"] = VERSION
     v.metadata["cnt_words"] = v.cnt_words
     t_end = time.time()
     v.metadata["execution_time"] = t_end - t_start
     v.metadata["timestamp"] = datetime.datetime.now().isoformat()
     v.metadata["context_representation"] = representation
+    v.metadata["source"] = source_corpus.metadata
     return v
 
 
@@ -278,7 +279,8 @@ def create_ngram_tokens_from_dir(path, min_gram, max_gram, min_frequency=0):
     dic_freqs = {}
     if not os.path.isdir(path):
         raise RuntimeError("source directory does not exist")
-    for word in DirTokenCorpus(path):
+    corpus = DirTokenCorpus(path)
+    for word in corpus:
         ngram_tokensList = get_ngram_tokensList_from_word(word, min_gram, max_gram)
         for nts in ngram_tokensList:
             for nt in nts:
@@ -296,14 +298,13 @@ def create_ngram_tokens_from_dir(path, min_gram, max_gram, min_frequency=0):
         v.lst_words.append(word)
         v.dic_words_ids[word] = i
     v.cnt_words = len(v.lst_words)
-    v.metadata["path_source"] = path
     v.metadata["min_frequency"] = min_frequency
     v.metadata["min_gram"] = min_gram
     v.metadata["max_gram"] = max_gram
-    v.metadata["vecto_version"] = VERSION
     v.metadata["cnt_words"] = v.cnt_words
     t_end = time.time()
     v.metadata["execution_time"] = t_end - t_start
     v.metadata["timestamp"] = datetime.datetime.now().isoformat()
+    v.metadata["source"] = corpus.metadata
     return v
 

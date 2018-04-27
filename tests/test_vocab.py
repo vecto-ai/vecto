@@ -6,6 +6,7 @@ import io
 import os
 import sys
 import contextlib
+import json
 from vecto.vocabulary import create_from_dir, create_from_file, create_from_annotated_dir, create_ngram_tokens_from_dir, \
     Vocabulary
 
@@ -22,6 +23,41 @@ def run_module(name: str, args, run_name: str = '__main__') -> None:
     sys.argv = [name + '.py'] + list(args)
     runpy.run_module(name, run_name=run_name)
     sys.argv = backup_sys_argv
+
+
+RIGHT_DICT_METADATA = r"""
+{
+    "_class": "vecto.vocabulary.vocabulary.Vocabulary",
+    "cnt_words": 1592,
+    "min_frequency": 0,
+    "source": {
+        "_class": "vecto.corpus.iterators.TokenIterator",
+        "base_corpus": {
+            "_class": "vecto.corpus.iterators.TokenizedSequenceIterator",
+            "base_corpus": {
+                "_class": "vecto.corpus.iterators.FileLineIterator",
+                "base_corpus": {
+                    "_base_path": "./tests/data/corpora/plain",
+                    "_class": "vecto.corpus.iterators.DirIterator",
+                    "vecto_version": "0.1.1"
+                },
+                "vecto_version": "0.1.1"
+            },
+            "tokenizer": {
+                "_class": "vecto.corpus.tokenization.Tokenizer",
+                "good_token_re": "^\\w+$",
+                "min_token_len": 3,
+                "normalizer": "vecto.corpus.tokenization.default_token_normalizer",
+                "stopwords": "too long to be saved to metadata, i suppose",
+                "vecto_version": "0.1.1"
+            },
+            "vecto_version": "0.1.1"
+        },
+        "vecto_version": "0.1.1"
+    },
+    "vecto_version": "0.1.1"
+}
+""".strip()
 
 
 class Tests(unittest.TestCase):
@@ -92,3 +128,13 @@ class Tests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 run_module('vecto.vocabulary', '-garbage')
         # _LOG.info('%s', sio.getvalue())
+
+    def test_metadata(self):
+        vocab = create_from_dir(path_text)
+        metadata = dict(vocab.metadata)
+        if 'execution_time' in metadata:
+            del metadata['execution_time']
+        if 'timestamp' in metadata:
+            del metadata['timestamp']
+        metadata = json.dumps(metadata, indent=4, sort_keys=True).strip()
+        assert metadata == RIGHT_DICT_METADATA
