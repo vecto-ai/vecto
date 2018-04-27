@@ -32,18 +32,12 @@ class Corpus(WithMetaData):
 class FileCorpus(Corpus):
     """Cepresents a body of text in a single file"""
 
-    def __init__(self, path):
-        super.__init__(path)
-
     def get_line_iterator(self, tokenizer, verbose=False):
         return FileLineIterator(FileIterator(self.path, verbose=verbose))
 
 
 class DirCorpus(Corpus):
     """Cepresents a body of text in a directory"""
-
-    def __init__(self, path):
-        super.__init__(path)
 
     def get_line_iterator(self, tokenizer, verbose=False):
         return FileLineIterator(DirIterator(self.path, verbose=verbose))

@@ -3,7 +3,7 @@
 import unittest
 import numpy as np
 import json
-from vecto.corpus import FileTokenCorpus, DirTokenCorpus, \
+from vecto.corpus import FileCorpus, FileTokenCorpus, DirTokenCorpus, \
     corpus_chain, load_file_as_ids, FileSentenceCorpus, \
     FileSlidingWindowCorpus
 from vecto.vocabulary import Vocabulary
@@ -93,7 +93,7 @@ TEST_RIGHT_METADATA = r'''
 class Tests(unittest.TestCase):
 
     def test_file_corpus(self):
-        pass
+        corpus = FileCorpus(path_text_file)
     # ----old tests ---------------------
 
     def test_file_iter(self):
