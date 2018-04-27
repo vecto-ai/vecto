@@ -16,6 +16,12 @@ class Corpus(WithMetaData):
     def __init__(self, path):
         self.path = path
 
+    def get_token_iterator(self, tokenizer, verbose=False):
+        return TokenIterator(self.get_sentence_iterator(tokenizer, verbose))
+
+    def get_sentence_iterator(self, tokenizer, verbose=False):
+        return TokenizedSequenceIterator(self.get_line_iterator(), tokenizer=tokenizer)
+
 
 class FileCorpus(Corpus):
     """Cepresents a body of text in a single file"""
@@ -23,14 +29,8 @@ class FileCorpus(Corpus):
     def __init__(self, path):
         super.__init__()
 
-    def get_token_iterator(self, tokenizer, verbose=False):
-        return TokenIterator(self.get_sentence_iterator(tokenizer, verbose))
-
-    def get_sentence_iterator(self, tokenizer, verbose=False):
-        return TokenizedSequenceIterator(
-            FileLineIterator(
-                FileIterator(self.path, verbose=verbose)),
-            tokenizer=tokenizer)
+    def get_line_iterator(self, tokenizer, verbose=False):
+        return FileLineIterator(FileIterator(self.path, verbose=verbose))
 
 
 class DirCorpus(Corpus):
