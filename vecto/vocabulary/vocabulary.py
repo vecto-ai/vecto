@@ -67,9 +67,9 @@ class Vocabulary(object):
         for i in range(len(self.lst_words)):
             self.dic_words_ids[self.lst_words[i]] = i
 
-    def load_from_list(self, path):
-        self.load_list_from_sorted_file(path)
-        self.create_dic_from_list()
+    # def load_from_list(self, path):
+    #    self.load_list_from_sorted_file(path)
+    #    self.create_dic_from_list()
 
     def load_tsv(self, path):
         pos = 0
@@ -101,35 +101,35 @@ class Vocabulary(object):
                 self.load_from_list(os.path.join(path, f))
 
 
-    def load_dic_from_file(self, filename):
-        rdic = {}
-        f = open(os.path.join(self.dir_root, filename),
-                 encoding='utf-8', errors='replace')
-        lines = f.readlines()
-        for line in lines:
-            tokens = line.split("\t")
-            rdic[tokens[0]] = np.int64(tokens[-1])
-        f.close()
-        return rdic
+#    def load_dic_from_file(self, filename):
+#        rdic = {}
+#        f = open(os.path.join(self.dir_root, filename),
+#                 encoding='utf-8', errors='replace')
+#        lines = f.readlines()
+#        for line in lines:
+#            tokens = line.split("\t")
+#            rdic[tokens[0]] = np.int64(tokens[-1])
+#        f.close()
+#        return rdic
 
-    def load_list_from_file(self, filename, n):
-        # postfix = 0
-        self.lst_words = [""] * n
-        # rdic={}
-        # rlst=[]
-        f = open(os.path.join(self.dir_root, filename),
-                 encoding='utf-8', errors='replace')
-        lines = f.readlines()
-        for line in lines:
-            tokens = line.split("\t")
-        #    if tokens[0] in rdic:
-            # rdic[tokens[0]+str(postfix)+tokens[1]]=np.int64(tokens[-1])
-            # postfix+=1
-            # else:
-            # rdic[tokens[0]]=np.int64(tokens[-1])
-            # rlst.append(tokens[0])
-            self.lst_words[np.int64(tokens[-1])] = tokens[0]
-        f.close()
+#    def load_list_from_file(self, filename, n):
+#        # postfix = 0
+#        self.lst_words = [""] * n
+#        # rdic={}
+#        # rlst=[]
+#        f = open(os.path.join(self.dir_root, filename),
+#                 encoding='utf-8', errors='replace')
+#        lines = f.readlines()
+#        for line in lines:
+#            tokens = line.split("\t")
+#        #    if tokens[0] in rdic:
+#            # rdic[tokens[0]+str(postfix)+tokens[1]]=np.int64(tokens[-1])
+#            # postfix+=1
+#            # else:
+#            # rdic[tokens[0]]=np.int64(tokens[-1])
+#            # rlst.append(tokens[0])
+#            self.lst_words[np.int64(tokens[-1])] = tokens[0]
+#        f.close()
 
     # legacy vsmlib format,
     # def load_legacy(self, path, verbose=False):

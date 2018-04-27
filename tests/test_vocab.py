@@ -62,6 +62,9 @@ class Tests(unittest.TestCase):
         vocab = Vocabulary()
         vocab.load(path_vocab)
         vocab.get_word_by_id(1)
+        vocab.get_frequency("the")
+        vocab.get_frequency("apple")
+        vocab.lst_frequencies = []
         vocab.get_frequency("apple")
 
     def test_cli(self):
