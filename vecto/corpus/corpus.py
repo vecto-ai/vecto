@@ -1,27 +1,123 @@
-import fnmatch
-import os
-
+import numpy as np
 import logging
-from .base import BaseCorpus
-from .iterators import FileTokenIterator
-from .tokenization import DEFAULT_TOKENIZER
+from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator, \
+    TokenizedSequenceIterator, TokenIterator, IteratorChain, \
+    SlidingWindowIterator
+from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER
 
 
 logger = logging.getLogger(__name__)
 
 
-class FileCorpus(BaseCorpus):
-    def __init__(self, filename, verbose=1):
-        super(FileCorpus, self).__init__(base_path=filename,
-                                         verbose=verbose)
-        self.filename = filename
+def FileSentenceCorpus(path, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=0):
+    """
+    Reads text from `path` line-by-line, splits each line into sentences, tokenizes each sentence.
+    Yields data sentence-by-sentence.
+    :param path: text file to read (can be archived)
+    :param tokenizer: tokenizer to use to split into sentences and tokens
+    :param verbose: whether to enable progressbar or not
+    :return:
+    """
+    return TokenizedSequenceIterator(
+        FileLineIterator(
+            FileIterator(path, verbose=verbose)),
+        tokenizer=tokenizer)
 
-    def _generate_samples(self):
-        yield self.filename
+
+def DirSentenceCorpus(path, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=0):
+    """
+    Reads text from all files from all subfolders of `path` line-by-line,
+    splits each line into sentences, tokenizes each sentence.
+    Yields data sentence-by-sentence.
+    :param path: root directory with text files
+    :param tokenizer: tokenizer to use to split into sentences and tokens
+    :param verbose: whether to enable progressbar or not
+    :return:
+    """
+    return TokenizedSequenceIterator(
+        FileLineIterator(
+            DirIterator(path, verbose=verbose)),
+        tokenizer=tokenizer)
 
 
-def FileTokenCorpus(path, *args, **kwargs):
-    return FileTokenIterator(FileCorpus(path), *args, **kwargs)
+def FileTokenCorpus(path, tokenizer=DEFAULT_TOKENIZER, verbose=0):
+    """
+    Reads text from `path` line-by-line, splits each line into tokens.
+    Yields data token-by-token.
+    :param path: text file to read (can be archived)
+    :param tokenizer: tokenizer to use to split into sentences and tokens
+    :param verbose: whether to enable progressbar or not
+    :return:
+    """
+    return TokenIterator(
+        TokenizedSequenceIterator(
+            FileLineIterator(
+                FileIterator(path, verbose=verbose)),
+            tokenizer=tokenizer))
+
+
+def DirTokenCorpus(path, tokenizer=DEFAULT_TOKENIZER, verbose=0):
+    """
+    Reads text from all files from all subfolders of `path` line-by-line, splits each line into tokens.
+    Yields data token-by-token.
+    :param path: text file to read (can be archived)
+    :param tokenizer: tokenizer to use to split into sentences and tokens
+    :param verbose: whether to enable progressbar or not
+    :return:
+    """
+    return TokenIterator(
+        TokenizedSequenceIterator(
+            FileLineIterator(
+                DirIterator(path, verbose=verbose)),
+            tokenizer=tokenizer))
+
+
+def FileSlidingWindowCorpus(path, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):
+    """
+    Reads text from `path` line-by-line, splits each line into tokens and/or sentences (depending on tokenizer),
+    and yields training samples for prediction-based distributional semantic models (like Word2Vec etc).
+    Example of one yielded value: {'current': 'long', 'context': ['family', 'dashwood', 'settled', 'sussex']}
+    :param path: text file to read (can be archived)
+    :param tokenizer: tokenizer to use to split into sentences and tokens
+    :param verbose: whether to enable progressbar or not
+    :return:
+    """
+    return SlidingWindowIterator(
+        TokenizedSequenceIterator(
+            FileLineIterator(
+                FileIterator(path, verbose=verbose)),
+            tokenizer=tokenizer),
+        left_ctx_size=left_ctx_size,
+        right_ctx_size=right_ctx_size)
+
+
+def DirSlidingWindowCorpus(path, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):
+    """
+    Reads text from all files from all subfolders of `path` line-by-line,
+    splits each line into tokens and/or sentences (depending on `tokenizer`),
+    and yields training samples for prediction-based distributional semantic models (like Word2Vec etc).
+    Example of one yielded value: {'current': 'long', 'context': ['family', 'dashwood', 'settled', 'sussex']}
+    :param path: text file to read (can be archived)
+    :param tokenizer: tokenizer to use to split into sentences and tokens
+    :param verbose: whether to enable progressbar or not
+    :return:
+    """
+    return SlidingWindowIterator(
+        TokenizedSequenceIterator(
+            FileLineIterator(
+                DirIterator(path, verbose=verbose)),
+            tokenizer=tokenizer),
+        left_ctx_size=left_ctx_size,
+        right_ctx_size=right_ctx_size)
+
+
+def corpus_chain(*corpuses):
+    """
+    Join all copuses into a big single one. Like `itertools.chain`, but with proper metadata handling.
+    :param corpuses: other corpuses or iterators
+    :return:
+    """
+    return IteratorChain(corpuses)
 
 
 def load_file_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
@@ -35,36 +131,3 @@ def load_file_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
         w = token    # specify what to do with missing words
         result.append(vocabulary.get_id(w))
     return np.array(result, dtype=np.int32)
-
-
-class DirCorpus(BaseCorpus):
-    def __init__(self, dirname, verbose=1):
-        super(DirCorpus, self).__init__(base_path=dirname,
-                                        verbose=verbose)
-        self.dirname = dirname
-
-    def _generate_samples(self):
-        for root, _, files in os.walk(self.dirname, followlinks=True):
-            for good_fname in fnmatch.filter(files, "*"):
-                logger.info("processing " + os.path.join(root, good_fname))
-                yield good_fname
-
-
-def DirTokenCorpus(path, *args, **kwargs):
-    return FileTokenIterator(DirCorpus(path), *args, **kwargs)
-
-
-class LimitedCorpus(BaseCorpus):
-    def __init__(self, base, limit=1000, verbose=1):
-        super(LimitedCorpus, self).__init__(base=base.meta,
-                                            verbose=verbose)
-        self.samples = []
-        for i, s in enumerate(base):
-            if i >= limit:
-                break
-            self.samples.append(s)
-        self.metadata['samples_count'] = len(self.samples)
-
-    def _generate_samples(self):
-        for s in self.samples:
-            yield s

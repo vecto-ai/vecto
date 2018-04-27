@@ -4,9 +4,14 @@ from vecto.utils.metadata import WithMetaData
 from vecto.utils.tqdm_utils import get_tqdm
 
 
-class BaseCorpus(WithMetaData):
+class BaseIterator(WithMetaData):
+    """
+    Base class for all corpora and iterators.
+    Responsible for base logic like metadata collection, __len__,
+    iteration, tqdm progressbar etc.
+    """
     def __init__(self, verbose=1, **metadata_kwargs):
-        super(BaseCorpus, self).__init__(**metadata_kwargs)
+        super(BaseIterator, self).__init__(**metadata_kwargs)
         self._verbose = verbose
 
     def __iter__(self):

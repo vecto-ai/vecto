@@ -5,7 +5,7 @@ import datetime
 from vecto._version import VERSION
 from vecto.utils.formathelper import countof_fmt
 from vecto.utils.data import save_json, load_json
-from vecto.corpus import DirTokenIterator, FileTokenIterator
+from vecto.corpus import DirTokenCorpus, FileTokenCorpus
 import logging
 
 logger = logging.getLogger(__name__)
@@ -174,7 +174,7 @@ def create_from_dir(path, min_frequency=0):
     """
     if not os.path.isdir(path):
         raise RuntimeError("source directory does not exist")
-    iter = DirTokenIterator(path)
+    iter = DirTokenCorpus(path)
     v = _create_from_iterator(iter, min_frequency)
     v.metadata["path_source"] = path
     return v
@@ -185,7 +185,7 @@ def create_from_file(path, min_frequency=0):
     """
     if not os.path.isfile(path):
         raise RuntimeError("source file does not exist")
-    iter = FileTokenIterator(path)
+    iter = FileTokenCorpus(path)
     v = _create_from_iterator(iter, min_frequency)
     v.metadata["path_source"] = path
     return v
@@ -240,7 +240,7 @@ def create_from_annotated_dir(path, min_frequency=0, representation='word'): # t
     dic_freqs = {}
     if not os.path.isdir(path):
         raise RuntimeError("source directory does not exist")
-    for token in DirTokenIterator(path, re_pattern = r"[^\s]+"):
+    for token in DirTokenCorpus(path, re_pattern = r"[^\s]+"):
         words = get_words_from_annotated_token(token, representation)
         for w in words:
             # print(w)
@@ -277,7 +277,7 @@ def create_ngram_tokens_from_dir(path, min_gram, max_gram, min_frequency=0):
     dic_freqs = {}
     if not os.path.isdir(path):
         raise RuntimeError("source directory does not exist")
-    for word in DirTokenIterator(path):
+    for word in DirTokenCorpus(path):
         ngram_tokensList = get_ngram_tokensList_from_word(word, min_gram, max_gram)
         for nts in ngram_tokensList:
             for nt in nts:
