@@ -7,12 +7,14 @@ from vecto.utils.metadata import WithMetaData, get_full_typename
 nltk.download('punkt')
 nltk.download('stopwords')
 
-_WORD_TOKENIZER_IMPL = nltk.tokenize.WordPunctTokenizer()
+_DEFAULT_WORD_SPLITTER = nltk.tokenize.WordPunctTokenizer().tokenize
+_WHITESPACE_TOKEN_SPLITTER = re.compile(r'[^\s]+').findall
 
 # we should not probably do it on module level
-_SENT_SPLITTER_IMPL = nltk.data.load('tokenizers/punkt/english.pickle')
+_SENT_SPLITTER_IMPL = nltk.data.load('tokenizers/punkt/english.pickle').tokenize
 
 DEFAULT_GOOD_TOKEN_RE = re.compile(r'^\w+$')
+ANY_TOKEN_IS_GOOD_RE = re.compile(r'.*')
 
 # TODO: moved from corpus, rename and use or remove
 _default_tokenizer_patter = r"[\w\-']+|[.,!?…]"
@@ -23,11 +25,12 @@ def default_token_normalizer(t):
 
 
 def word_tokenize_txt(txt,
+                      token_splitter=_DEFAULT_WORD_SPLITTER,
                       token_normalizer=default_token_normalizer,
                       good_token_re=DEFAULT_GOOD_TOKEN_RE,
                       min_token_len=3,
                       stopwords=nltk.corpus.stopwords.words('english')):
-    norm_tokens = map(token_normalizer, _WORD_TOKENIZER_IMPL.tokenize(txt))
+    norm_tokens = map(token_normalizer, token_splitter(txt))
     return [t for t in norm_tokens
             if len(t) >= min_token_len
             and (t not in stopwords)
@@ -55,6 +58,7 @@ class Tokenizer(BaseTokenizer):
     which returns list of sentences (each is a list of tokens).
     """
     def __init__(self,
+                 token_splitter=_DEFAULT_WORD_SPLITTER,
                  token_normalizer=default_token_normalizer,
                  good_token_re=DEFAULT_GOOD_TOKEN_RE,
                  min_token_len=3,
@@ -63,6 +67,7 @@ class Tokenizer(BaseTokenizer):
                                         good_token_re=good_token_re.pattern,
                                         min_token_len=min_token_len,
                                         stopwords='too long to be saved to metadata, i suppose')  # TODO: decide how to save stopwords to metadata
+        self.token_splitter = token_splitter
         self.token_normalizer = token_normalizer
         self.good_token_re = good_token_re
         self.min_token_len = min_token_len
@@ -70,6 +75,7 @@ class Tokenizer(BaseTokenizer):
 
     def __call__(self, txt):
         return [word_tokenize_txt(txt,
+                                  self.token_splitter,
                                   self.token_normalizer,
                                   self.good_token_re,
                                   self.min_token_len,
@@ -77,6 +83,10 @@ class Tokenizer(BaseTokenizer):
 
 
 DEFAULT_TOKENIZER = Tokenizer()
+
+ANNOTATED_TEXT_TOKENIZER = Tokenizer(token_splitter=_WHITESPACE_TOKEN_SPLITTER,
+                                     good_token_re=ANY_TOKEN_IS_GOOD_RE,
+                                     min_token_len=0)
 
 
 class SentenceTokenizer(BaseTokenizer):
@@ -97,7 +107,7 @@ class SentenceTokenizer(BaseTokenizer):
         self.min_sent_words = min_sent_words
 
     def __call__(self, txt):
-        for sent in self.sentence_splitter.tokenize(txt.strip()):
+        for sent in self.sentence_splitter(txt.strip()):
             for sent_tokens in self.word_tokenizer(sent):
                 if len(sent_tokens) >= self.min_sent_words:
                     yield sent_tokens

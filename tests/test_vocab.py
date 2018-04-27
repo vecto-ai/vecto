@@ -32,12 +32,12 @@ class Tests(unittest.TestCase):
 
         vocab = create_from_dir(path_text)
         print("the:", vocab.get_id("the"))
-        assert vocab.get_id("the") >= 0
+        assert vocab.get_id("home") >= 0
         vocab.save_to_dir("/tmp/vecto/vocab")
         with self.assertRaises(RuntimeError):
             create_from_file("./random/empty/file")
         vocab = create_from_file(path_text_file)
-        assert vocab.get_id("the") >= 0
+        assert vocab.get_id("home") >= 0
 
     def test_create_from_annotated_dir(self):
         with self.assertRaises(RuntimeError):
@@ -48,8 +48,7 @@ class Tests(unittest.TestCase):
             create_from_annotated_dir(path_annotated_text, representation='undefined')
         for representation in ['word', 'pos', 'deps']:
             vocab = create_from_annotated_dir(path_annotated_text, representation=representation)
-            print("the/det:", vocab.get_id("the/det"))
-            assert vocab.get_id("the") >= 0 or vocab.get_id("the/det") >= 0 or vocab.get_id("the/+det")
+            assert vocab.get_id("home") >= 0 or vocab.get_id("home/noun") >= 0 or vocab.get_id("home/+pobj") >= 0
             vocab.save_to_dir(os.path.join("/tmp/vecto/vocab_annotated/", representation))
 
     def test_create_ngram_tokens_from_dir(self):

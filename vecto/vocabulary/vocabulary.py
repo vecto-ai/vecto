@@ -4,21 +4,21 @@ import time
 import datetime
 from vecto._version import VERSION
 from vecto.utils.formathelper import countof_fmt
-from vecto.utils.data import save_json, load_json
-from vecto.corpus import DirTokenCorpus, FileTokenCorpus
+from vecto.utils.metadata import WithMetaData
+from vecto.corpus import DirTokenCorpus, FileTokenCorpus, ANNOTATED_TEXT_TOKENIZER
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class Vocabulary(object):
+class Vocabulary(WithMetaData):
 
     def __init__(self):
+        super(Vocabulary, self).__init__()
         # todo: check if our ternary tree module is available
         self.dic_words_ids = {}
         self.lst_words = []
         self.lst_frequencies = []
-        self.metadata = {}
 
     def tokens_to_ids(self, tokens):
         ids = np.ones(len(tokens), dtype=np.int32) * -1
@@ -51,7 +51,7 @@ class Vocabulary(object):
         for i in range(len(self.lst_words)):
             f.write("{}\t{}\n".format(self.lst_words[i], self.lst_frequencies[i]))
         f.close()
-        save_json(self.metadata, os.path.join(path, "metadata.json"))
+        self.save_metadata(path)
 
     def load_list_from_sorted_file(self, filename):
        self.lst_words = []
@@ -88,9 +88,10 @@ class Vocabulary(object):
         f.close()
         self.cnt_words = len(self.lst_words)
         self.lst_frequencies = np.array(self.lst_frequencies)
-        self.metadata = load_json(os.path.join(path, "metadata.json"))
+        self.init_metadata(base_path=path)
 
     def load(self, path):
+
         if os.path.isfile(os.path.join(path, "vocab.tsv")):
             self.load_tsv(path)
 
@@ -240,7 +241,7 @@ def create_from_annotated_dir(path, min_frequency=0, representation='word'): # t
     dic_freqs = {}
     if not os.path.isdir(path):
         raise RuntimeError("source directory does not exist")
-    for token in DirTokenCorpus(path, re_pattern = r"[^\s]+"):
+    for token in DirTokenCorpus(path, tokenizer=ANNOTATED_TEXT_TOKENIZER):
         words = get_words_from_annotated_token(token, representation)
         for w in words:
             # print(w)
