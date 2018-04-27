@@ -1,6 +1,6 @@
 import numpy as np
 import collections
-from .corpus import BaseCorpus, FileCorpus
+from .base import BaseCorpus
 from .tokenization import DEFAULT_TOKENIZER
 from vecto.utils.data import detect_archive_format_and_open
 
@@ -10,6 +10,7 @@ class FileTokenIterator(BaseCorpus):
         super(FileTokenIterator, self).__init__(base_corpus=base_corpus.metadata,
                                                 tokenizer=str(tokenizer),
                                                 verbose=verbose)
+        self.base_corpus = base_corpus
         self.tokenizer = tokenizer
 
     def _generate_samples(self):
@@ -19,19 +20,6 @@ class FileTokenIterator(BaseCorpus):
                     for token_lst in self.tokenizer(line.strip()):
                         for token in token_lst:
                             yield token
-
-
-def load_file_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
-    # use proper tokenizer from cooc
-    # options to ignore sentence bounbdaries
-    # specify what to do with missing words
-    # replace numbers with special tokens
-    result = []
-    ti = FileTokenIterator(FileCorpus(path), tokenizer=tokenizer)
-    for token in ti:
-        w = token    # specify what to do with missing words
-        result.append(vocabulary.get_id(w))
-    return np.array(result, dtype=np.int32)
 
 
 def iter_sliding_window(seq, left_ctx_size, right_ctx_size):

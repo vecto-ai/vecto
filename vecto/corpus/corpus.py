@@ -1,40 +1,13 @@
 import fnmatch
 import os
-import abc
 
-from vecto.utils.metadata import WithMetaData
-from vecto.utils.tqdm_utils import get_tqdm
 import logging
+from .base import BaseCorpus
+from .iterators import FileTokenIterator
+from .tokenization import DEFAULT_TOKENIZER
+
 
 logger = logging.getLogger(__name__)
-
-
-class BaseCorpus(WithMetaData):
-    def __init__(self, verbose=1, **metadata_kwargs):
-        super(BaseCorpus, self).__init__(**metadata_kwargs)
-        self._verbose = verbose
-
-    def __iter__(self):
-        for s in self._generate_samples_outer():
-            yield s
-
-    def __len__(self):
-        return self.metadata.get('samples_count', 0)
-
-    def _generate_samples_outer(self):
-        gen = self._generate_samples()
-        if self._verbose > 0:
-            cur_len = len(self)
-            if cur_len is None:
-                return get_tqdm(gen)
-            else:
-                return get_tqdm(gen, total=cur_len)
-        else:
-            return gen
-
-    @abc.abstractmethod
-    def _generate_samples(self):
-        pass
 
 
 class FileCorpus(BaseCorpus):
@@ -45,6 +18,23 @@ class FileCorpus(BaseCorpus):
 
     def _generate_samples(self):
         yield self.filename
+
+
+def FileTokenCorpus(path, *args, **kwargs):
+    return FileTokenIterator(FileCorpus(path), *args, **kwargs)
+
+
+def load_file_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
+    # use proper tokenizer from cooc
+    # options to ignore sentence bounbdaries
+    # specify what to do with missing words
+    # replace numbers with special tokens
+    result = []
+    ti = FileTokenCorpus(path, tokenizer=tokenizer)
+    for token in ti:
+        w = token    # specify what to do with missing words
+        result.append(vocabulary.get_id(w))
+    return np.array(result, dtype=np.int32)
 
 
 class DirCorpus(BaseCorpus):
@@ -58,6 +48,10 @@ class DirCorpus(BaseCorpus):
             for good_fname in fnmatch.filter(files, "*"):
                 logger.info("processing " + os.path.join(root, good_fname))
                 yield good_fname
+
+
+def DirTokenCorpus(path, *args, **kwargs):
+    return FileTokenIterator(DirCorpus(path), *args, **kwargs)
 
 
 class LimitedCorpus(BaseCorpus):
