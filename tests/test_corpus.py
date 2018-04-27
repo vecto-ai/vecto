@@ -3,7 +3,7 @@
 import unittest
 import numpy as np
 import json
-from vecto.corpus import FileCorpus, DirCorpus, FileTokenCorpus, DirTokenCorpus, \
+from vecto.corpus import FileCorpus, DirCorpus, DirTokenCorpus, \
     corpus_chain, load_file_as_ids, FileSentenceCorpus, \
     FileSlidingWindowCorpus
 from vecto.vocabulary import Vocabulary
@@ -105,12 +105,8 @@ class Tests(unittest.TestCase):
         total_words, words = count_words_and_collect_prefix(tokens_iter)
         assert total_words == TEST_TEXT_LEN
         assert '|'.join(words) == TEST_FIRST_10_WORDS
-    # ----old tests ---------------------
 
-    def test_file_iter(self):
-        total_words, words = count_words_and_collect_prefix(FileTokenCorpus(path_text_file))
-        assert total_words == TEST_TEXT_LEN
-        assert '|'.join(words) == TEST_FIRST_10_WORDS
+    # ----old tests ---------------------
 
     def test_dir_iter(self):
         total_words, words = count_words_and_collect_prefix(DirTokenCorpus(path_text))
@@ -134,17 +130,17 @@ class Tests(unittest.TestCase):
         assert total_words == TEST_TEXT_LEN
         assert '|'.join(words) == TEST_FIRST_10_WORDS
 
-    def test_chain(self):
-        total_words, words = count_words_and_collect_prefix(corpus_chain(FileTokenCorpus(path_text_file),
-                                                                         DirTokenCorpus(path_text)))
-        assert total_words == TEST_TEXT_LEN * 2
-        assert '|'.join(words) == TEST_FIRST_10_WORDS
+    #def test_chain(self):
+    #    total_words, words = count_words_and_collect_prefix(corpus_chain(FileTokenCorpus(path_text_file),
+    #                                                                     DirTokenCorpus(path_text)))
+    #    assert total_words == TEST_TEXT_LEN * 2
+    #    assert '|'.join(words) == TEST_FIRST_10_WORDS
 
-    def test_metadata(self):
-        corp = corpus_chain(FileTokenCorpus(path_text_file),
-                            DirTokenCorpus(path_text))
-        metadata = json.dumps(corp.metadata, indent=4, sort_keys=True).strip()
-        assert metadata == TEST_RIGHT_METADATA
+    #def test_metadata(self):
+    #    corp = corpus_chain(FileTokenCorpus(path_text_file),
+    #                        DirTokenCorpus(path_text))
+    #    metadata = json.dumps(corp.metadata, indent=4, sort_keys=True).strip()
+    #    assert metadata == TEST_RIGHT_METADATA
 
     def test_sentence(self):
         for s in FileSentenceCorpus(path_text_file):

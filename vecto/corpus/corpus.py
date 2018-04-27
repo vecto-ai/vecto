@@ -76,22 +76,6 @@ def DirSentenceCorpus(path, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=0):
         tokenizer=tokenizer)
 
 
-def FileTokenCorpus(path, tokenizer=DEFAULT_TOKENIZER, verbose=0):
-    """
-    Reads text from `path` line-by-line, splits each line into tokens.
-    Yields data token-by-token.
-    :param path: text file to read (can be archived)
-    :param tokenizer: tokenizer to use to split into sentences and tokens
-    :param verbose: whether to enable progressbar or not
-    :return:
-    """
-    return TokenIterator(
-        TokenizedSequenceIterator(
-            FileLineIterator(
-                FileIterator(path, verbose=verbose)),
-            tokenizer=tokenizer))
-
-
 def DirTokenCorpus(path, tokenizer=DEFAULT_TOKENIZER, verbose=0):
     """
     Reads text from all files from all subfolders of `path` line-by-line, splits each line into tokens.
@@ -162,7 +146,7 @@ def load_file_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
     # specify what to do with missing words
     # replace numbers with special tokens
     result = []
-    ti = FileTokenCorpus(path, tokenizer=tokenizer)
+    ti = FileCorpus(path).get_token_iterator(tokenizer=tokenizer)
     for token in ti:
         w = token    # specify what to do with missing words
         result.append(vocabulary.get_id(w))

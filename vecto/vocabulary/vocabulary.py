@@ -5,7 +5,7 @@ import datetime
 from vecto._version import VERSION
 from vecto.utils.formathelper import countof_fmt
 from vecto.utils.metadata import WithMetaData
-from vecto.corpus import DirTokenCorpus, FileTokenCorpus, ANNOTATED_TEXT_TOKENIZER
+from vecto.corpus import DirTokenCorpus, FileCorpus, ANNOTATED_TEXT_TOKENIZER
 import logging
 
 logger = logging.getLogger(__name__)
@@ -187,7 +187,7 @@ def create_from_file(path, min_frequency=0):
     """
     if not os.path.isfile(path):
         raise RuntimeError("source file does not exist")
-    iter = FileTokenCorpus(path)
+    iter = FileCorpus(path).get_token_iterator()
     v = _create_from_iterator(iter, min_frequency)
     return v
 
