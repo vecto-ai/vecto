@@ -89,7 +89,12 @@ TEST_RIGHT_METADATA = r'''
 }
 '''.strip()
 
+
 class Tests(unittest.TestCase):
+
+    def test_file_corpus(self):
+        pass
+    # ----old tests ---------------------
 
     def test_file_iter(self):
         total_words, words = count_words_and_collect_prefix(FileTokenCorpus(path_text_file))

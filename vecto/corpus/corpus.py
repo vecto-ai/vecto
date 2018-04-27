@@ -16,6 +16,12 @@ class Corpus(WithMetaData):
     def __init__(self, path):
         self.path = path
 
+    def get_sliding_window_iterator(self, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):
+        return SlidingWindowIterator(
+            self.get_sentence_iterator(tokenizer=tokenizer),
+            left_ctx_size=left_ctx_size,
+            right_ctx_size=right_ctx_size)
+
     def get_token_iterator(self, tokenizer, verbose=False):
         return TokenIterator(self.get_sentence_iterator(tokenizer, verbose))
 
