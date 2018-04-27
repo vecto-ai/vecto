@@ -3,3 +3,5 @@ numpy
 system-query
 tables
 scipy
+tqdm
+nltk
