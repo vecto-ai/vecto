@@ -22,24 +22,24 @@ class Corpus(WithMetaData):
             left_ctx_size=left_ctx_size,
             right_ctx_size=right_ctx_size)
 
-    def get_token_iterator(self, tokenizer, verbose=False):
+    def get_token_iterator(self, tokenizer=DEFAULT_TOKENIZER, verbose=False):
         return TokenIterator(self.get_sentence_iterator(tokenizer, verbose))
 
-    def get_sentence_iterator(self, tokenizer, verbose=False):
+    def get_sentence_iterator(self, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=False):
         return TokenizedSequenceIterator(self.get_line_iterator(), tokenizer=tokenizer)
 
 
 class FileCorpus(Corpus):
     """Cepresents a body of text in a single file"""
 
-    def get_line_iterator(self, tokenizer, verbose=False):
+    def get_line_iterator(self, verbose=False):
         return FileLineIterator(FileIterator(self.path, verbose=verbose))
 
 
 class DirCorpus(Corpus):
     """Cepresents a body of text in a directory"""
 
-    def get_line_iterator(self, tokenizer, verbose=False):
+    def get_line_iterator(self, verbose=False):
         return FileLineIterator(DirIterator(self.path, verbose=verbose))
 
 # old code below ----------------------------------
