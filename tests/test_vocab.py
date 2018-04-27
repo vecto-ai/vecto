@@ -71,4 +71,6 @@ class Tests(unittest.TestCase):
             run_module('vecto.vocabulary', ['--type', 'normal', '--path_corpus', path_text, '--path_out', '/tmp/vecto/vocabulary/main/normal'])
             run_module('vecto.vocabulary', ['--type', 'annotated', '--path_corpus', annotated_text, '--path_out', '/tmp/vecto/vocabulary/main/annotated'])
             run_module('vecto.vocabulary', ['--type', 'ngram_tokens', '--path_corpus', path_text, '--path_out', '/tmp/vecto/vocabulary/main/ngram_tokens'])
-        # _LOG.info('%s', sio.getvalue())
+            with self.assertRaises(SystemExit):
+                run_module('vecto.vocabulary', '-garbage')
+         # _LOG.info('%s', sio.getvalue())
