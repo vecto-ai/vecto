@@ -14,6 +14,7 @@ annotated_text = "./tests/data/corpora/annotated/"
 
 path_text_file = "./tests/data/corpora/plain/sense_small.txt"
 path_vocab = "./tests/data/vocabs/plain"
+path_vocab = "./tests/data/vocabs/one_column"
 
 
 def run_module(name: str, args, run_name: str = '__main__') -> None:
@@ -48,6 +49,8 @@ class Tests(unittest.TestCase):
 
     def test_load_from_dir(self):
         vocab = Vocabulary()
+        vocab.load(path_vocab)
+        print("the:", vocab.get_id("the"))
         vocab.load(path_vocab)
         print("the:", vocab.get_id("the"))
 

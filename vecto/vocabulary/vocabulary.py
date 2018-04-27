@@ -53,23 +53,23 @@ class Vocabulary(object):
         f.close()
         save_json(self.metadata, os.path.join(path, "metadata.json"))
 
-    # def load_list_from_sorted_file(self, filename):
-    #    self.lst_words = []
-    #    f = open(filename, encoding='utf-8', errors='replace')
-    #    lines = f.readlines()
-    #    for line in lines:
-    #        token = line.strip()
-    #        self.lst_words.append(token)
-    #    f.close()
+    def load_list_from_sorted_file(self, filename):
+       self.lst_words = []
+       f = open(filename, encoding='utf-8', errors='replace')
+       lines = f.readlines()
+       for line in lines:
+           token = line.strip()
+           self.lst_words.append(token)
+       f.close()
 
-    # def create_dic_from_list(self):
-    #    self.dic_words_ids = {}
-    #    for i in range(len(self.lst_words)):
-    #        self.dic_words_ids[self.lst_words[i]] = i
+    def create_dic_from_list(self):
+       self.dic_words_ids = {}
+       for i in range(len(self.lst_words)):
+           self.dic_words_ids[self.lst_words[i]] = i
 
-    # def load_from_list(self, path):
-    #    self.load_list_from_sorted_file(path)
-    #    self.create_dic_from_list()
+    def load_from_list(self, path):
+       self.load_list_from_sorted_file(path)
+       self.create_dic_from_list()
 
     def load_tsv(self, path):
         pos = 0
