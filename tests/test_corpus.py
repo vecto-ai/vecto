@@ -42,17 +42,22 @@ TEST_RIGHT_METADATA = r'''
                     "_class": "vecto.corpus.iterators.FileLineIterator",
                     "base_corpus": {
                         "_base_path": "./tests/data/corpora/plain/sense_small.txt",
-                        "_class": "vecto.corpus.iterators.FileIterator"
-                    }
+                        "_class": "vecto.corpus.iterators.FileIterator",
+                        "vecto_version": "0.1.1"
+                    },
+                    "vecto_version": "0.1.1"
                 },
                 "tokenizer": {
                     "_class": "vecto.corpus.tokenization.Tokenizer",
                     "good_token_re": "^\\w+$",
                     "min_token_len": 3,
                     "normalizer": "vecto.corpus.tokenization.default_token_normalizer",
-                    "stopwords": "too long to be saved to metadata, i suppose"
-                }
-            }
+                    "stopwords": "too long to be saved to metadata, i suppose",
+                    "vecto_version": "0.1.1"
+                },
+                "vecto_version": "0.1.1"
+            },
+            "vecto_version": "0.1.1"
         },
         {
             "_class": "vecto.corpus.iterators.TokenIterator",
@@ -62,19 +67,25 @@ TEST_RIGHT_METADATA = r'''
                     "_class": "vecto.corpus.iterators.FileLineIterator",
                     "base_corpus": {
                         "_base_path": "./tests/data/corpora/plain",
-                        "_class": "vecto.corpus.iterators.DirIterator"
-                    }
+                        "_class": "vecto.corpus.iterators.DirIterator",
+                        "vecto_version": "0.1.1"
+                    },
+                    "vecto_version": "0.1.1"
                 },
                 "tokenizer": {
                     "_class": "vecto.corpus.tokenization.Tokenizer",
                     "good_token_re": "^\\w+$",
                     "min_token_len": 3,
                     "normalizer": "vecto.corpus.tokenization.default_token_normalizer",
-                    "stopwords": "too long to be saved to metadata, i suppose"
-                }
-            }
+                    "stopwords": "too long to be saved to metadata, i suppose",
+                    "vecto_version": "0.1.1"
+                },
+                "vecto_version": "0.1.1"
+            },
+            "vecto_version": "0.1.1"
         }
-    ]
+    ],
+    "vecto_version": "0.1.1"
 }
 '''.strip()
 
