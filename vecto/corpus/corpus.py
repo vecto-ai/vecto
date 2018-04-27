@@ -4,10 +4,47 @@ from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator,
     TokenizedSequenceIterator, TokenIterator, IteratorChain, \
     SlidingWindowIterator
 from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER
+from vecto.utils.metadata import WithMetaData
 
 
 logger = logging.getLogger(__name__)
 
+
+class Corpus(WithMetaData):
+    """Cepresents a body of text in single or multiple files"""
+
+    def __init__(self, path):
+        self.path = path
+
+
+class FileCorpus(Corpus):
+    """Cepresents a body of text in a single file"""
+
+    def __init__(self, path):
+        super.__init__()
+
+    def get_token_iterator(self, tokenizer, verbose=False):
+        return TokenIterator(
+            TokenizedSequenceIterator(
+                FileLineIterator(
+                    FileIterator(self.path, verbose=verbose)),
+                tokenizer=tokenizer))
+
+
+class DirCorpus(Corpus):
+    """Cepresents a body of text in a direcotry"""
+
+    def __init__(self, path):
+        super.__init__()
+
+    def get_token_iterator(self, tokenizer, verbose=False):
+        return TokenIterator(
+            TokenizedSequenceIterator(
+                FileLineIterator(
+                    DirIterator(self.path, verbose=verbose)),
+                tokenizer=tokenizer))
+
+## old code below ----------------------------------
 
 def FileSentenceCorpus(path, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=0):
     """
