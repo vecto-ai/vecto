@@ -3,7 +3,7 @@
 import unittest
 import numpy as np
 import json
-from vecto.corpus import FileCorpus, FileTokenCorpus, DirTokenCorpus, \
+from vecto.corpus import FileCorpus, DirCorpus, FileTokenCorpus, DirTokenCorpus, \
     corpus_chain, load_file_as_ids, FileSentenceCorpus, \
     FileSlidingWindowCorpus
 from vecto.vocabulary import Vocabulary
@@ -99,6 +99,12 @@ class Tests(unittest.TestCase):
         assert total_words == TEST_TEXT_LEN
         assert '|'.join(words) == TEST_FIRST_10_WORDS
 
+    def test_dir_corpus(self):
+        corpus = DirCorpus(path_text)
+        tokens_iter = corpus.get_token_iterator()
+        total_words, words = count_words_and_collect_prefix(tokens_iter)
+        assert total_words == TEST_TEXT_LEN
+        assert '|'.join(words) == TEST_FIRST_10_WORDS
     # ----old tests ---------------------
 
     def test_file_iter(self):
