@@ -24,15 +24,17 @@ class FileCorpus(Corpus):
         super.__init__()
 
     def get_token_iterator(self, tokenizer, verbose=False):
-        return TokenIterator(
-            TokenizedSequenceIterator(
-                FileLineIterator(
-                    FileIterator(self.path, verbose=verbose)),
-                tokenizer=tokenizer))
+        return TokenIterator(self.get_sentence_iterator(tokenizer, verbose))
+
+    def get_sentence_iterator(self, tokenizer, verbose=False):
+        return TokenizedSequenceIterator(
+            FileLineIterator(
+                FileIterator(self.path, verbose=verbose)),
+            tokenizer=tokenizer)
 
 
 class DirCorpus(Corpus):
-    """Cepresents a body of text in a direcotry"""
+    """Cepresents a body of text in a directory"""
 
     def __init__(self, path):
         super.__init__()
