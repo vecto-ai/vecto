@@ -3,7 +3,7 @@
 import unittest
 import numpy as np
 import json
-from vecto.corpus import FileCorpus, DirCorpus, DirTokenCorpus, \
+from vecto.corpus import FileCorpus, DirCorpus, \
     corpus_chain, load_file_as_ids, FileSentenceCorpus, \
     FileSlidingWindowCorpus
 from vecto.vocabulary import Vocabulary
@@ -106,12 +106,21 @@ class Tests(unittest.TestCase):
         assert total_words == TEST_TEXT_LEN
         assert '|'.join(words) == TEST_FIRST_10_WORDS
 
-    # ----old tests ---------------------
-
-    def test_dir_iter(self):
-        total_words, words = count_words_and_collect_prefix(DirTokenCorpus(path_text))
+    def test_dir_iter_gzipped(self):
+        corpus = DirCorpus(path_gzipped)
+        tokens_iter = corpus.get_token_iterator()
+        total_words, words = count_words_and_collect_prefix(tokens_iter)
         assert total_words == TEST_TEXT_LEN
         assert '|'.join(words) == TEST_FIRST_10_WORDS
+
+    def test_dir_iter_bzipped(self):
+        corpus = DirCorpus(path_bzipped)
+        tokens_iter = corpus.get_token_iterator()
+        total_words, words = count_words_and_collect_prefix(tokens_iter)
+        assert total_words == TEST_TEXT_LEN
+        assert '|'.join(words) == TEST_FIRST_10_WORDS
+
+# ----old tests ---------------------
 
     def test_text_to_ids(self):
         v = Vocabulary()
@@ -120,15 +129,8 @@ class Tests(unittest.TestCase):
         assert doc.shape == (TEST_TEXT_LEN,)
         assert np.allclose(doc[:10], [-1, 40, -1, -1, -1, -1, -1, -1, 57, -1])
 
-    def test_dir_iter_gzipped(self):
-        total_words, words = count_words_and_collect_prefix(DirTokenCorpus(path_gzipped))
-        assert total_words == TEST_TEXT_LEN
-        assert '|'.join(words) == TEST_FIRST_10_WORDS
 
-    def test_dir_iter_bzipped(self):
-        total_words, words = count_words_and_collect_prefix(DirTokenCorpus(path_bzipped))
-        assert total_words == TEST_TEXT_LEN
-        assert '|'.join(words) == TEST_FIRST_10_WORDS
+
 
     #def test_chain(self):
     #    total_words, words = count_words_and_collect_prefix(corpus_chain(FileTokenCorpus(path_text_file),

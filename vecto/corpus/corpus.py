@@ -76,20 +76,20 @@ def DirSentenceCorpus(path, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=0):
         tokenizer=tokenizer)
 
 
-def DirTokenCorpus(path, tokenizer=DEFAULT_TOKENIZER, verbose=0):
-    """
-    Reads text from all files from all subfolders of `path` line-by-line, splits each line into tokens.
-    Yields data token-by-token.
-    :param path: text file to read (can be archived)
-    :param tokenizer: tokenizer to use to split into sentences and tokens
-    :param verbose: whether to enable progressbar or not
-    :return:
-    """
-    return TokenIterator(
-        TokenizedSequenceIterator(
-            FileLineIterator(
-                DirIterator(path, verbose=verbose)),
-            tokenizer=tokenizer))
+#def DirTokenCorpus(path, tokenizer=DEFAULT_TOKENIZER, verbose=0):
+    #"""
+    #Reads text from all files from all subfolders of `path` line-by-line, splits each line into tokens.
+    #Yields data token-by-token.
+    #:param path: text file to read (can be archived)
+    #:param tokenizer: tokenizer to use to split into sentences and tokens
+    #:param verbose: whether to enable progressbar or not
+    #:return:
+    #"""
+    #return TokenIterator(
+        #TokenizedSequenceIterator(
+            #FileLineIterator(
+                #DirIterator(path, verbose=verbose)),
+            #tokenizer=tokenizer))
 
 
 def FileSlidingWindowCorpus(path, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):
@@ -140,6 +140,7 @@ def corpus_chain(*corpuses):
     return IteratorChain(corpuses)
 
 
+# TODO: make it a part of Corpus class
 def load_file_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
     # use proper tokenizer from cooc
     # options to ignore sentence bounbdaries
