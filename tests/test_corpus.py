@@ -129,9 +129,6 @@ class Tests(unittest.TestCase):
         assert doc.shape == (TEST_TEXT_LEN,)
         assert np.allclose(doc[:10], [-1, 40, -1, -1, -1, -1, -1, -1, 57, -1])
 
-
-
-
     #def test_chain(self):
     #    total_words, words = count_words_and_collect_prefix(corpus_chain(FileTokenCorpus(path_text_file),
     #                                                                     DirTokenCorpus(path_text)))
