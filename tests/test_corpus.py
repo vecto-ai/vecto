@@ -34,6 +34,7 @@ class Tests(unittest.TestCase):
     def test_text_to_ids(self):
         v = Vocabulary()
         v.load(path_vocab)
+        doc = load_file_as_ids(path_text_file, v, downcase=False)
         doc = load_file_as_ids(path_text_file, v)
         print("test load as ids:", doc.shape)
         print(doc[:10])
