@@ -1,6 +1,6 @@
 import os
 from .data import load_json, save_json
-
+from vecto._version import VERSION
 
 METADATA_SUFFIX = 'metainfo.json'
 
@@ -52,7 +52,7 @@ class WithMetaData(object):
         :param base_path: path from which metadata.json path will be constructed
         :param other_metadata: anything json serializable
         """
-        self._metadata = {}
+        self._metadata = { "vecto_version" : VERSION }
         if base_path is not None:
             self.metadata['_base_path'] = base_path
             self.load_metadata(base_path)
