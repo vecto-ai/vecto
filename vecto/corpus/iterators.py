@@ -164,21 +164,21 @@ class IteratorChain(BaseIterator):
                 yield sample
 
 
-class TruncatedCorpus(BaseIterator):
-    """
-    Reads first `limit` samples from `base_corpus` and yields them sample-by-sample.
-    Good for debugging.
-    """
-    def __init__(self, base_corpus, limit=1000, verbose=0):
-        super(TruncatedCorpus, self).__init__(base_corpus=base_corpus.meta,
-                                              verbose=verbose)
-        self.samples = []
-        for i, s in enumerate(base_corpus):
-            if i >= limit:
-                break
-            self.samples.append(s)
-        self.metadata['samples_count'] = len(self.samples)
+#class TruncatedCorpus(BaseIterator):
+#    """
+#    Reads first `limit` samples from `base_corpus` and yields them sample-by-sample.
+#    Good for debugging.
+#    """
+#    def __init__(self, base_corpus, limit=1000, verbose=0):
+#        super(TruncatedCorpus, self).__init__(base_corpus=base_corpus.meta,
+#                                              verbose=verbose)
+#        self.samples = []
+#        for i, s in enumerate(base_corpus):
+#            if i >= limit:
+#                break
+#            self.samples.append(s)
+#        self.metadata['samples_count'] = len(self.samples)
 
-    def _generate_samples(self):
-        for s in self.samples:
-            yield s
+#    def _generate_samples(self):
+#        for s in self.samples:
+#            yield s
