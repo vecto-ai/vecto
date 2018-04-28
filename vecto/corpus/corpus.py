@@ -45,19 +45,19 @@ class DirCorpus(Corpus):
 # old code below ----------------------------------
 
 
-def FileSentenceCorpus(path, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=0):
-    """
-    Reads text from `path` line-by-line, splits each line into sentences, tokenizes each sentence.
-    Yields data sentence-by-sentence.
-    :param path: text file to read (can be archived)
-    :param tokenizer: tokenizer to use to split into sentences and tokens
-    :param verbose: whether to enable progressbar or not
-    :return:
-    """
-    return TokenizedSequenceIterator(
-        FileLineIterator(
-            FileIterator(path, verbose=verbose)),
-        tokenizer=tokenizer)
+#def FileSentenceCorpus(path, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=0):
+#    """
+#    Reads text from `path` line-by-line, splits each line into sentences, tokenizes each sentence.
+#    Yields data sentence-by-sentence.
+#    :param path: text file to read (can be archived)
+#    :param tokenizer: tokenizer to use to split into sentences and tokens
+#    :param verbose: whether to enable progressbar or not
+#    :return:
+#    """
+#    return TokenizedSequenceIterator(
+#        FileLineIterator(
+#            FileIterator(path, verbose=verbose)),
+#        tokenizer=tokenizer)
 
 
 def DirSentenceCorpus(path, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=0):

@@ -4,8 +4,7 @@ import unittest
 import numpy as np
 import json
 from vecto.corpus import FileCorpus, DirCorpus, \
-    corpus_chain, load_file_as_ids, FileSentenceCorpus, \
-    FileSlidingWindowCorpus
+    corpus_chain, load_file_as_ids, FileSlidingWindowCorpus
 from vecto.vocabulary import Vocabulary
 
 # todo: use local vocab
@@ -120,6 +119,13 @@ class Tests(unittest.TestCase):
         assert total_words == TEST_TEXT_LEN
         assert '|'.join(words) == TEST_FIRST_10_WORDS
 
+    def test_sentence(self):
+        corpus = FileCorpus(path_text_file)
+        sentence_iter = corpus.get_sentence_iterator()
+        for s in sentence_iter:
+            assert s == ['family', 'dashwood', 'long', 'settled', 'sussex']
+            break
+
 # ----old tests ---------------------
 
     def test_text_to_ids(self):
@@ -128,6 +134,7 @@ class Tests(unittest.TestCase):
         doc = load_file_as_ids(path_text_file, v)
         assert doc.shape == (TEST_TEXT_LEN,)
         assert np.allclose(doc[:10], [-1, 40, -1, -1, -1, -1, -1, -1, 57, -1])
+
 
     #def test_chain(self):
     #    total_words, words = count_words_and_collect_prefix(corpus_chain(FileTokenCorpus(path_text_file),
@@ -141,10 +148,7 @@ class Tests(unittest.TestCase):
     #    metadata = json.dumps(corp.metadata, indent=4, sort_keys=True).strip()
     #    assert metadata == TEST_RIGHT_METADATA
 
-    def test_sentence(self):
-        for s in FileSentenceCorpus(path_text_file):
-            assert s == ['family', 'dashwood', 'long', 'settled', 'sussex']
-            break
+
 
     def test_sliding_window(self):
         for i, s in enumerate(FileSlidingWindowCorpus(path_text_file)):
