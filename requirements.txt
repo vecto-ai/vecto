@@ -5,3 +5,4 @@ tables
 scipy
 tqdm
 nltk
+brewer2mpl
