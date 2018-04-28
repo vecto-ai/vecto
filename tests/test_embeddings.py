@@ -2,6 +2,7 @@
 
 import unittest
 from vecto.embeddings.dense import WordEmbeddingsDense
+from vecto.embeddings import load_from_dir
 
 
 class Tests(unittest.TestCase):
