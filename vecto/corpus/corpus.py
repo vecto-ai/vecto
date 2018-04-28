@@ -45,23 +45,23 @@ class DirCorpus(Corpus):
 # old code below ----------------------------------
 
 
-def FileSlidingWindowCorpus(path, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):
-    """
-    Reads text from `path` line-by-line, splits each line into tokens and/or sentences (depending on tokenizer),
-    and yields training samples for prediction-based distributional semantic models (like Word2Vec etc).
-    Example of one yielded value: {'current': 'long', 'context': ['family', 'dashwood', 'settled', 'sussex']}
-    :param path: text file to read (can be archived)
-    :param tokenizer: tokenizer to use to split into sentences and tokens
-    :param verbose: whether to enable progressbar or not
-    :return:
-    """
-    return SlidingWindowIterator(
-        TokenizedSequenceIterator(
-            FileLineIterator(
-                FileIterator(path, verbose=verbose)),
-            tokenizer=tokenizer),
-        left_ctx_size=left_ctx_size,
-        right_ctx_size=right_ctx_size)
+#def FileSlidingWindowCorpus(path, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):
+#    """
+#    Reads text from `path` line-by-line, splits each line into tokens and/or sentences (depending on tokenizer),
+#    and yields training samples for prediction-based distributional semantic models (like Word2Vec etc).
+#    Example of one yielded value: {'current': 'long', 'context': ['family', 'dashwood', 'settled', 'sussex']}
+#    :param path: text file to read (can be archived)
+#    :param tokenizer: tokenizer to use to split into sentences and tokens
+#    :param verbose: whether to enable progressbar or not
+#    :return:
+#    """
+#    return SlidingWindowIterator(
+#        TokenizedSequenceIterator(
+#            FileLineIterator(
+#                FileIterator(path, verbose=verbose)),
+#            tokenizer=tokenizer),
+#        left_ctx_size=left_ctx_size,
+#        right_ctx_size=right_ctx_size)
 
 
 def DirSlidingWindowCorpus(path, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):

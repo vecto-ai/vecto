@@ -3,8 +3,7 @@
 import unittest
 import numpy as np
 import json
-from vecto.corpus import FileCorpus, DirCorpus, \
-    corpus_chain, load_file_as_ids, FileSlidingWindowCorpus
+from vecto.corpus import FileCorpus, DirCorpus, corpus_chain, load_file_as_ids
 from vecto.vocabulary import Vocabulary
 
 # todo: use local vocab
@@ -122,9 +121,19 @@ class Tests(unittest.TestCase):
     def test_sentence(self):
         corpus = FileCorpus(path_text_file)
         sentence_iter = corpus.get_sentence_iterator()
+        corpus = FileCorpus(path_text_file)
+        sentence_iter = corpus.get_sentence_iterator()
         for s in sentence_iter:
             assert s == ['family', 'dashwood', 'long', 'settled', 'sussex']
             break
+
+    def test_sliding_window(self):
+        corpus = FileCorpus(path_text_file)
+        sliding_window_iter = corpus.get_sliding_window_iterator()
+        for i, s in enumerate(sliding_window_iter):
+            if i >= 2:
+                break
+        assert s == {'current': 'long', 'context': ['family', 'dashwood', 'settled', 'sussex']}
 
 # ----old tests ---------------------
 
@@ -149,9 +158,3 @@ class Tests(unittest.TestCase):
     #    assert metadata == TEST_RIGHT_METADATA
 
 
-
-    def test_sliding_window(self):
-        for i, s in enumerate(FileSlidingWindowCorpus(path_text_file)):
-            if i >= 2:
-                break
-        assert s == {'current': 'long', 'context': ['family', 'dashwood', 'settled', 'sussex']}
