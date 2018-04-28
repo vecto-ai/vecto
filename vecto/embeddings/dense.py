@@ -1,6 +1,7 @@
 from .base import WordEmbeddings
 import tables
 import math
+import warnings
 import numpy as np
 import brewer2mpl
 import os
@@ -58,7 +59,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         if not os.path.exists(path):
             os.makedirs(path)
         with open(os.path.join(path, 'vectors.txt'), 'w') as output:
-            for i,w in enumerate(self.vocabulary.lst_words):
+            for i, w in enumerate(self.vocabulary.lst_words):
                 if len(w.strip()) == 0:
                     continue
                 output.write(w + ' ')
@@ -70,7 +71,7 @@ class WordEmbeddingsDense(WordEmbeddings):
     def load_with_alpha(self, path, power=0.6):
         # self.load_provenance(path)
         f = tables.open_file(os.path.join(path, 'vectors.h5p'), 'r')
-#        left = np.nan_to_num(f.root.vectors.read())
+        #        left = np.nan_to_num(f.root.vectors.read())
         left = f.root.vectors.read()
         sigma = f.root.sigma.read()
         logger.info("loaded left singular vectors and sigma")
@@ -92,7 +93,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         self.metadata["normalized"] = True
 
     def cache_normalized_copy(self):
-        if self.normalized:
+        if hasattr(self, 'normalized') and self.normalized == True:
             self._normalized_matrix = self.matrix
         else:
             self._normalized_matrix = self.matrix.copy()
@@ -186,3 +187,48 @@ class WordEmbeddingsDense(WordEmbeddings):
             cnt += 1
         if show_legend:
             plt.legend()
+
+    def get_most_similar_vectors(self, u, cnt=10):
+        scores = np.zeros(self.matrix.shape[0], dtype=np.float32)
+        if hasattr(self, "_normalized_matrix"):
+            scores = normed(u) @ self._normalized_matrix.T
+            scores = (scores + 1) / 2
+        else:
+            str_warn = "\n\tthis method executes slow if embeddings are not normalized."
+            str_warn += "\n\tuse normalize() method to normalize your embeddings"
+            str_warn += "\n\tif for whatever reasons you need your embeddings to be not normalized, you can use .cache_normalized_copy() method to cache normalized copy of embeddings"
+            str_warn += "\n\tplease note that latter will consume additional memory\n"
+            warnings.warn(str_warn, RuntimeWarning)
+            for i in range(self.matrix.shape[0]):
+                scores[i] = self.cmp_vectors(u, self.matrix[i])
+        ids = np.argsort(scores)[::-1]
+        ids = ids[:cnt]
+        return zip(ids, scores[ids])
+
+    def get_most_similar_words(self, w, cnt=10):
+        """returns list of words sorted by cosine proximity to a target word
+
+        Args:
+            w: target word
+            cnt: how many similar words are needed
+
+        Returns:
+            list of words and corresponding similarities
+        """
+
+        if isinstance(w, str):
+            vec = self.matrix[self.vocabulary.get_id(w)]
+        else:
+            vec = w
+        rows = self.get_most_similar_vectors(vec, cnt)
+        results = []
+        for i in rows:
+            results.append([self.vocabulary.get_word_by_id(i[0]), i[1]])
+        return results
+
+    def get_vector(self, w):
+        i = self.vocabulary.get_id(w)
+        if i < 0:
+            raise RuntimeError('word do not exist', w)
+        row = self.matrix[i]
+        return row
