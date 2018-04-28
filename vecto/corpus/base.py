@@ -33,6 +33,6 @@ class BaseIterator(WithMetaData):
         else:
             return gen
 
-    @abc.abstractmethod
-    def _generate_samples(self):
-        pass
+    #@abc.abstractmethod
+    #def _generate_samples(self):
+    #    pass
