@@ -26,7 +26,7 @@ class Corpus(WithMetaData):
         return TokenIterator(self.get_sentence_iterator(tokenizer, verbose))
 
     def get_sentence_iterator(self, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=False):
-        return TokenizedSequenceIterator(self.get_line_iterator(), tokenizer=tokenizer)
+        return TokenizedSequenceIterator(self.get_line_iterator(), tokenizer=tokenizer, verbose=verbose)
 
 
 class FileCorpus(Corpus):

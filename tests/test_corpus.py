@@ -120,9 +120,7 @@ class Tests(unittest.TestCase):
 
     def test_sentence(self):
         corpus = FileCorpus(path_text_file)
-        sentence_iter = corpus.get_sentence_iterator()
-        corpus = FileCorpus(path_text_file)
-        sentence_iter = corpus.get_sentence_iterator()
+        sentence_iter = corpus.get_sentence_iterator(verbose=True)
         for s in sentence_iter:
             assert s == ['family', 'dashwood', 'long', 'settled', 'sussex']
             break
