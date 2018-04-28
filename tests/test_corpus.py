@@ -92,7 +92,7 @@ class Tests(unittest.TestCase):
 
     def test_file_corpus(self):
         corpus = FileCorpus(path_text_file)
-        tokens_iter = corpus.get_token_iterator()
+        tokens_iter = corpus.get_token_iterator(verbose=1)
         total_words, words = count_words_and_collect_prefix(tokens_iter)
         assert total_words == TEST_TEXT_LEN
         assert '|'.join(words) == TEST_FIRST_10_WORDS

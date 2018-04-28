@@ -10,6 +10,7 @@ class BaseIterator(WithMetaData):
     Responsible for base logic like metadata collection, __len__,
     iteration, tqdm progressbar etc.
     """
+
     def __init__(self, verbose=1, **metadata_kwargs):
         super(BaseIterator, self).__init__(**metadata_kwargs)
         self._verbose = verbose
