@@ -93,7 +93,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         self.metadata["normalized"] = True
 
     def cache_normalized_copy(self):
-        if self.normalized:
+        if hasattr(self, 'normalized') and self.normalized == True:
             self._normalized_matrix = self.matrix
         else:
             self._normalized_matrix = self.matrix.copy()
@@ -190,21 +190,17 @@ class WordEmbeddingsDense(WordEmbeddings):
 
     def get_most_similar_vectors(self, u, cnt=10):
         scores = np.zeros(self.matrix.shape[0], dtype=np.float32)
-        if hasattr(self, 'normalized') and self.normalized == True:
-            scores = normed(u) @ self.matrix.T
+        if hasattr(self, "_normalized_matrix"):
+            scores = normed(u) @ self._normalized_matrix.T
             scores = (scores + 1) / 2
         else:
-            if hasattr(self, "_normalized_matrix"):
-                scores = normed(u) @ self._normalized_matrix.T
-                scores = (scores + 1) / 2
-            else:
-                str_warn = "\n\tthis method executes slow if embeddings are not normalized."
-                str_warn += "\n\tuse normalize() method to normalize your embeddings"
-                str_warn += "\n\tif for whatever reasons you need your embeddings to be not normalized, you can use .cache_normalized_copy() method to cache normalized copy of embeddings"
-                str_warn += "\n\tplease note that latter will consume additional memory\n"
-                warnings.warn(str_warn, RuntimeWarning)
-                for i in range(self.matrix.shape[0]):
-                    scores[i] = self.cmp_vectors(u, self.matrix[i])
+            str_warn = "\n\tthis method executes slow if embeddings are not normalized."
+            str_warn += "\n\tuse normalize() method to normalize your embeddings"
+            str_warn += "\n\tif for whatever reasons you need your embeddings to be not normalized, you can use .cache_normalized_copy() method to cache normalized copy of embeddings"
+            str_warn += "\n\tplease note that latter will consume additional memory\n"
+            warnings.warn(str_warn, RuntimeWarning)
+            for i in range(self.matrix.shape[0]):
+                scores[i] = self.cmp_vectors(u, self.matrix[i])
         ids = np.argsort(scores)[::-1]
         ids = ids[:cnt]
         return zip(ids, scores[ids])
@@ -229,3 +225,10 @@ class WordEmbeddingsDense(WordEmbeddings):
         for i in rows:
             results.append([self.vocabulary.get_word_by_id(i[0]), i[1]])
         return results
+
+    def get_vector(self, w):
+        i = self.vocabulary.get_id(w)
+        if i < 0:
+            raise RuntimeError('word do not exist', w)
+        row = self.matrix[i]
+        return row
