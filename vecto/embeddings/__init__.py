@@ -1,5 +1,10 @@
 """Loading and training for embeddings"""
+import os
+import logging
 import vecto.embeddings.dense
+from vecto.vocabulary import Vocabulary
+
+logger = logging.getLogger(__name__)
 
 
 def load_from_dir(path):
@@ -48,7 +53,7 @@ def load_from_dir(path):
         result.load_metadata(path)
         return result
 
-    result = ModelNumbered()
+    result = vecto.embeddings.dense.WordEmbeddingsDense()
     files = os.listdir(path)
     for f in files:
         if f.endswith(".gz") or f.endswith(".bz") or f.endswith(".txt"):

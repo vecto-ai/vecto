@@ -2,7 +2,11 @@ from .base import WordEmbeddings
 import tables
 import math
 import numpy as np
+import brewer2mpl
+import os
 from vecto.utils.blas import normed
+from vecto.vocabulary import Vocabulary
+from vecto.utils.data import save_json, load_json, detect_archive_format_and_open
 
 
 class WordEmbeddingsDense(WordEmbeddings):
@@ -165,3 +169,20 @@ class WordEmbeddingsDense(WordEmbeddings):
             new_embds.metadata = self.metadata
             new_embds.metadata["vocabulary"] = new_embds.vocabulary.metadata
             return new_embds
+
+    def get_x_label(self, i):
+        return i
+
+    def viz_wordlist(self, wl, colored=False, show_legend=False):
+        colors = brewer2mpl.get_map('Set2', 'qualitative', 8).mpl_colors
+        cnt = 0
+        for i in wl:
+            row = self.get_row(i)
+            row = row / np.linalg.norm(row)
+            if colored:
+                plt.bar(range(0, len(row)), row, color=colors[cnt], linewidth=0, alpha=0.6, label=i)
+            else:
+                plt.bar(range(0, len(row)), row, color="black", linewidth=0, alpha=1 / len(wl), label=i)
+            cnt += 1
+        if show_legend:
+            plt.legend()
