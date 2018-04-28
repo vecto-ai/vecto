@@ -48,7 +48,7 @@ def load_from_dir(path):
         result.load_metadata(path)
         return result
     if os.path.isfile(os.path.join(path, "vectors.h5p")):
-        result = ModelNumbered()
+        result = vecto.embeddings.dense.WordEmbeddingsDense()
         logger.info("detected as vecto format ")
         result.load_hdf5(path)
         result.load_metadata(path)

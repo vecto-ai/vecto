@@ -35,7 +35,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         self.matrix = f.root.vectors.read()
         self.vocabulary = Vocabulary()
         self.vocabulary.load(path)
-        self.name += os.path.basename(os.path.normpath(path))
+        # self.name += os.path.basename(os.path.normpath(path))
         f.close()
 
     def load_npy(self, path):

@@ -32,3 +32,10 @@ class Tests(unittest.TestCase):
 
         results = embs.get_most_similar_words(embs.get_vector('apple'), 5)
         print(results)
+
+    def test_save(self):
+        embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
+        path_save = "/tmp/vecto/saved"
+        embs.save_to_dir(path_save)
+        embs = load_from_dir(path_save)
+        print(embs.matrix.shape)
