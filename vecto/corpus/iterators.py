@@ -149,19 +149,19 @@ class SlidingWindowAndGlobal(BaseIterator):
                            global_context=list(sample_elems))
 
 
-class IteratorChain(BaseIterator):
-    """
-    Like `itertools.chain`, but with proper metadata handling
-    """
-    def __init__(self, base_iterators, verbose=0):
-        super(IteratorChain, self).__init__(base_iterators=[i.metadata for i in base_iterators],
-                                            verbose=verbose)
-        self.base_iterators = base_iterators
+#class IteratorChain(BaseIterator):
+#    """
+#    Like `itertools.chain`, but with proper metadata handling
+#    """
+#    def __init__(self, base_iterators, verbose=0):
+#        super(IteratorChain, self).__init__(base_iterators=[i.metadata for i in base_iterators],
+#                                            verbose=verbose)
+#        self.base_iterators = base_iterators
 
-    def _generate_samples(self):
-        for base_iter in self.base_iterators:
-            for sample in base_iter:
-                yield sample
+#    def _generate_samples(self):
+#        for base_iter in self.base_iterators:
+#            for sample in base_iter:
+#                yield sample
 
 
 #class TruncatedCorpus(BaseIterator):

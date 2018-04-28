@@ -1,8 +1,7 @@
 import numpy as np
 import logging
 from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator, \
-    TokenizedSequenceIterator, TokenIterator, IteratorChain, \
-    SlidingWindowIterator
+    TokenizedSequenceIterator, TokenIterator, SlidingWindowIterator
 from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER
 from vecto.utils.metadata import WithMetaData
 
