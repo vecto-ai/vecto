@@ -1,6 +1,7 @@
 """Loading and training for embeddings"""
 import os
 import logging
+import numpy as np
 import vecto.embeddings.dense
 from vecto.vocabulary import Vocabulary
 
