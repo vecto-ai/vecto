@@ -232,3 +232,9 @@ class WordEmbeddingsDense(WordEmbeddings):
             raise RuntimeError('word do not exist', w)
         row = self.matrix[i]
         return row
+
+    def has_word(self, w):
+        i = self.vocabulary.get_id(w)
+        if i < 0:
+            return False
+        return True
