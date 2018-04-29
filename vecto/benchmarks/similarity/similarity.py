@@ -1,13 +1,6 @@
-import numpy as np
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score
-import sys
 import datetime
-import yaml
-import argparse
 from scipy.stats.stats import spearmanr
 import os
-import random
 import math
 from ..base import Benchmark
 
