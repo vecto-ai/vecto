@@ -17,6 +17,9 @@ class Tests(unittest.TestCase):
         # TODO: assert right class
         load_from_dir("tests/data/embeddings/npy")
 
+
+        load_from_dir("tests/data/embeddings/word2vec/bin")
+
         embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
         embs.get_vector('apple')
         with self.assertRaises(RuntimeError):

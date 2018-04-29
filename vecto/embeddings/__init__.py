@@ -29,30 +29,30 @@ def load_from_dir(path):
 #        result.load(path)
 #        result.load_metadata(path)
 #        return result
-    if os.path.isfile(os.path.join(path, "vectors.bin")):
-        logger.info("this is w2v original binary format")
-        result = ModelW2V()
-        result.load_from_dir(path)
-        result.load_metadata(path)
-        return result
+#     if os.path.isfile(os.path.join(path, "vectors.bin")):
+#         logger.info("this is w2v original binary format")
+#         result = ModelW2V()
+#         result.load_from_dir(path)
+#         result.load_metadata(path)
+#         return result
 #    if os.path.isfile(os.path.join(path, "sgns.words.npy")):
 #        result = ModelLevy()
 #        logger.info("this is Levi")
 #        result.load_from_dir(path)
 #        result.load_metadata(path)
 #        return result
-    if os.path.isfile(os.path.join(path, "vectors.npy")):
-        result = ModelNumbered()
-        logger.info("detected as dense ")
-        result.load_npy(path)
-        result.load_metadata(path)
-        return result
-    if os.path.isfile(os.path.join(path, "vectors.h5p")):
-        result = ModelNumbered()
-        logger.info("detected as vecto format ")
-        result.load_hdf5(path)
-        result.load_metadata(path)
-        return result
+#     if os.path.isfile(os.path.join(path, "vectors.npy")):
+#         result = ModelNumbered()
+#         logger.info("detected as dense ")
+#         result.load_npy(path)
+#         result.load_metadata(path)
+#         return result
+#     if os.path.isfile(os.path.join(path, "vectors.h5p")):
+#         result = ModelNumbered()
+#         logger.info("detected as vecto format ")
+#         result.load_hdf5(path)
+#         result.load_metadata(path)
+#         return result
 
     result = vecto.embeddings.dense.WordEmbeddingsDense()
     files = os.listdir(path)
@@ -70,9 +70,8 @@ def load_from_dir(path):
             result.load_metadata(path)
             return result
         if any(file.endswith('bin') for file in os.listdir(path)):
-            result = ModelW2V()
             logger.info("Detected VSM in the w2v original binary format")
-            result.load_from_dir(path)
+            result.load_from_word2vec_format(os.path.join(path, f))
             result.load_metadata(path)
             return result
 #        if f.startswith("words") and f.endswith(".npy") \

@@ -99,6 +99,35 @@ class WordEmbeddingsDense(WordEmbeddings):
             self._normalized_matrix = self.matrix.copy()
             self._normalized_matrix /= np.linalg.norm(self._normalized_matrix, axis=1)[:, None]
 
+    @staticmethod
+    def _load_word(file):
+        result = b''
+        w = b''
+        while w != b' ':
+            w = file.read(1)
+            result = result + w
+        return result[:-1]
+
+    def load_from_word2vec_format(self, path):
+        self.vocabulary = Vocabulary()
+        f = open(path, "rb")
+        header = f.readline().split()
+        cnt_rows = int(header[0])
+        size_row = int(header[1])
+        self.name = os.path.basename(os.path.dirname(os.path.normpath(path)))
+        self.matrix = np.zeros((cnt_rows, size_row), dtype=np.float32)
+        # logger.debug("cnt rows = {}, size row = {}".format(cnt_rows, size_row))
+        for i in range(cnt_rows):
+            word = self._load_word(f).decode(
+                'UTF-8', errors="ignore").strip()
+            self.vocabulary.dic_words_ids[word] = i
+            self.vocabulary.lst_words.append(word)
+            s_row = f.read(size_row * 4)
+            row = np.fromstring(s_row, dtype=np.float32)
+            # row = row / np.linalg.norm(row)
+            self.matrix[i] = row
+        f.close()
+
     def load_from_text(self, path):
         i = 0
         # self.name+="_"+os.path.basename(os.path.normpath(path))
