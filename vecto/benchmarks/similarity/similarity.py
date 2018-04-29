@@ -20,7 +20,7 @@ def read_test_set(path):
             test.append(((x, y), float(sim)))
     return test
 
-def evaluate(m, data):
+def evaluate(embs, data):
     details = []
     results = []
     count = 0
@@ -28,9 +28,9 @@ def evaluate(m, data):
         x = x.lower()
         y = y.lower()
         # print(x,y)
-        if m.has_word(x) and m.has_word(y) and not math.isnan(m.get_row(x).dot(m.get_row(y))):
+        if embs.has_word(x) and embs.has_word(y) and not math.isnan(embs.get_vector(x).dot(embs.get_vector(y))):
             # print(m.get_row(x).dot(m.get_row(y)))
-            v =  m.get_row(x).dot(m.get_row(y))
+            v =  embs.get_vector(x).dot(embs.get_vector(y))
             results.append((v, sim))
             count += 1
             details.append([x, y, float(v), float(sim)])
@@ -48,18 +48,18 @@ def evaluate(m, data):
     return spearmanr(actual, expected)[0], count, details
 
 
-def run(embeddings, datasset_path):
+def run(embs, path_dataset):
     results = []
-    for file in os.listdir(datasset_path):
-        testset = read_test_set(os.path.join(datasset_path, file))
+    for file in os.listdir(path_dataset):
+        testset = read_test_set(os.path.join(path_dataset, file))
 
         out = dict()
-        out["result"], count, out["details"] = evaluate(embeddings, testset)
+        out["result"], count, out["details"] = evaluate(embs, testset)
 
         experiment_setup = dict()
         experiment_setup["cnt_finded_pairs_total"] = count
         experiment_setup["cnt_pairs_total"] = len(testset)
-        experiment_setup["embeddings"] = embeddings.metadata
+        experiment_setup["embeddings"] = embs.metadata
         experiment_setup["category"] = "default"
         experiment_setup["dataset"] = os.path.splitext(file)[0]
         experiment_setup["method"] = "cosine_distance"
@@ -79,10 +79,10 @@ class Similarity(Benchmark):
         self.normalize = True
 
 
-    def get_result(self, embs, dataset_path):
+    def get_result(self, embs, path_dataset):
         if self.normalize:
             embs.normalize()
 
-        results = run(embs, dataset_path)
+        results = run(embs, path_dataset)
         return results
 
