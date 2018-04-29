@@ -5,7 +5,6 @@ import math
 from ..base import Benchmark
 
 
-
 class Similarity(Benchmark):
 
     def __init__(self, normalize=True, ignore_oov=True):
@@ -24,7 +23,7 @@ class Similarity(Benchmark):
     def evaluate(self, embs, data):
         details = []
         results = []
-        count = 0
+        cnt_found_pairs_total = 0
         for (x, y), sim in data:
             x = x.lower()
             y = y.lower()
@@ -33,7 +32,7 @@ class Similarity(Benchmark):
                 # print(m.get_row(x).dot(m.get_row(y)))
                 v = embs.get_vector(x).dot(embs.get_vector(y))
                 results.append((v, sim))
-                count += 1
+                cnt_found_pairs_total += 1
                 details.append([x, y, float(v), float(sim)])
             else:
                 if not self.ignore_oov:
@@ -44,10 +43,10 @@ class Similarity(Benchmark):
                     # print('oov')
                     pass
         if len(results) <= 2:
-            return -1, count, []
+            return -1, cnt_found_pairs_total, []
         actual, expected = zip(*results)
         # print(actual)
-        return spearmanr(actual, expected)[0], count, details
+        return spearmanr(actual, expected)[0], cnt_found_pairs_total, details
 
     def run(self, embs, path_dataset):
         results = []
@@ -55,10 +54,10 @@ class Similarity(Benchmark):
             testset = self.read_test_set(os.path.join(path_dataset, file))
 
             out = dict()
-            out["result"], count, out["details"] = self.evaluate(embs, testset)
+            out["result"], cnt_found_pairs_total, out["details"] = self.evaluate(embs, testset)
 
             experiment_setup = dict()
-            experiment_setup["cnt_finded_pairs_total"] = count
+            experiment_setup["cnt_found_pairs_total"] = cnt_found_pairs_total
             experiment_setup["cnt_pairs_total"] = len(testset)
             experiment_setup["embeddings"] = embs.metadata
             experiment_setup["category"] = "default"
@@ -78,4 +77,3 @@ class Similarity(Benchmark):
 
         results = self.run(embs, path_dataset)
         return results
-
