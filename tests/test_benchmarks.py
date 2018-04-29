@@ -15,3 +15,7 @@ class Tests(unittest.TestCase):
         similarity = Similarity()
         result = similarity.get_result(embs, path_similarity_dataset)
         print(result)
+
+        similarity = Similarity(ignore_oov=False)
+        result = similarity.get_result(embs, path_similarity_dataset)
+        print(result)
