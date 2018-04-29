@@ -6,5 +6,9 @@ class Benchmark(WithMetaData):
     # TODO: define proper interface
 
     @abc.abstractmethod
-    def get_result(self):
+    def __init__(self):
+        pass
+
+    @abc.abstractmethod
+    def get_result(self, embeds, path_dataset):
         pass
