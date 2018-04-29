@@ -2,7 +2,7 @@ import abc
 from vecto.utils.metadata import WithMetaData
 
 
-class Benchmark(WithMetaData):
+class Benchmark():
     # TODO: define proper interface
 
     @abc.abstractmethod
