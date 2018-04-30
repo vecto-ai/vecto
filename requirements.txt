@@ -6,3 +6,4 @@ scipy
 tqdm
 nltk
 brewer2mpl
+progressbar2
