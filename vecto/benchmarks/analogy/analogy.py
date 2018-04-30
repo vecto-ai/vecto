@@ -76,8 +76,7 @@ class Analogy(Benchmark):
         return json_data
 
     def normed(self, v):
-        global is_normalized
-        if is_normalized:
+        if self.normalize:
             return v
         else:
             return v / np.linalg.norm(v)
@@ -270,7 +269,10 @@ class Analogy(Benchmark):
     #     else:
     #         raise Exception("method name not recognized")
 
-    def run_category(self, pairs, name_category):
+    def run_category(self, pairs, name_category, name_subcategory):
+
+        self.cnt_total_correct = 0
+        self.cnt_total_total = 0
 
         details = []
         kf = sklearn.model_selection.KFold(n_splits=len(pairs) // self.size_cv_test)
@@ -319,6 +321,7 @@ class Analogy(Benchmark):
         experiment_setup["cnt_questions_total"] = self.cnt_total_total
         experiment_setup["embeddings"] = self.embs.metadata
         experiment_setup["category"] = name_category
+        experiment_setup["subcategory"] = name_subcategory
         experiment_setup["task"] = "word_analogy"
         experiment_setup["measurement"] = "accuracy"
         if not self.exclude:
@@ -326,7 +329,10 @@ class Analogy(Benchmark):
         experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
         out["experiment_setup"] = experiment_setup
         out["details"] = details
-
+        if self.cnt_total_total == 0:
+            out['result'] = -1
+        else:
+            out['result'] = self.cnt_total_correct / self.cnt_total_total
         str_results = json.dumps(self.jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
         return out
 
@@ -359,8 +365,6 @@ class Analogy(Benchmark):
         return pairs
 
     def run(self, embs, path_dataset):
-        self.cnt_total_correct = 0
-        self.cnt_total_total = 0
         self.embs = embs
 
         if self.normalize:
@@ -376,47 +380,47 @@ class Analogy(Benchmark):
                 print(filename)
                 pairs = self.get_pairs(os.path.join(root, filename))
                 # print(pairs)
-                out = self.run_category(pairs, name_category=filename)
+                out = self.run_category(pairs, name_category=os.path.basename(root), name_subcategory=filename)
                 results.append(out)
         print("")
         print(len(results))
+        results.extend(self.group_results(results))
         print(len(results))
         for r in results:
             print(r['experiment_setup'])
-        # print("total accuracy: {:.4f}".format(cnt_total_correct/(cnt_total_total+1)))
         return results
 
-    # def group_results(self, results):
-    #     # group analogy results, based on the filename's first character
-    #     rs = {}
-    #     for r in results:
-    #         cnt_correct = 0
-    #         cnt_total = 0
-    #         for t in r['details']:
-    #             if t['rank'] == 0:
-    #                 cnt_correct += 1
-    #             cnt_total += 1
-    #
-    #         k = r['experiment_setup']['type']
-    #
-    #         if k in rs:
-    #             rs[k]['details']['cnt_correct'] += cnt_correct
-    #             rs[k]['details']['cnt_total'] += cnt_total
-    #             rs[k]['experiment_setup']['cnt_questions_total'] += r['experiment_setup']['cnt_questions_total']
-    #         else:
-    #             rs[k] = {}
-    #             rs[k]['experiment_setup'] = r['experiment_setup'].copy()
-    #             del rs[k]['experiment_setup']['category']
-    #             rs[k]['experiment_setup']['dataset'] = k
-    #             rs[k]['details'] = {}
-    #             rs[k]['details']['cnt_correct'] = cnt_correct
-    #             rs[k]['details']['cnt_total'] = cnt_total
-    #     for k, v in rs.items():
-    #         rs[k]['result'] = rs[k]['details']['cnt_correct'] * 1.0 / rs[k]['details']['cnt_total']
-    #     out = []
-    #     for k, v in rs.items():
-    #         out.append(rs[k])
-    #     return out
+    def group_results(self, results):
+        # group analogy results, based on the filename's first character
+        rs = {}
+        for r in results:
+            cnt_correct = 0
+            cnt_total = 0
+            for t in r['details']:
+                if t['rank'] == 0:
+                    cnt_correct += 1
+                cnt_total += 1
+
+            k = r['experiment_setup']['category']
+
+            if k in rs:
+                rs[k]['details']['cnt_correct'] += cnt_correct
+                rs[k]['details']['cnt_total'] += cnt_total
+                rs[k]['experiment_setup']['cnt_questions_total'] += r['experiment_setup']['cnt_questions_total']
+            else:
+                rs[k] = {}
+                rs[k]['experiment_setup'] = r['experiment_setup'].copy()
+                del rs[k]['experiment_setup']['category']
+                rs[k]['experiment_setup']['category'] = k
+                rs[k]['details'] = {}
+                rs[k]['details']['cnt_correct'] = cnt_correct
+                rs[k]['details']['cnt_total'] = cnt_total
+        for k, v in rs.items():
+            rs[k]['result'] = rs[k]['details']['cnt_correct'] * 1.0 / rs[k]['details']['cnt_total']
+        out = []
+        for k, v in rs.items():
+            out.append(rs[k])
+        return out
 
     def subsample_dims(self, newdim):
         self.embs.matrix = self.embs.matrix[:, 0:newdim]
@@ -454,7 +458,7 @@ class PairWise(Analogy):
 
         scores, vec_b_prime_predicted = self.compute_scores(vec_a, vec_a_prime, vec_b)
         ids_max = np.argsort(scores)[::-1]
-        result = self.process_prediction(p_test, scores, None, None, [p_train], self.options)
+        result = self.process_prediction(p_test, scores, None, None, [p_train])
         self.collect_stats(result, vec_a, vec_a_prime, vec_b, vec_b_prime, vec_b_prime_predicted)
         return result
 
@@ -539,7 +543,7 @@ class SimilarToB(Analogy):
             vec_b = self.embs.get_vector(pair_test[0])
             vec_b_prime = self.embs.get_vector(pair_test[1][0])
             scores = self.get_most_similar_fast(vec_b)
-            result = self.process_prediction(pair_test, scores, None, None, self.options)
+            result = self.process_prediction(pair_test, scores, None, None)
             result["similarity to correct cosine"] = self.embs.cmp_vectors(vec_b, vec_b_prime)
         return result
 
@@ -578,7 +582,7 @@ class TheeCosAvg(Analogy):
             vec_b_prime_predicted = vec_a_prime - vec_a + vec_b
             # oh crap, why are we not normalizing here?
             scores = self.get_most_similar_fast(vec_b_prime_predicted)
-            result = self.process_prediction(p_test_one, scores, None, None, options=self.options)
+            result = self.process_prediction(p_test_one, scores, None, None)
             result["distances to correct cosine"] = self.embs.cmp_vectors(vec_b_prime_predicted, vec_b_prime)
             results.append(result)
         return results

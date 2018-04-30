@@ -89,7 +89,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         nrm = np.linalg.norm(self.matrix, axis=1)
         nrm[nrm == 0] = 1
         self.matrix /= nrm[:, np.newaxis]
-        self.name += "_normalized"
+        # self.name += "_normalized"
         self.metadata["normalized"] = True
 
     def cache_normalized_copy(self):
