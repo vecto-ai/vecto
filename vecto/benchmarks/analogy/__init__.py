@@ -1,1 +1,1 @@
-from . import analogy
+from .analogy import LRCos

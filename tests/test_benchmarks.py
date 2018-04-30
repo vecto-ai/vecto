@@ -2,10 +2,12 @@
 
 import unittest
 from vecto.benchmarks.similarity import Similarity
+from vecto.benchmarks.analogy import LRCos
 from vecto.embeddings import load_from_dir
 
 
 path_similarity_dataset = "./tests/data/benchmarks/similarity/"
+path_analogy_dataset = "./tests/data/benchmarks/analogy/"
 
 class Tests(unittest.TestCase):
 
