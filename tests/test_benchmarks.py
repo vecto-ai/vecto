@@ -1,7 +1,7 @@
 """Tests for embeddings module."""
 
 import unittest
-from vecto.benchmarks.similarity.similarity import Similarity
+from vecto.benchmarks.similarity import Similarity
 from vecto.embeddings import load_from_dir
 
 
