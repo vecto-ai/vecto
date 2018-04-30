@@ -2,6 +2,6 @@ pip >= 10.0
 setuptools >= 20.5
 wheel
 fabric3
-progressbar
+progressbar2
 sklearn
 -rrequirements.txt
