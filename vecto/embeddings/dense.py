@@ -89,7 +89,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         nrm = np.linalg.norm(self.matrix, axis=1)
         nrm[nrm == 0] = 1
         self.matrix /= nrm[:, np.newaxis]
-        self.name += "_normalized"
+        # self.name += "_normalized"
         self.metadata["normalized"] = True
 
     def cache_normalized_copy(self):
@@ -232,3 +232,9 @@ class WordEmbeddingsDense(WordEmbeddings):
             raise RuntimeError('word do not exist', w)
         row = self.matrix[i]
         return row
+
+    def has_word(self, w):
+        i = self.vocabulary.get_id(w)
+        if i < 0:
+            return False
+        return True
