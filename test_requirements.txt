@@ -2,4 +2,7 @@ pip >= 10.0
 setuptools >= 20.5
 wheel
 fabric3
+progressbar2
+sklearn
+pyyaml
 -rrequirements.txt

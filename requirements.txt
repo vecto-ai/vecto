@@ -1,3 +1,9 @@
 # requrements for vecto
 numpy
-
+system-query
+tables
+scipy
+tqdm
+nltk
+brewer2mpl
+progressbar2
