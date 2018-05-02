@@ -1,0 +1,17 @@
+album	albums
+application	applications
+area	areas
+car	cars
+college	colleges
+council	councils
+customer	customers
+day	days
+death	deaths
+department	departments
+development	developments
+difference	differences
+director	directors
+event	events
+example	examples
+fact	facts
+thing	things
