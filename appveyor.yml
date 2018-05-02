@@ -31,7 +31,7 @@ install:
   - "python -m pip install --upgrade pip"
 
   - "%CMD_IN_ENV% pip install -r requirements.txt"
-  - "%CMD_IN_ENV% pip -m install -r test_requirements.txt"
+  - "%CMD_IN_ENV% python -m pip install -r test_requirements.txt"
 
 build_script:
   - "%CMD_IN_ENV% python setup.py build"
