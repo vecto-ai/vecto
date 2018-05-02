@@ -8,3 +8,4 @@ pyyaml
 coveralls
 coverage
 pylint
+-rrequirements.txt
