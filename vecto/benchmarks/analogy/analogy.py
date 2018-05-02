@@ -53,6 +53,7 @@ class Analogy(Benchmark):
         self.stats = {}
         self.cnt_total_correct = 0
         self.cnt_total_total = 0
+        # self.method = ""
 
 
         # this are some hard-coded bits which will be implemented later
@@ -60,6 +61,10 @@ class Analogy(Benchmark):
             "rank": -1,
             "reason": "missing words"
         }
+
+    @property
+    def method(self):
+        return type(self).__name__
 
     def jsonify(self, data):
         json_data = dict()
@@ -323,6 +328,7 @@ class Analogy(Benchmark):
         experiment_setup["category"] = name_category
         experiment_setup["subcategory"] = name_subcategory
         experiment_setup["task"] = "word_analogy"
+        experiment_setup["method"] = self.method
         experiment_setup["measurement"] = "accuracy"
         if not self.exclude:
             experiment_setup["method"] += "_honest"
