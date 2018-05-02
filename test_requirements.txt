@@ -5,4 +5,7 @@ fabric3
 progressbar2
 sklearn
 pyyaml
+coveralls
+coverage
+pylint
 -rrequirements.txt
