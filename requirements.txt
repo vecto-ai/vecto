@@ -7,3 +7,4 @@ tqdm
 nltk
 brewer2mpl
 progressbar2
+pandas
