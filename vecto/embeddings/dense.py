@@ -21,6 +21,18 @@ class WordEmbeddingsDense(WordEmbeddings):
             return 0
         return (c + 1) / 2
 
+    def cmp_rows(self, id1, id2):
+        r1 = self.matrix[id1]
+        r2 = self.matrix[id2]
+        return self.cmp_vectors(r1, r2)
+
+    def cmp_words(self, w1, w2):
+        id1 = self.vocabulary.get_id(w1)
+        id2 = self.vocabulary.get_id(w2)
+        if (id1 < 0) or (id2 < 0):
+            return 0
+        return self.cmp_rows(id1, id2)
+
     def save_matr_to_hdf5(self, path):
         f = tables.open_file(os.path.join(path, 'vectors.h5p'), 'w')
         atom = tables.Atom.from_dtype(self.matrix.dtype)
