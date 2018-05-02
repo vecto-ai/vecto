@@ -29,7 +29,7 @@ def df_from_dir(path):
     return df
 
 
-def plot_accuracy(path="tests/data/benchmarks_results/similarity/", group_xaxis='experiment_setup.method'): # experiment_setup.embeddings
+def plot_accuracy(path="tests/data/benchmarks_results/similarity/", group_xaxis=['experiment_setup.embeddings.foldername', 'experiment_setup.method'][0]): #
 
     df = df_from_dir(path)
     group = df.groupby(["experiment_setup.category", group_xaxis])
