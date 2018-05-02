@@ -410,9 +410,9 @@ class Analogy(Benchmark):
             k = r['experiment_setup']['category']
 
             if k in rs:
-                rs[k]['summary']={}
-                rs[k]['summary']['cnt_correct'] += cnt_correct
-                rs[k]['summary']['cnt_total'] += cnt_total
+                #rs[k]['summary']={}
+                #rs[k]['summary']['cnt_correct'] += cnt_correct
+                #rs[k]['summary']['cnt_total'] += cnt_total
                 rs[k]['experiment_setup']['cnt_questions_total'] += r['experiment_setup']['cnt_questions_total']
             else:
                 rs[k] = {}
@@ -420,10 +420,10 @@ class Analogy(Benchmark):
                 del rs[k]['experiment_setup']['category']
                 rs[k]['experiment_setup']['category'] = k
                 rs[k]['details'] = {}
-                rs[k]['details']['cnt_correct'] = cnt_correct
-                rs[k]['details']['cnt_total'] = cnt_total
-        for k, v in rs.items():
-            rs[k]['result'] = rs[k]['details']['cnt_correct'] * 1.0 / rs[k]['details']['cnt_total']
+                #rs[k]['summary']['cnt_correct'] = cnt_correct
+                #rs[k]['summary']['cnt_total'] = cnt_total
+        #for k, v in rs.items():
+        #    rs[k]['result'] = rs[k]['details']['cnt_correct'] * 1.0 / rs[k]['details']['cnt_total']
         out = []
         for k, v in rs.items():
             out.append(rs[k])
