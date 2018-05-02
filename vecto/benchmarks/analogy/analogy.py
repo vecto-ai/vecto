@@ -410,8 +410,9 @@ class Analogy(Benchmark):
             k = r['experiment_setup']['category']
 
             if k in rs:
-                rs[k]['details']['cnt_correct'] += cnt_correct
-                rs[k]['details']['cnt_total'] += cnt_total
+                rs[k]['summary']={}
+                rs[k]['summary']['cnt_correct'] += cnt_correct
+                rs[k]['summary']['cnt_total'] += cnt_total
                 rs[k]['experiment_setup']['cnt_questions_total'] += r['experiment_setup']['cnt_questions_total']
             else:
                 rs[k] = {}
