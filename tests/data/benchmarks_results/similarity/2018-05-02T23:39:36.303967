@@ -1,0 +1,20 @@
+[
+    {
+        "details": [],
+        "experiment_setup": {
+            "category": "default",
+            "cnt_found_pairs_total": 0,
+            "cnt_pairs_total": 20,
+            "dataset": "ws",
+            "embeddings": {
+                "_class": "vecto.embeddings.dense.WordEmbeddingsDense",
+                "vecto_version": "0.1.2"
+            },
+            "measurement": "spearman",
+            "method": "cosine_distance",
+            "task": "word_similarity",
+            "timestamp": "2018-05-02T23:39:36.303945"
+        },
+        "result": 0.4
+    }
+]
