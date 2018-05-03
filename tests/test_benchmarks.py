@@ -66,6 +66,8 @@ class Tests(unittest.TestCase):
 
         model = text_classification.load_model("./tests/data/benchmarks_results/text_classification/args.json", embs.matrix)
         print(text_classification.predict(model, "I like this"))
+        print(text_classification.get_vectors(model, ["I like this", "I hate this"]))
+
 
 
 # Tests().test_text_classification()

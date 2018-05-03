@@ -7,6 +7,7 @@ import os
 import chainer
 from chainer import training
 from chainer.training import extensions
+import numpy
 
 from vecto.benchmarks.text_classification import nets
 from vecto.benchmarks.text_classification.nlp_utils import convert_seq
@@ -59,7 +60,24 @@ def predict(model, sentence):
         prob = model.predict(xs, softmax=True)[0]
     answer = int(model.xp.argmax(prob))
     score = float(prob[answer])
-    print('{}\t{:.4f}\t{}'.format(answer, score, ' '.join(words)))
+    return answer, score
+
+def get_vectors(model, sentences):
+    model, vocab, setup = model
+    vectors = []
+    for sentence in sentences:
+        sentence = sentence.strip()
+        text = nlp_utils.normalize_text(sentence)
+        words = nlp_utils.split_text(text, char_based=setup['char_based'])
+        xs = nlp_utils.transform_to_array([words], vocab, with_label=False)
+        xs = nlp_utils.convert_seq(xs, device=-1, with_label=False) # todo use GPU
+        with chainer.using_config('train', False), chainer.no_backprop_mode():
+            vector = model.encoder(xs)
+            vectors.append(vector.data[0])
+    vectors = numpy.asarray(vectors)
+    return vectors
+
+
 
 
 class Text_classification(Benchmark):
