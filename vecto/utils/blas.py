@@ -1,9 +1,21 @@
 import numpy as np
+import functools
 import scipy.sparse.linalg
 
 
-def normed(v):
-    return v / np.linalg.norm(v)
+def identity(x):
+    return x
+
+
+def normed(v, ord=None):
+    return v / np.linalg.norm(v, ord=ord)
+
+
+def make_normalizer(ord='unnormed'):
+    if ord == 'unnormed':
+        return identity
+    else:
+        return functools.partial(normed, ord=ord)
 
 
 def normalize_sparse(m):
