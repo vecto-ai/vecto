@@ -4,8 +4,8 @@ import abc
 
 from vecto.utils.metadata import WithMetaData, get_full_typename
 
-nltk.download('punkt')
-nltk.download('stopwords')
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
 
 _DEFAULT_WORD_SPLITTER = nltk.tokenize.WordPunctTokenizer().tokenize
 _WHITESPACE_TOKEN_SPLITTER = re.compile(r'[^\s]+').findall
