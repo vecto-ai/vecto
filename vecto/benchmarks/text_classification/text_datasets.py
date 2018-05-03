@@ -19,40 +19,40 @@ URL_DBPEDIA = 'https://github.com/le-scientifique/torchDatasets/raw/master/dbped
 URL_IMDB = 'https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz'
 URL_OTHER_BASE = 'https://raw.githubusercontent.com/harvardnlp/sent-conv-torch/master/data/'  # NOQA
 
-
-def download_dbpedia():
-    path = chainer.dataset.cached_download(URL_DBPEDIA)
-    tf = tarfile.open(path, 'r')
-    return tf
-
-
-def read_dbpedia(tf, split, shrink=1, char_based=False):
-    dataset = []
-    f = tf.extractfile('dbpedia_csv/{}.csv'.format(split))
-    for i, (label, title, text) in enumerate(csv.reader(f)):
-        if i % shrink != 0:
-            continue
-        label = int(label) - 1  # Index begins from 1
-        tokens = split_text(normalize_text(text), char_based)
-        dataset.append((tokens, label))
-    return dataset
-
-
-def get_dbpedia(vocab=None, shrink=1, char_based=False):
-    tf = download_dbpedia()
-
-    print('read dbpedia')
-    train = read_dbpedia(tf, 'train', shrink=shrink, char_based=char_based)
-    test = read_dbpedia(tf, 'test', shrink=shrink, char_based=char_based)
-
-    if vocab is None:
-        print('constract vocabulary based on frequency')
-        vocab = make_vocab(train)
-
-    train = transform_to_array(train, vocab)
-    test = transform_to_array(test, vocab)
-
-    return train, test, vocab
+#
+# def download_dbpedia():
+#     path = chainer.dataset.cached_download(URL_DBPEDIA)
+#     tf = tarfile.open(path, 'r')
+#     return tf
+#
+#
+# def read_dbpedia(tf, split, shrink=1, char_based=False):
+#     dataset = []
+#     f = tf.extractfile('dbpedia_csv/{}.csv'.format(split))
+#     for i, (label, title, text) in enumerate(csv.reader(f)):
+#         if i % shrink != 0:
+#             continue
+#         label = int(label) - 1  # Index begins from 1
+#         tokens = split_text(normalize_text(text), char_based)
+#         dataset.append((tokens, label))
+#     return dataset
+#
+#
+# def get_dbpedia(vocab=None, shrink=1, char_based=False):
+#     tf = download_dbpedia()
+#
+#     print('read dbpedia')
+#     train = read_dbpedia(tf, 'train', shrink=shrink, char_based=char_based)
+#     test = read_dbpedia(tf, 'test', shrink=shrink, char_based=char_based)
+#
+#     if vocab is None:
+#         print('constract vocabulary based on frequency')
+#         vocab = make_vocab(train)
+#
+#     train = transform_to_array(train, vocab)
+#     test = transform_to_array(test, vocab)
+#
+#     return train, test, vocab
 
 
 def download_imdb():
@@ -133,22 +133,22 @@ def get_imdb(vocab=None, shrink=1, fine_grained=False,
 
     return train, test, vocab
 
-
-def download_other_dataset(name):
-    if name in ['custrev', 'mpqa', 'rt-polarity', 'subj']:
-        files = [name + '.all']
-    elif name == 'TREC':
-        files = [name + suff for suff in ['.train.all', '.test.all']]
-    else:
-        files = [name + suff for suff in ['.train', '.test']]
-    file_paths = []
-    for f_name in files:
-        url = os.path.join(URL_OTHER_BASE, f_name)
-        path = chainer.dataset.cached_download(url)
-        file_paths.append(path)
-    return file_paths
-
-
+#
+# def download_other_dataset(name):
+#     if name in ['custrev', 'mpqa', 'rt-polarity', 'subj']:
+#         files = [name + '.all']
+#     elif name == 'TREC':
+#         files = [name + suff for suff in ['.train.all', '.test.all']]
+#     else:
+#         files = [name + suff for suff in ['.train', '.test']]
+#     file_paths = []
+#     for f_name in files:
+#         url = os.path.join(URL_OTHER_BASE, f_name)
+#         path = chainer.dataset.cached_download(url)
+#         file_paths.append(path)
+#     return file_paths
+#
+#
 def read_other_dataset(path, shrink=1, char_based=False):
     dataset = []
     with io.open(path, encoding='utf-8', errors='ignore') as f:
@@ -160,29 +160,29 @@ def read_other_dataset(path, shrink=1, char_based=False):
             tokens = split_text(normalize_text(text), char_based)
             dataset.append((tokens, label))
     return dataset
-
-
-def get_other_text_dataset(name, vocab=None, shrink=1,
-                           char_based=False, seed=777):
-    assert (name in ['TREC', 'stsa.binary', 'stsa.fine',
-                     'custrev', 'mpqa', 'rt-polarity', 'subj'])
-    datasets = download_other_dataset(name)
-    train = read_other_dataset(
-        datasets[0], shrink=shrink, char_based=char_based)
-    if len(datasets) == 2:
-        test = read_other_dataset(
-            datasets[1], shrink=shrink, char_based=char_based)
-    else:
-        numpy.random.seed(seed)
-        alldata = numpy.random.permutation(train)
-        train = alldata[:-len(alldata) // 10]
-        test = alldata[-len(alldata) // 10:]
-
-    if vocab is None:
-        print('constract vocabulary based on frequency')
-        vocab = make_vocab(train)
-
-    train = transform_to_array(train, vocab)
-    test = transform_to_array(test, vocab)
-
-    return train, test, vocab
+#
+#
+# def get_other_text_dataset(name, vocab=None, shrink=1,
+#                            char_based=False, seed=777):
+#     assert (name in ['TREC', 'stsa.binary', 'stsa.fine',
+#                      'custrev', 'mpqa', 'rt-polarity', 'subj'])
+#     datasets = download_other_dataset(name)
+#     train = read_other_dataset(
+#         datasets[0], shrink=shrink, char_based=char_based)
+#     if len(datasets) == 2:
+#         test = read_other_dataset(
+#             datasets[1], shrink=shrink, char_based=char_based)
+#     else:
+#         numpy.random.seed(seed)
+#         alldata = numpy.random.permutation(train)
+#         train = alldata[:-len(alldata) // 10]
+#         test = alldata[-len(alldata) // 10:]
+#
+#     if vocab is None:
+#         print('constract vocabulary based on frequency')
+#         vocab = make_vocab(train)
+#
+#     train = transform_to_array(train, vocab)
+#     test = transform_to_array(test, vocab)
+#
+#     return train, test, vocab

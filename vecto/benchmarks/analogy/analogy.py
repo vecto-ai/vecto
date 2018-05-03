@@ -521,35 +521,35 @@ class ThreeCosMul2(PairWise):
         return scores, predicted
 
 
-class SimilarToAny(PairWise):
-    def compute_scores(self, vectors):
-        scores = self.get_most_similar_fast(vectors)
-        best = scores.max(axis=0)
-        return best
-
-
-class SimilarToB(Analogy):
-    def do_test_on_pairs(self, pairs_train, pairs_test):
-        results = []
-        for p_test in pairs_test:
-            if self.is_pair_missing([p_test]):
-                continue
-            result = self.do_on_two_pairs(p_test)
-            result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
-            result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
-            results.append(result)
-        return results
-
-    def do_on_two_pairs(self, pair_test):
-        if self.is_pair_missing([pair_test]):
-            result = self.result_miss
-        else:
-            vec_b = self.embs.get_vector(pair_test[0])
-            vec_b_prime = self.embs.get_vector(pair_test[1][0])
-            scores = self.get_most_similar_fast(vec_b)
-            result = self.process_prediction(pair_test, scores, None, None)
-            result["similarity to correct cosine"] = self.embs.cmp_vectors(vec_b, vec_b_prime)
-        return result
+# class SimilarToAny(PairWise):
+#     def compute_scores(self, vectors):
+#         scores = self.get_most_similar_fast(vectors)
+#         best = scores.max(axis=0)
+#         return best
+#
+#
+# class SimilarToB(Analogy):
+#     def do_test_on_pairs(self, pairs_train, pairs_test):
+#         results = []
+#         for p_test in pairs_test:
+#             if self.is_pair_missing([p_test]):
+#                 continue
+#             result = self.do_on_two_pairs(p_test)
+#             result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
+#             result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
+#             results.append(result)
+#         return results
+#
+#     def do_on_two_pairs(self, pair_test):
+#         if self.is_pair_missing([pair_test]):
+#             result = self.result_miss
+#         else:
+#             vec_b = self.embs.get_vector(pair_test[0])
+#             vec_b_prime = self.embs.get_vector(pair_test[1][0])
+#             scores = self.get_most_similar_fast(vec_b)
+#             result = self.process_prediction(pair_test, scores, None, None)
+#             result["similarity to correct cosine"] = self.embs.cmp_vectors(vec_b, vec_b_prime)
+#         return result
 
 
 class TheeCosAvg(Analogy):
