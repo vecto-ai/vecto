@@ -6,16 +6,19 @@ from scipy.spatial.distance import cosine
 from vecto.embeddings import load_from_dir
 from vecto.vocabulary import Vocabulary
 from vecto.embeddings.composite import ArithmeticMeanVector, GeometricMeanVector, \
-    IDFArithmeticMeanVector, IDFGeometricMeanVector
+    IDFArithmeticMeanVector, IDFGeometricMeanVector, precompute_composite_embeddings
 from vecto.utils.blas import normed
 
 
 def make_dummy_vocab():
     result = Vocabulary()
     result.lst_words = ['the', 'apple', 'banana', 'fast', 'quick', 'tiger', 'cat']
-    result.lst_frequencies = [150, 2, 2, 20, 2, 5, 2]
+    result.lst_frequencies = [150, 2, 10, 20, 2, 5, 2]
     result.dic_words_ids = { w : i for i, w in enumerate(result.lst_words) }
     return result
+
+
+GOLD_TIGER_SIMILAR = "[['tiger', 0.99999988], ['the cat', 0.9998315], ['banana cat', 0.99780756], ['the fast tiger', 0.99770665], ['the apple', 0.98412168]]"
 
 
 class Tests(unittest.TestCase):
@@ -76,3 +79,17 @@ class Tests(unittest.TestCase):
         assert cosine(apple, the_apple) < cosine(apple, quick_apple)
         assert cosine(apple, quick_apple) < cosine(apple, the_quick_apple)
         assert cosine(apple, the_fast_apple) < cosine(apple, the_quick_apple)
+
+    def test_precompute(self):
+        base_emb = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
+        vocab_with_freq = make_dummy_vocab()  # load any vocab with non-zero frequencies
+        comp = IDFArithmeticMeanVector(base_emb, vocab=vocab_with_freq)
+        objects = ['the apple', 'banana cat', 'the fast tiger', 'the cat', 'tiger']
+        precomputed = precompute_composite_embeddings(comp, objects)
+        assert precomputed.dimensions_number == 4
+        assert len(precomputed.vocabulary.lst_words) == 5
+        assert np.allclose(comp.get_vector(objects[0].split(' ')),
+                           precomputed.get_vector(objects[0]))
+        precomputed.cache_normalized_copy()
+        tiger_similar = precomputed.get_most_similar_words(objects[-1])
+        assert str(tiger_similar) == GOLD_TIGER_SIMILAR
