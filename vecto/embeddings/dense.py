@@ -17,8 +17,8 @@ class WordEmbeddingsDense(WordEmbeddings):
 
     def __init__(self, matrix=None, vocab=None):
         super().__init__()
-        self.matrix = None
-        self.vocabulary = None
+        self.matrix = matrix
+        self.vocabulary = vocab
 
     def cmp_vectors(self, r1, r2):
         c = normed(r1) @ normed(r2)
