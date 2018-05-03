@@ -143,7 +143,7 @@ class Vocabulary(WithMetaData):
     #         f.close()
 
 
-def _create_from_iterator(iterator, min_frequency=0):
+def create_from_iterator(iterator, min_frequency=0):
     t_start = time.time()
     dic_freqs = {}
     for w in iterator:
