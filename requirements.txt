@@ -9,3 +9,4 @@ brewer2mpl
 progressbar2
 pandas
 matplotlib
+chainer
