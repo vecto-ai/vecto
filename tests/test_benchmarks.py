@@ -3,11 +3,13 @@
 import unittest
 from vecto.benchmarks.similarity import Similarity
 from vecto.benchmarks.analogy import *
+from vecto.benchmarks.text_classification import Text_classification
 from vecto.embeddings import load_from_dir
 
 
 path_similarity_dataset = "./tests/data/benchmarks/similarity/"
 path_analogy_dataset = "./tests/data/benchmarks/analogy/"
+path_text_classification_dataset = "./tests/data/benchmarks/text_classification/"
 
 class Tests(unittest.TestCase):
 
@@ -52,7 +54,12 @@ class Tests(unittest.TestCase):
         # result = analogy.get_result(embs, "/home/bofang/Downloads/BATS_3.0_small")
         # print(result)
 
+    def test_text_classification(self):
+        embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
+        tc = Text_classification()
+        result = tc.get_result(embs, path_text_classification_dataset)
+        print(result)
 
 
 
-# Tests().test_analogy()
+# Tests().test_text_classification()
