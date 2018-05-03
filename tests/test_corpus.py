@@ -26,6 +26,7 @@ def count_words_and_collect_prefix(corpus, max_len=10):
 
 TEST_TEXT_LEN = 4207
 TEST_FIRST_10_WORDS = 'family|dashwood|long|settled|sussex|estate|large|residence|norland|park'
+SECOND_SENTENCE_FULL = 'estate|large|residence|norland|park|centre|property|many|generations|lived|respectable|manner|engage|general|good|opinion|surrounding|acquaintance'
 
 
 TEST_RIGHT_METADATA = r'''
@@ -103,6 +104,17 @@ class Tests(unittest.TestCase):
         total_words, words = count_words_and_collect_prefix(tokens_iter)
         assert total_words == TEST_TEXT_LEN
         assert '|'.join(words) == TEST_FIRST_10_WORDS
+
+    def test_dir_entire_corpus(self):
+        corpus = DirCorpus(path_text, by_line=False)
+        tokens_iter = corpus.get_token_iterator()
+        total_words, words = count_words_and_collect_prefix(tokens_iter)
+        assert total_words == TEST_TEXT_LEN
+        assert '|'.join(words) == TEST_FIRST_10_WORDS
+        sentence_iter = iter(corpus.get_sentence_iterator())
+        next(sentence_iter)  # move to second sentence, which spans over 5 lines
+        second_sentence = '|'.join(next(sentence_iter))
+        assert SECOND_SENTENCE_FULL == second_sentence
 
     def test_dir_iter_gzipped(self):
         corpus = DirCorpus(path_gzipped)

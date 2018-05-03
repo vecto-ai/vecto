@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator, \
+from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator, EntireFileIterator, \
     TokenizedSequenceIterator, TokenIterator, SlidingWindowIterator
 from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER
 from vecto.utils.metadata import WithMetaData
@@ -10,9 +10,10 @@ logger = logging.getLogger(__name__)
 
 
 class Corpus(WithMetaData):
-    """Cepresents a body of text in single or multiple files"""
+    """Represents a body of text in single or multiple files"""
 
     def __init__(self, path):
+        super(Corpus, self).__init__()
         self.path = path
 
     def get_sliding_window_iterator(self, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):
@@ -25,21 +26,31 @@ class Corpus(WithMetaData):
         return TokenIterator(self.get_sentence_iterator(tokenizer, verbose))
 
     def get_sentence_iterator(self, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=False):
-        return TokenizedSequenceIterator(self.get_line_iterator(), tokenizer=tokenizer, verbose=verbose)
+        return TokenizedSequenceIterator(self.get_text_iterator(), tokenizer=tokenizer, verbose=verbose)
 
 
 class FileCorpus(Corpus):
-    """Cepresents a body of text in a single file"""
+    """Represents a body of text in a single file"""
 
-    def get_line_iterator(self, verbose=False):
+    def get_text_iterator(self, verbose=False):
         return FileLineIterator(FileIterator(self.path, verbose=verbose))
 
 
 class DirCorpus(Corpus):
-    """Cepresents a body of text in a directory"""
+    """Represents a body of text in a directory"""
 
-    def get_line_iterator(self, verbose=False):
-        return FileLineIterator(DirIterator(self.path, verbose=verbose))
+    def __init__(self, path, by_line=True):
+        super(DirCorpus, self).__init__(path)
+        self.metadata['by_line'] = by_line
+        self.by_line = by_line
+
+    def get_text_iterator(self, verbose=False):
+        base = DirIterator(self.path, verbose=verbose)
+        if self.by_line:
+            return FileLineIterator(base)
+        else:
+            return EntireFileIterator(base)
+
 
 # old code below ----------------------------------
 

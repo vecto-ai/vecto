@@ -59,6 +59,23 @@ class FileLineIterator(BaseIterator):
                         yield line
 
 
+class EntireFileIterator(BaseIterator):
+    """
+    Receives a sequence of filenames from `base_corpus` and reads each file contents.
+    Reads full contents of each file at once.
+    This is better than FileLineIterator if you have sentences spanning across multiple lines.
+    """
+    def __init__(self, base_corpus, verbose=0):
+        super(EntireFileIterator, self).__init__(base_corpus=base_corpus.metadata,
+                                                 verbose=verbose)
+        self.base_corpus = base_corpus
+
+    def _generate_samples(self):
+        for filename in self.base_corpus:
+            with detect_archive_format_and_open(filename) as f:
+                yield f.read().strip()
+
+
 class TokenizedSequenceIterator(BaseIterator):
     """
     Receives any corpus yielding text (e.g. `FileLineIterator`) and produces tokenized sequences.
