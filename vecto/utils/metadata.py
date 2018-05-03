@@ -2,7 +2,7 @@ import os
 from .data import load_json, save_json
 from vecto._version import VERSION
 
-METADATA_SUFFIX = 'metainfo.json'
+METADATA_SUFFIX = 'metadata.json'
 
 
 def make_metadata_path(fname):
