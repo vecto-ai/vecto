@@ -4,15 +4,15 @@ import unittest
 from vecto.benchmarks.similarity import Similarity
 from vecto.benchmarks.analogy import *
 from vecto.benchmarks.text_classification import Text_classification
+from vecto.benchmarks import text_classification
 from vecto.embeddings import load_from_dir
-
 
 path_similarity_dataset = "./tests/data/benchmarks/similarity/"
 path_analogy_dataset = "./tests/data/benchmarks/analogy/"
 path_text_classification_dataset = "./tests/data/benchmarks/text_classification/"
 
-class Tests(unittest.TestCase):
 
+class Tests(unittest.TestCase):
 
     def test_similarity(self):
         embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
@@ -56,10 +56,16 @@ class Tests(unittest.TestCase):
 
     def test_text_classification(self):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
+
+
         tc = Text_classification()
-        result = tc.get_result(embs, path_text_classification_dataset)
+        result = tc.get_result(embs, path_text_classification_dataset,
+                               "./tests/data/benchmarks_results/text_classification/")
         print(result)
 
+
+        model = text_classification.load_model("./tests/data/benchmarks_results/text_classification/args.json", embs.matrix)
+        print(text_classification.predict(model, "I like this"))
 
 
 # Tests().test_text_classification()

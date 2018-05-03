@@ -18,6 +18,48 @@ import math
 from ..base import Benchmark
 from io import StringIO
 from vecto.utils.data import load_json
+from vecto.benchmarks.text_classification import nets
+from vecto.benchmarks.text_classification import nlp_utils
+
+
+def load_model(model_path, wv):
+    setup = json.load(open(model_path))
+
+    vocab = json.load(open(setup['vocab_path']))
+    n_class = setup['n_class']
+
+    # Setup a model
+    if setup['model'] == 'rnn':
+        Encoder = nets.RNNEncoder
+    elif setup['model'] == 'cnn':
+        Encoder = nets.CNNEncoder
+    elif setup['model'] == 'bow':
+        Encoder = nets.BOWMLPEncoder
+    encoder = Encoder(n_layers=setup['layer'], n_vocab=len(vocab),
+                      n_units=setup['unit'], dropout=setup['dropout'], wv=wv)
+    model = nets.TextClassifier(encoder, n_class)
+    chainer.serializers.load_npz(setup['model_path'], model)
+
+    gpu = -1  # todo gpu
+    if gpu >= 0:
+        # Make a specified GPU current
+        chainer.backends.cuda.get_device_from_id(args.gpu).use()
+        model.to_gpu()  # Copy the model to the GPU
+
+    return model, vocab, setup
+
+def predict(model, sentence):
+    model, vocab, setup = model
+    sentence = sentence.strip()
+    text = nlp_utils.normalize_text(sentence)
+    words = nlp_utils.split_text(text, char_based=setup['char_based'])
+    xs = nlp_utils.transform_to_array([words], vocab, with_label=False)
+    xs = nlp_utils.convert_seq(xs, device=-1, with_label=False) # todo use GPU
+    with chainer.using_config('train', False), chainer.no_backprop_mode():
+        prob = model.predict(xs, softmax=True)[0]
+    answer = int(model.xp.argmax(prob))
+    score = float(prob[answer])
+    print('{}\t{:.4f}\t{}'.format(answer, score, ' '.join(words)))
 
 
 class Text_classification(Benchmark):

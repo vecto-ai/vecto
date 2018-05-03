@@ -128,7 +128,7 @@ class RNNEncoder(chainer.Chain):
             else:
                 self.embed = self.get_embed_from_wv
             self.encoder = L.NStepLSTM(n_layers, n_units, n_units, dropout)
-        self.wv = wv
+            self.wv = wv
         self.n_layers = n_layers
         self.out_units = n_units
         self.dropout = dropout
@@ -244,7 +244,7 @@ class BOWEncoder(chainer.Chain):
                                        initialW=embed_init)
             else:
                 self.embed = self.get_embed_from_wv
-        self.wv = wv
+            self.wv = wv
         self.out_units = n_units
         self.dropout = dropout
 
