@@ -7,6 +7,9 @@ tqdm
 nltk
 brewer2mpl
 progressbar2
+gitpython
+
+
 pandas
 matplotlib
 chainer
