@@ -39,7 +39,7 @@ def plot_accuracy(path="tests/data/benchmarks_results/similarity/", group_xaxis=
     unstacked = means.groupby(['experiment_setup.category', group_xaxis])['result'].aggregate(
         'first').unstack()
     unstacked.plot(kind="bar")
-    plt.show()
+    # plt.show()
 
 
 def run_results(path_embeds=["tests/data/embeddings/text/plain_with_file_header",

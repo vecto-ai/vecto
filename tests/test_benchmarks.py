@@ -2,6 +2,8 @@
 
 import unittest
 from vecto.benchmarks.similarity import Similarity
+from vecto.benchmarks.analogy import visualize as analogy_visualize
+from vecto.benchmarks.similarity import visualize as similarity_visualize
 from vecto.benchmarks.analogy import *
 from vecto.benchmarks.text_classification import Text_classification
 from vecto.benchmarks import text_classification
@@ -23,6 +25,8 @@ class Tests(unittest.TestCase):
         similarity = Similarity(ignore_oov=False)
         result = similarity.get_result(embs, path_similarity_dataset)
         print(result)
+
+        similarity_visualize.plot_accuracy()
 
     def test_analogy(self):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
@@ -49,6 +53,9 @@ class Tests(unittest.TestCase):
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
 
+        # analogy_visualize.run_results()
+        analogy_visualize.plot_accuracy()
+
         # big embs and dataset test
         # embs = load_from_dir("/home/bofang/Documents/embeddings/negative_sampling/fair/")
         # result = analogy.get_result(embs, "/home/bofang/Downloads/BATS_3.0_small")
@@ -58,7 +65,15 @@ class Tests(unittest.TestCase):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
 
 
-        tc = Text_classification()
+        tc = Text_classification(model='cnn')
+        result = tc.get_result(embs, path_text_classification_dataset,
+                               "./tests/data/benchmarks_results/text_classification/")
+        print(result)
+        tc = Text_classification(model='rnn')
+        result = tc.get_result(embs, path_text_classification_dataset,
+                               "./tests/data/benchmarks_results/text_classification/")
+        print(result)
+        tc = Text_classification(model='bow')
         result = tc.get_result(embs, path_text_classification_dataset,
                                "./tests/data/benchmarks_results/text_classification/")
         print(result)
