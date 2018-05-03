@@ -8,3 +8,8 @@ class WordEmbeddings(WithMetaData):
     @abc.abstractmethod
     def get_vector(w):
         pass
+
+    @property
+    @abc.abstractmethod
+    def dimensions_number(self):
+        pass

@@ -15,6 +15,11 @@ class WordEmbeddingsDense(WordEmbeddings):
 
     """
 
+    def __init__(self, matrix=None, vocab=None):
+        super().__init__()
+        self.matrix = None
+        self.vocabulary = None
+
     def cmp_vectors(self, r1, r2):
         c = normed(r1) @ normed(r2)
         if math.isnan(c):
@@ -250,3 +255,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         if i < 0:
             return False
         return True
+
+    @property
+    def dimensions_number(self):
+        return self.matrix.shape[1]
