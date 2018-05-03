@@ -178,7 +178,7 @@ def create_from_dir(path, min_frequency=0):
     if not os.path.isdir(path):
         raise RuntimeError("source directory does not exist")
     iter = DirCorpus(path).get_token_iterator()
-    v = _create_from_iterator(iter, min_frequency)
+    v = create_from_iterator(iter, min_frequency)
     return v
 
 
@@ -188,7 +188,7 @@ def create_from_file(path, min_frequency=0):
     if not os.path.isfile(path):
         raise RuntimeError("source file does not exist")
     iter = FileCorpus(path).get_token_iterator()
-    v = _create_from_iterator(iter, min_frequency)
+    v = create_from_iterator(iter, min_frequency)
     return v
 
 
@@ -251,7 +251,7 @@ def create_from_annotated_dir(path, min_frequency=0, representation='word'): # t
                 dic_freqs[w] += 1
             else:
                 dic_freqs[w] = 1
-    # TODO: does it really differs from _create_from_iterator? maybe merge?
+    # TODO: does it really differs from create_from_iterator? maybe merge?
     v = Vocabulary()
     v.lst_frequencies = []
     for i, word in enumerate(sorted(dic_freqs, key=dic_freqs.get, reverse=True)):
