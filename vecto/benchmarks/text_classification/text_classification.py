@@ -49,18 +49,20 @@ def load_model(model_path, wv):
 
     return model, vocab, setup
 
+
 def predict(model, sentence):
     model, vocab, setup = model
     sentence = sentence.strip()
     text = nlp_utils.normalize_text(sentence)
     words = nlp_utils.split_text(text, char_based=setup['char_based'])
     xs = nlp_utils.transform_to_array([words], vocab, with_label=False)
-    xs = nlp_utils.convert_seq(xs, device=-1, with_label=False) # todo use GPU
+    xs = nlp_utils.convert_seq(xs, device=-1, with_label=False)  # todo use GPU
     with chainer.using_config('train', False), chainer.no_backprop_mode():
         prob = model.predict(xs, softmax=True)[0]
     answer = int(model.xp.argmax(prob))
     score = float(prob[answer])
     return answer, score
+
 
 def get_vectors(model, sentences):
     model, vocab, setup = model
@@ -70,14 +72,12 @@ def get_vectors(model, sentences):
         text = nlp_utils.normalize_text(sentence)
         words = nlp_utils.split_text(text, char_based=setup['char_based'])
         xs = nlp_utils.transform_to_array([words], vocab, with_label=False)
-        xs = nlp_utils.convert_seq(xs, device=-1, with_label=False) # todo use GPU
+        xs = nlp_utils.convert_seq(xs, device=-1, with_label=False)  # todo use GPU
         with chainer.using_config('train', False), chainer.no_backprop_mode():
             vector = model.encoder(xs)
             vectors.append(vector.data[0])
     vectors = numpy.asarray(vectors)
     return vectors
-
-
 
 
 class Text_classification(Benchmark):
@@ -97,21 +97,23 @@ class Text_classification(Benchmark):
         self.out = path_output
         self.unit = embs.matrix.shape[1]
 
+        if not os.path.isdir(path_output):
+            os.makedirs(path_output)
 
         # Load a dataset
         self.dataset = path_dataset
         if self.dataset == 'dbpedia':
             train, test, vocab = text_datasets.get_dbpedia(
-                char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids,)
+                char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, )
         elif self.dataset.startswith('imdb.'):
             train, test, vocab = text_datasets.get_imdb(
                 fine_grained=self.dataset.endswith('.fine'),
-                char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids,)
+                char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, )
         elif self.dataset in ['TREC', 'stsa.binary', 'stsa.fine',
                               'custrev', 'mpqa', 'rt-polarity', 'subj']:
             train, test, vocab = text_datasets.get_other_text_dataset(
-                self.dataset, char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids,)
-        else: # finallly, if file is not downloadable, load from local path
+                self.dataset, char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, )
+        else:  # finallly, if file is not downloadable, load from local path
             train, test, vocab = text_datasets.get_dataset_from_path(path_dataset, vocab=embs.vocabulary.dic_words_ids,
                                                                      char_based=self.char_based)
 
