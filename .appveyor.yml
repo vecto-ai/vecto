@@ -49,3 +49,13 @@ after_test:
 
 artifacts:
   - path: dist\*
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/25b43ed5bc5e1d3a0772
+    on_success: always  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: never     # options: [always|never|change] default: always
+
+  email: false
