@@ -9,9 +9,8 @@ from vecto.embeddings import load_from_dir
 path_similarity_dataset = "./tests/data/benchmarks/similarity/"
 path_analogy_dataset = "./tests/data/benchmarks/analogy/"
 
+
 class Tests(unittest.TestCase):
-
-
     def test_similarity(self):
         embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
         similarity = Similarity()
@@ -24,16 +23,18 @@ class Tests(unittest.TestCase):
 
     def test_analogy(self):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
-
         analogy = LinearOffset()
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
+
         analogy = PairDistance()
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
+
         analogy = ThreeCosMul()
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
+
         analogy = ThreeCosMul2()
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
