@@ -7,8 +7,8 @@ from json import load
 from collections import defaultdict
 from os import path
 
-class Similarity(Benchmark):
 
+class Similarity(Benchmark):
     def __init__(self, normalize=True, ignore_oov=True):
         self.normalize = normalize
         self.ignore_oov = ignore_oov
@@ -68,7 +68,6 @@ class Similarity(Benchmark):
         for dataset_name, dataset_data in datasets:
             out = dict()
             out["result"], cnt_found_pairs_total, out["details"] = self.evaluate(embs, dataset_data['benchmark'])
-
             experiment_setup = dict()
             experiment_setup["cnt_found_pairs_total"] = cnt_found_pairs_total
             experiment_setup["cnt_pairs_total"] = len(dataset_data['benchmark'])
@@ -82,12 +81,10 @@ class Similarity(Benchmark):
             experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
             out["experiment_setup"] = experiment_setup
             results.append(out)
-
         return results
 
     def get_result(self, embs, path_dataset):
         if self.normalize:
             embs.normalize()
-
         results = self.run(embs, path_dataset)
         return results
