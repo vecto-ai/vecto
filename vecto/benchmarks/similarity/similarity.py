@@ -3,7 +3,9 @@ from scipy.stats.stats import spearmanr
 import os
 import math
 from ..base import Benchmark
-
+from json import load
+from collections import defaultdict
+from os import path
 
 class Similarity(Benchmark):
 
@@ -48,25 +50,35 @@ class Similarity(Benchmark):
         # print(actual)
         return spearmanr(actual, expected)[0], cnt_found_pairs_total, details
 
+    def read_dataset(self, path_dataset):
+        datasets = defaultdict(lambda: {'metadata': {}, 'benchmark': []})
+        for file in os.listdir(path_dataset):
+            filename, file_extension = path.splitext(path_dataset)
+            if file_extension == '.json':
+                with open(os.path.join(path_dataset, file)) as f:
+                    metadata = load(f, strict=False)
+                datasets[filename]['metadata'] = metadata
+            elif file_extension == '.txt':
+                datasets[filename]['benchmark'] = self.read_test_set(os.path.join(path_dataset, file))
+        return datasets
+
     def run(self, embs, path_dataset):
         results = []
-        for file in os.listdir(path_dataset):
-            if file.endswith('json'):
-                continue
-            testset = self.read_test_set(os.path.join(path_dataset, file))
-
+        datasets = self.read_dataset(path_dataset)
+        for dataset_name, dataset_data in datasets:
             out = dict()
-            out["result"], cnt_found_pairs_total, out["details"] = self.evaluate(embs, testset)
+            out["result"], cnt_found_pairs_total, out["details"] = self.evaluate(embs, dataset_data['benchmark'])
 
             experiment_setup = dict()
             experiment_setup["cnt_found_pairs_total"] = cnt_found_pairs_total
-            experiment_setup["cnt_pairs_total"] = len(testset)
+            experiment_setup["cnt_pairs_total"] = len(dataset_data['benchmark'])
             experiment_setup["embeddings"] = embs.metadata
             experiment_setup["category"] = "default"
-            experiment_setup["dataset"] = os.path.splitext(file)[0]
+            experiment_setup["dataset"] = dataset_name
             experiment_setup["method"] = "cosine_distance"
             experiment_setup["measurement"] = "spearman"
             experiment_setup["task"] = "word_similarity"
+            experiment_setup["dataset_metadata"] = dataset_data['metadata']
             experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
             out["experiment_setup"] = experiment_setup
             results.append(out)
