@@ -53,7 +53,6 @@ class Analogy(Benchmark):
         self.stats = {}
         self.cnt_total_correct = 0
         self.cnt_total_total = 0
-        # self.method = ""
 
 
         # this are some hard-coded bits which will be implemented later
@@ -328,8 +327,8 @@ class Analogy(Benchmark):
         experiment_setup["category"] = name_category
         experiment_setup["subcategory"] = name_subcategory
         experiment_setup["task"] = "word_analogy"
-        experiment_setup["method"] = self.method
         experiment_setup["measurement"] = "accuracy"
+        experiment_setup["method"] = self.method
         if not self.exclude:
             experiment_setup["method"] += "_honest"
         experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
@@ -388,47 +387,45 @@ class Analogy(Benchmark):
                 print(filename)
                 pairs = self.get_pairs(os.path.join(root, filename))
                 # print(pairs)
-                out = self.run_category(pairs, name_category=os.path.basename(root), name_subcategory=filename)
+                out = self.run_category(pairs, name_category=os.path.basename(os.path.dirname(root)), name_subcategory=filename)
                 results.append(out)
         print("")
         print(len(results))
-        results.extend(self.group_results(results))
+        # results.extend(self.group_subcategory_results(results))
         print(len(results))
         for r in results:
             print(r['experiment_setup'])
         return results
 
-    def group_results(self, results):
-        # group analogy results, based on the filename's first character
-        rs = {}
-        for r in results:
+    def group_subcategory_results(self, results):
+        # group analogy results, based on the category
+        new_results = {}
+        for result in results:
             cnt_correct = 0
             cnt_total = 0
-            for t in r['details']:
+            for t in result['details']:
                 if t['rank'] == 0:
                     cnt_correct += 1
                 cnt_total += 1
 
-            k = r['experiment_setup']['category']
+            k = result['experiment_setup']['category']
 
-            if k in rs:
-                #rs[k]['summary']={}
-                #rs[k]['summary']['cnt_correct'] += cnt_correct
-                #rs[k]['summary']['cnt_total'] += cnt_total
-                rs[k]['experiment_setup']['cnt_questions_total'] += r['experiment_setup']['cnt_questions_total']
+            if k in new_results:
+                new_results[k]['experiment_setup']['cnt_questions_correct'] += cnt_correct
+                new_results[k]['experiment_setup']['cnt_questions_total'] += cnt_total
+                new_results[k]['details'] += result['details']
             else:
-                rs[k] = {}
-                rs[k]['experiment_setup'] = r['experiment_setup'].copy()
-                del rs[k]['experiment_setup']['category']
-                rs[k]['experiment_setup']['category'] = k
-                rs[k]['details'] = {}
-                #rs[k]['summary']['cnt_correct'] = cnt_correct
-                #rs[k]['summary']['cnt_total'] = cnt_total
-        #for k, v in rs.items():
-        #    rs[k]['result'] = rs[k]['details']['cnt_correct'] * 1.0 / rs[k]['details']['cnt_total']
+                new_results[k] = result.copy()
+                # new_results[k]['experiment_setup'] = r['experiment_setup'].copy()
+                new_results[k]['experiment_setup']['category'] = k
+                new_results[k]['experiment_setup']['subcategory'] = k
+                new_results[k]['experiment_setup']['cnt_questions_correct'] = cnt_correct
+                new_results[k]['experiment_setup']['cnt_questions_total'] = cnt_total
+        for k, v in new_results.items():
+            new_results[k]['result'] = new_results[k]['experiment_setup']['cnt_questions_correct'] * 1.0 / new_results[k]['experiment_setup']['cnt_questions_total']
         out = []
-        for k, v in rs.items():
-            out.append(rs[k])
+        for k, v in new_results.items():
+            out.append(new_results[k])
         return out
 
     def subsample_dims(self, newdim):
@@ -526,35 +523,35 @@ class ThreeCosMul2(PairWise):
         return scores, predicted
 
 
-class SimilarToAny(PairWise):
-    def compute_scores(self, vectors):
-        scores = self.get_most_similar_fast(vectors)
-        best = scores.max(axis=0)
-        return best
-
-
-class SimilarToB(Analogy):
-    def do_test_on_pairs(self, pairs_train, pairs_test):
-        results = []
-        for p_test in pairs_test:
-            if self.is_pair_missing([p_test]):
-                continue
-            result = self.do_on_two_pairs(p_test)
-            result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
-            result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
-            results.append(result)
-        return results
-
-    def do_on_two_pairs(self, pair_test):
-        if self.is_pair_missing([pair_test]):
-            result = self.result_miss
-        else:
-            vec_b = self.embs.get_vector(pair_test[0])
-            vec_b_prime = self.embs.get_vector(pair_test[1][0])
-            scores = self.get_most_similar_fast(vec_b)
-            result = self.process_prediction(pair_test, scores, None, None)
-            result["similarity to correct cosine"] = self.embs.cmp_vectors(vec_b, vec_b_prime)
-        return result
+# class SimilarToAny(PairWise):
+#     def compute_scores(self, vectors):
+#         scores = self.get_most_similar_fast(vectors)
+#         best = scores.max(axis=0)
+#         return best
+#
+#
+# class SimilarToB(Analogy):
+#     def do_test_on_pairs(self, pairs_train, pairs_test):
+#         results = []
+#         for p_test in pairs_test:
+#             if self.is_pair_missing([p_test]):
+#                 continue
+#             result = self.do_on_two_pairs(p_test)
+#             result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
+#             result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
+#             results.append(result)
+#         return results
+#
+#     def do_on_two_pairs(self, pair_test):
+#         if self.is_pair_missing([pair_test]):
+#             result = self.result_miss
+#         else:
+#             vec_b = self.embs.get_vector(pair_test[0])
+#             vec_b_prime = self.embs.get_vector(pair_test[1][0])
+#             scores = self.get_most_similar_fast(vec_b)
+#             result = self.process_prediction(pair_test, scores, None, None)
+#             result["similarity to correct cosine"] = self.embs.cmp_vectors(vec_b, vec_b_prime)
+#         return result
 
 
 class TheeCosAvg(Analogy):
