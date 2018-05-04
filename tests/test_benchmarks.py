@@ -1,17 +1,16 @@
 """Tests for embeddings module."""
 
 import unittest
-from vecto.benchmarks.similarity import Similarity
-from vecto.benchmarks.analogy import visualize as analogy_visualize
-from vecto.benchmarks.similarity import visualize as similarity_visualize
-from vecto.benchmarks.analogy import *
-from vecto.benchmarks.text_classification import Text_classification
-from vecto.benchmarks import text_classification
-from vecto.embeddings import load_from_dir
-from vecto.benchmarks.fetch_benchmarks import fetch_benchmarks
 from os import path
-from shutil import rmtree
 
+from vecto.benchmarks import text_classification
+from vecto.benchmarks.analogy import *
+from vecto.benchmarks.analogy import visualize as analogy_visualize
+from vecto.benchmarks.similarity import Similarity
+from vecto.benchmarks.similarity import visualize as similarity_visualize
+from vecto.benchmarks.text_classification import Text_classification
+from vecto.embeddings import load_from_dir
+from vecto.utils.fetch_benchmarks import fetch_benchmarks
 
 path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'similarity')
 path_analogy_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'analogy')
