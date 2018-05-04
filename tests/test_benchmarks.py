@@ -9,7 +9,7 @@ from os import path
 from shutil import rmtree
 
 
-path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'similarity/')
+path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'similarity')
 path_analogy_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'analogy')
 
 
@@ -53,7 +53,7 @@ class Tests(unittest.TestCase):
 
     def test_fetcher(self):
         if path.isdir(path.join('.', 'tests', 'data', 'benchmarks_test')):
-            rmtree('.', 'tests', 'data', 'benchmarks_test')
+            rmtree(path.join('.', 'tests', 'data', 'benchmarks_test'))
         fetch_benchmarks(path.join('.', 'tests', 'data', 'benchmarks_test'))
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         similarity = Similarity()
