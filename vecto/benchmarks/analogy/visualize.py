@@ -51,7 +51,7 @@ def run_results(path_embeds=["tests/data/embeddings/text/plain_with_file_header"
             analogy = method()
             results = analogy.run(embs, path_analogy_dataset)
             print(results)
-            save_json(results, os.path.join("tests/data/benchmarks_results/analogy/", datetime.datetime.now().isoformat()))
+            save_json(results, os.path.join("/tmp/tests/data/benchmarks_results/analogy/", datetime.datetime.now().isoformat()))
 
 
 

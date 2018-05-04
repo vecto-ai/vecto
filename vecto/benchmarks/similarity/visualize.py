@@ -50,7 +50,7 @@ def run_results(path_embeds=["tests/data/embeddings/text/plain_with_file_header"
         similarity = Similarity()
         results = similarity.run(embs, path_analogy_dataset)
         print(results)
-        save_json(results, os.path.join("tests/data/benchmarks_results/similarity/", datetime.datetime.now().isoformat()))
+        save_json(results, os.path.join("/tmp/tests/data/benchmarks_results/similarity/", datetime.datetime.now().isoformat()))
 
 
 

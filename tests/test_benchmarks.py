@@ -67,15 +67,15 @@ class Tests(unittest.TestCase):
 
         tc = Text_classification(model='cnn')
         result = tc.get_result(embs, path_text_classification_dataset,
-                               "./tests/data/benchmarks_results/text_classification/")
+                               "/tmp/tests/data/benchmarks_results/text_classification/")
         print(result)
         tc = Text_classification(model='rnn')
         result = tc.get_result(embs, path_text_classification_dataset,
-                               "./tests/data/benchmarks_results/text_classification/")
+                               "/tmp/tests/data/benchmarks_results/text_classification/")
         print(result)
         tc = Text_classification(model='bow')
         result = tc.get_result(embs, path_text_classification_dataset,
-                               "./tests/data/benchmarks_results/text_classification/")
+                               "/tmp/tests/data/benchmarks_results/text_classification/")
         print(result)
 
 
