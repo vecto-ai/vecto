@@ -83,7 +83,7 @@ def get_vectors(model, sentences):
 class Text_classification(Benchmark):
 
     def __init__(self, batchsize=64, epoch=5, gpu=-1, layer=1, dropout=0, model=['cnn', 'rnn', 'bow'][1],
-                 char_based=False):
+                 char_based=False, shrink=100):
         self.current_datetime = '{}'.format(datetime.datetime.today())
         self.batchsize = batchsize
         self.epoch = epoch
@@ -92,6 +92,7 @@ class Text_classification(Benchmark):
         self.dropout = dropout
         self.model = model
         self.char_based = char_based
+        self.shrink = shrink
 
     def get_result(self, embs, path_dataset, path_output='/tmp/text_classification/'):
         self.out = path_output
@@ -104,18 +105,18 @@ class Text_classification(Benchmark):
         self.dataset = path_dataset
         if self.dataset == 'dbpedia':
             train, test, vocab = text_datasets.get_dbpedia(
-                char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, )
+                char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, shrink=self.shrink )
         elif self.dataset.startswith('imdb.'):
             train, test, vocab = text_datasets.get_imdb(
                 fine_grained=self.dataset.endswith('.fine'),
-                char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, )
+                char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, shrink=self.shrink)
         elif self.dataset in ['TREC', 'stsa.binary', 'stsa.fine',
                               'custrev', 'mpqa', 'rt-polarity', 'subj']:
             train, test, vocab = text_datasets.get_other_text_dataset(
-                self.dataset, char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, )
+                self.dataset, char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, shrink=self.shrink)
         else:  # finallly, if file is not downloadable, load from local path
             train, test, vocab = text_datasets.get_dataset_from_path(path_dataset, vocab=embs.vocabulary.dic_words_ids,
-                                                                     char_based=self.char_based)
+                                                                     char_based=self.char_based, shrink=self.shrink)
 
         print('# train data: {}'.format(len(train)))
         print('# test  data: {}'.format(len(test)))

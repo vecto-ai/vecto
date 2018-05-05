@@ -382,6 +382,8 @@ class Analogy(Benchmark):
         results = []
         for root, dirnames, filenames in os.walk(dir_tests):
             for filename in fnmatch.filter(sorted(filenames), '*'):
+                if filename.endswith('json'):
+                    continue
                 print(filename)
                 pairs = self.get_pairs(os.path.join(root, filename))
                 # print(pairs)
