@@ -51,6 +51,8 @@ class Similarity(Benchmark):
     def run(self, embs, path_dataset):
         results = []
         for file in os.listdir(path_dataset):
+            if file.endswith('json'):
+                continue
             testset = self.read_test_set(os.path.join(path_dataset, file))
 
             out = dict()
