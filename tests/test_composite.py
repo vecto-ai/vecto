@@ -7,6 +7,7 @@ from vecto.embeddings import load_from_dir
 from vecto.vocabulary import Vocabulary
 from vecto.embeddings.composite import ArithmeticMeanVector, GeometricMeanVector, \
     IDFArithmeticMeanVector, IDFGeometricMeanVector, precompute_composite_embeddings
+from vecto.corpus import word_tokenize_txt
 from vecto.utils.blas import normed
 
 
@@ -18,7 +19,7 @@ def make_dummy_vocab():
     return result
 
 
-GOLD_TIGER_SIMILAR = "[['tiger', 0.99999988], ['the cat', 0.9998315], ['banana cat', 0.99780756], ['the fast tiger', 0.99770665], ['the apple', 0.98412168]]"
+GOLD_TIGER_SIMILAR = ('tiger', 'the cat', 'the fast tiger', 'banana cat', 'the apple')
 
 
 class Tests(unittest.TestCase):
@@ -88,8 +89,8 @@ class Tests(unittest.TestCase):
         precomputed = precompute_composite_embeddings(comp, objects)
         assert precomputed.dimensions_number == 4
         assert len(precomputed.vocabulary.lst_words) == 5
-        assert np.allclose(comp.get_vector(objects[0].split(' ')),
+        assert np.allclose(comp.get_vector(word_tokenize_txt(objects[0])),
                            precomputed.get_vector(objects[0]))
         precomputed.cache_normalized_copy()
-        tiger_similar = precomputed.get_most_similar_words(objects[-1])
-        assert str(tiger_similar) == GOLD_TIGER_SIMILAR
+        tiger_similar_words, _ = zip(*precomputed.get_most_similar_words(objects[-1]))
+        assert tiger_similar_words == GOLD_TIGER_SIMILAR
