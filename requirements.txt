@@ -8,8 +8,7 @@ nltk
 brewer2mpl
 progressbar2
 gitpython
-
-
+sklearn
 pandas
 matplotlib
 chainer
