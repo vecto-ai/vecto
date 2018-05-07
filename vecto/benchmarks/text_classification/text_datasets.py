@@ -156,7 +156,8 @@ def read_other_dataset(path, shrink=1, char_based=False):
             if i % shrink != 0 or not len(l.strip()) >= 3:
                 continue
             label, text = l.strip().split(None, 1)
-            label = int(label)
+            label = int(label) % 2 # todo only support binary classification
+            # print(text)
             tokens = split_text(normalize_text(text), char_based)
             dataset.append((tokens, label))
     return dataset

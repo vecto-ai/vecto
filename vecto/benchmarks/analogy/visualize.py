@@ -41,22 +41,21 @@ def plot_accuracy(path="tests/data/benchmarks_results/analogy/", group_xaxis=['e
     # plt.show()
 
 
-def run_results(path_embeds=["tests/data/embeddings/text/plain_with_file_header",
-                               "tests/data/embeddings/text/plain_no_file_header", ],
-                  path_analogy_dataset="./tests/data/benchmarks/analogy/",
-                  methods=[LRCos, LinearOffset]):
-    for method in methods:
-        for path_embed in path_embeds:
-            embs = load_from_dir(path_embed)
-            analogy = method()
-            results = analogy.run(embs, path_analogy_dataset)
-            print(results)
-            save_json(results, os.path.join("/tmp/tests/data/benchmarks_results/analogy/", datetime.datetime.now().isoformat()))
+# def run_results(path_embeds=["tests/data/embeddings/text/plain_with_file_header",
+#                                "tests/data/embeddings/text/plain_no_file_header", ],
+#                   path_analogy_dataset="./tests/data/benchmarks/analogy/",
+#                   methods=[LRCos, LinearOffset]):
+#     for method in methods:
+#         for path_embed in path_embeds:
+#             embs = load_from_dir(path_embed)
+#             analogy = method()
+#             results = analogy.run(embs, path_analogy_dataset)
+#             print(results)
+#             save_json(results, os.path.join("/tmp/tests/data/benchmarks_results/analogy/", datetime.datetime.now().isoformat()))
 
 
 
 def main():
-    # run_results()
     plot_accuracy()
 
 

@@ -11,6 +11,9 @@ from vecto.benchmarks.similarity import visualize as similarity_visualize
 from vecto.benchmarks.text_classification import Text_classification
 from vecto.embeddings import load_from_dir
 from vecto.utils.fetch_benchmarks import fetch_benchmarks
+from os import path
+from shutil import rmtree
+
 
 path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'similarity')
 path_analogy_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'analogy')
@@ -57,6 +60,12 @@ class Tests(unittest.TestCase):
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
         analogy_visualize.plot_accuracy()
+
+        # big embs and dataset test
+        # embs = load_from_dir("/home/bofang/Documents/embeddings/negative_sampling/fair/")
+        # result = analogy.get_result(embs, "/home/bofang/Downloads/BATS_3.0_small")
+        # print(result)
+
 
     def test_fetcher(self):
         if path.isdir(path.join('.', 'tests', 'data', 'benchmarks_test')):
