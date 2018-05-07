@@ -49,3 +49,10 @@ after_test:
 
 artifacts:
   - path: dist\*
+
+notifications:
+  - provider: Webhook
+    url: https://webhooks.gitter.im/e/25b43ed5bc5e1d3a0772
+    on_build_success: true
+    on_build_failure: true
+    on_build_status_changed: true

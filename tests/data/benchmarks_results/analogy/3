@@ -1,0 +1,44 @@
+[
+    {
+        "details": [],
+        "experiment_setup": {
+            "category": "analogy",
+            "cnt_questions_correct": 0,
+            "cnt_questions_total": 0,
+            "embeddings": {
+                "_class": "vecto.embeddings.dense.WordEmbeddingsDense",
+                "foldername": "plain_no_file_header",
+                "normalized": true,
+                "type": "test",
+                "vecto_version": "0.1.2"
+            },
+            "measurement": "accuracy",
+            "method": "LinearOffset",
+            "subcategory": "I01 [noun - plural_reg].txt",
+            "task": "word_analogy",
+            "timestamp": "2018-05-03T00:17:17.620866"
+        },
+        "result": -1
+    },
+    {
+        "details": [],
+        "experiment_setup": {
+            "category": "analogy",
+            "cnt_questions_correct": 0,
+            "cnt_questions_total": 0,
+            "embeddings": {
+                "_class": "vecto.embeddings.dense.WordEmbeddingsDense",
+                "foldername": "plain_no_file_header",
+                "normalized": true,
+                "type": "test",
+                "vecto_version": "0.1.2"
+            },
+            "measurement": "accuracy",
+            "method": "LinearOffset",
+            "subcategory": "I02 [noun - plural_irreg].txt",
+            "task": "word_analogy",
+            "timestamp": "2018-05-03T00:17:17.621908"
+        },
+        "result": -1
+    }
+]
