@@ -1,14 +1,16 @@
 """Tests for embeddings module."""
 
 import unittest
-from vecto.benchmarks.similarity import Similarity
-from vecto.benchmarks.analogy import visualize as analogy_visualize
-from vecto.benchmarks.similarity import visualize as similarity_visualize
-from vecto.benchmarks.analogy import *
-from vecto.benchmarks.text_classification import Text_classification
+from os import path
+
 from vecto.benchmarks import text_classification
+from vecto.benchmarks.analogy import *
+from vecto.benchmarks.analogy import visualize as analogy_visualize
+from vecto.benchmarks.similarity import Similarity
+from vecto.benchmarks.similarity import visualize as similarity_visualize
+from vecto.benchmarks.text_classification import Text_classification
 from vecto.embeddings import load_from_dir
-from vecto.benchmarks.fetch_benchmarks import fetch_benchmarks
+from vecto.utils.fetch_benchmarks import fetch_benchmarks
 from os import path
 from shutil import rmtree
 
@@ -57,8 +59,6 @@ class Tests(unittest.TestCase):
         analogy = LRCos()
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
-
-        # analogy_visualize.run_results()
         analogy_visualize.plot_accuracy()
 
         # big embs and dataset test
@@ -71,10 +71,16 @@ class Tests(unittest.TestCase):
         if path.isdir(path.join('.', 'tests', 'data', 'benchmarks_test')):
             return
         fetch_benchmarks(path.join('.', 'tests', 'data', 'benchmarks_test'))
-        embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
-        similarity = Similarity()
-        path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks_test', 'benchmarks', 'similarity', 'en')
-        result = similarity.get_result(embs, path_similarity_dataset),
+#         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
+#         similarity = Similarity()
+#         path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks_test', 'benchmarks', 'similarity', 'en')
+#         result = similarity.get_result(embs, path_similarity_dataset),
+
+
+        # big embs and dataset test
+        # embs = load_from_dir("/home/bofang/Documents/embeddings/negative_sampling/fair/")
+        # result = analogy.get_result(embs, "/home/bofang/Downloads/BATS_3.0_small")
+        # print(result)
 
     def test_text_classification(self):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")

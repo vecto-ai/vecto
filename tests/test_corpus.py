@@ -94,6 +94,7 @@ class Tests(unittest.TestCase):
         corpus = FileCorpus(path_text_file)
         tokens_iter = corpus.get_token_iterator(verbose=1)
         total_words, words = count_words_and_collect_prefix(tokens_iter)
+        print("!!!!!total words", total_words)
         assert total_words == TEST_TEXT_LEN
         assert '|'.join(words) == TEST_FIRST_10_WORDS
 
