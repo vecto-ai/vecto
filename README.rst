@@ -13,6 +13,9 @@ vecto
     :target: https://badge.fury.io/py/vecto
     :alt: pypi version
 
+.. image:: https://badges.gitter.im/badge.svg
+   :alt: Join the chat at https://gitter.im/vecto-ai/Lobby
+   :target: https://gitter.im/vecto-ai/Lobby
 
 vecto helps to perform a range of tasks within a framework of vector space models of computational linguistics.
 
