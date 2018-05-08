@@ -228,8 +228,6 @@ def get_ngram_tokensList_from_word(word, min_gram, max_gram):
             nt = word[i:i+gram]
             ngram_tokens.append(nt)
         ngram_tokensList.append(ngram_tokens)
-    #　print(word)
-    # print(ngram_tokensList)
     return ngram_tokensList
 
 
