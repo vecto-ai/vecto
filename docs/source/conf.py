@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath('../'))
 sys.path.insert(0, os.path.abspath('.'))
 
 #__version__ = pkg_resources.get_distribution('vecto').version
- __version__ = "0.1.3"
+__version__ = "0.1.3"
 
 # -- General configuration ------------------------------------------------
 
