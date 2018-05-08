@@ -18,7 +18,7 @@ import os
 import sys
 import pkg_resources
 
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__))) # TODO: figure out which one is the right one
+#sys.path.insert(0, os.path.abspath(os.path.dirname(__file__))) # TODO: figure out which one is the right one
 sys.path.insert(0, os.path.abspath('../../'))
 sys.path.insert(0, os.path.abspath('../'))
 sys.path.insert(0, os.path.abspath('.'))
