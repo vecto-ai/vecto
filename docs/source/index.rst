@@ -1,7 +1,7 @@
 
-===============================================
-vsmlib - Python library for vector space models
-===============================================
+==============================================
+vecto - Python library for vector space models
+==============================================
 
 VSMlib is an open-source Python library for working with vector space models (VSMs), 
 including various word embeddings such as word2vec. VSMlib can load various popular 
