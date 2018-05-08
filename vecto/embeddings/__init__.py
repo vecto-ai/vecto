@@ -1,4 +1,5 @@
 """Loading and training for embeddings"""
+
 import os
 import logging
 import numpy as np
