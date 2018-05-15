@@ -1,4 +1,11 @@
-"""Loading and training for embeddings"""
+"""Loading and training for embeddings
+
+.. autosummary::
+    :toctree: _autosummary
+
+    analogy
+
+"""
 
 import os
 import logging

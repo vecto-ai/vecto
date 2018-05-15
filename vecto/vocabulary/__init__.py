@@ -1,4 +1,10 @@
 """The model module that implements vocabulary.
+
+.. autosummary::
+    :toctree: _autosummary
+
+    analogy
+
 """
 
 from .vocabulary import Vocabulary
