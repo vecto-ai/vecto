@@ -3,6 +3,7 @@ from scipy.stats.stats import spearmanr
 import os
 import math
 from ..base import Benchmark
+import csv
 
 
 class Similarity(Benchmark):
@@ -13,11 +14,25 @@ class Similarity(Benchmark):
 
     def read_test_set(self, path):
         test = []
-        with open(path) as f:
-            for line in f:
-                # line = line.lower();
-                x, y, sim = line.strip().split()
-                test.append(((x, y), float(sim)))
+        if path.endswith(".csv"):
+            with open(path, 'r') as csvfile:
+                reader = csv.reader(csvfile)
+                head = True
+                for row in reader:
+                    if len(row) < 3:
+                        continue
+                    if not head:
+                        x = row[0]
+                        y = row[1]
+                        sim = row[2]
+                        test.append(((x, y), float(sim)))
+                    head = False
+        else:
+            with open(path) as f:
+                for line in f:
+                    # line = line.lower();
+                    x, y, sim = line.strip().split()
+                    test.append(((x, y), float(sim)))
         return test
 
     def evaluate(self, embs, data):
