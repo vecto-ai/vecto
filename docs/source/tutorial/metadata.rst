@@ -21,28 +21,62 @@ Vecto records the following metadata:
 
 .. glossary::
 
-   id: An identifier of the corpus, unique in the collection.
-   size : The size of the corpus (in tokens).
-   name : The (preferably short) name of the corpus, often used to identify the models built from it.
-   description: The freeform description of the corpus, such as the domains it covers.
-   source: Where the corpus was obtained.
-   domain: The list of the domains of the texts, such as **news**, **encyclopedia**, **fiction**, **medical**, **spoken**, or **web**. If the corpus covers only one domain, the list only contains one item; otherwise several can be listed. We suggest using **general** only for balanced, representative corpora such as `BNC <http://www.natcorp.ox.ac.uk/corpus/creating.xml>`_ that make a conscious effort to represent different registers.
-   language: A list containing the language codes for the corpus. There will be just one entry in case of monolingual corpora (e.g. _["en"]_), and for parallel or multilingual corpora there will be several (_["en", "de"]_).
-   encoding: The encoding of the corpus files.
-   format: The format of the corpus. Some frequent options include: one-corpus-per-line, one-sentence-per-line, one-paragraph-per-line, one-word-per-line, vertical-format
-   date: The date when the corpus (or its text source) was published. It can be the date of a Wikipedia dump (e.g. _2018-07_), or the year when the paper presenting the resource came out (e.g. _2017_).
-   path: The path to the local copy of the corpus files.
-   cite: The bibtex entry for the paper presenting the resource, that should be referenced in subsequent work building on or using the resource. It should be bibtex rather than biblatex, as most NLP publishers have not made the switch yet.
-   pre-processing: The pre-processing steps used in preparing this resource, described in freeform text.
-   cleanup: Markup removal, format conversion, encoding, de-duplication (freeform description, URL or path to the pre-processing script)
-   lowercasing: **True** if the corpus was lowercased, **False** otherwise.
-   tokenization: The tokenizer that was used, if any (URL or path to the script, name, version).
-   lemmatization: The lemmatizer that was used, if any (URL or path to the script, name, version).
-   stemming: The stemmer that was used, if any (URL or path to the script, name, version).
-   POS_tagging: The POS-tagger that was used, if any (URL or path to the script, name, version).
-   syntactic_parsing: The syntactic parser that was used, if any (URL or path to the script, name, version).
-   Semantic_parsing: The semantic parser that was used, if any (URL or path to the script, name, version).
-   Other_preprocessing: Any other pre-processing that was performed, if any (URL or path to the script, name, version).
+   environment
+      A structure where information about all documents under the root is
+      saved, and used for cross-referencing.  The environment is pickled
+      after the parsing stage, so that successive runs only need to read
+      and parse new and changed documents.
+
+   source directory
+      The directory which, including its subdirectories, contains all
+      source files for one Sphinx project.
+
+.. glossary::
+
+   id
+      An identifier of the corpus, unique in the collection.
+   size
+      The size of the corpus (in tokens).
+   name
+      The (preferably short) name of the corpus, often used to identify the models built from it.
+   description
+      The freeform description of the corpus, such as the domains it covers.
+   source
+      Where the corpus was obtained.
+   domain
+      The list of the domains of the texts, such as **news**, **encyclopedia**, **fiction**, **medical**, **spoken**, or **web**. If the corpus covers only one domain, the list only contains one item; otherwise several can be listed. We suggest using **general** only for balanced, representative corpora such as `BNC <http://www.natcorp.ox.ac.uk/corpus/creating.xml>`_ that make a conscious effort to represent different registers.
+   language
+      A list containing the language codes for the corpus. There will be just one entry in case of monolingual corpora (e.g. _["en"]_), and for parallel or multilingual corpora there will be several (_["en", "de"]_).
+   encoding
+      The encoding of the corpus files.
+   format
+      The format of the corpus. Some frequent options include: one-corpus-per-line, one-sentence-per-line, one-paragraph-per-line, one-word-per-line, vertical-format
+   date
+      The date when the corpus (or its text source) was published. It can be the date of a Wikipedia dump (e.g. _2018-07_), or the year when the paper presenting the resource came out (e.g. _2017_).
+   path
+      The path to the local copy of the corpus files.
+   cite
+      The bibtex entry for the paper presenting the resource, that should be referenced in subsequent work building on or using the resource. It should be bibtex rather than biblatex, as most NLP publishers have not made the switch yet.
+   pre-processing
+      The pre-processing steps used in preparing this resource, described in freeform text.
+   cleanup
+      Markup removal, format conversion, encoding, de-duplication (freeform description, URL or path to the pre-processing script)
+   lowercasing
+      **True** if the corpus was lowercased, **False** otherwise.
+   tokenization
+      The tokenizer that was used, if any (URL or path to the script, name, version).
+   lemmatization
+      The lemmatizer that was used, if any (URL or path to the script, name, version).
+   stemming
+      The stemmer that was used, if any (URL or path to the script, name, version).
+   POS_tagging
+      The POS-tagger that was used, if any (URL or path to the script, name, version).
+   syntactic_parsing
+      The syntactic parser that was used, if any (URL or path to the script, name, version).
+   Semantic_parsing
+      The semantic parser that was used, if any (URL or path to the script, name, version).
+   Other_preprocessing
+      Any other pre-processing that was performed, if any (URL or path to the script, name, version).
 
 :todo: the format section should link to the input of embedding models
 
