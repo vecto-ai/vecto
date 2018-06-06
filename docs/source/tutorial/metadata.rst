@@ -73,6 +73,7 @@ Vecto records the following metadata:
 .. code-block:: json
 
     {
+    "class": "corpus",
     "corpus_01":   {
                     "id": "",
                     "size": ,
@@ -128,7 +129,9 @@ Vecto records the following metadata:
 The vocab metadata
 ~~~~~~~~~~~~~~~~~~
 
-The vocab files are basically lists of the vocabulary of word embeddings. Sometimes they are stored separately from the numerical data as plain-text, one-word-per-line files (e.g. when the numerical data itself is stored in .npy format). Vecto expects such files to have a ".vocab" extension.
+There are two types of vocab files in Vecto. One is basically lists of the vocabulary of word embeddings. Sometimes they are stored separately from the numerical data as plain-text, one-word-per-line files (e.g. when the numerical data itself is stored in .npy format). Vecto expects such files to have a ".vocab" extension.
+
+The other type of vocab is a tab-separated file structured as [WORD FREQUENCY].
 
 The vocab files can have associated metadata as follows.
 
@@ -146,33 +149,28 @@ The vocab files can have associated metadata as follows.
       The version of Vecto with which a given vocab file was produced (generated automatically by Vecto).
    system_info
       The system in which the vocab file was produced (generated automatically by Vecto).
-   timing
-      todo
-   source_corpus
-      Includes the corpus metadata, as described in `The corpus metadata`_ section.
+
+   source
+      Includes the metadata of the source corpus from which the vocab file was produced, as described in `The corpus metadata`_ section.
 
 :todo: link to the vocab filtering section, if any
-:todo: explain timing
+
+:todo: filtered_by - text file, wordlist, dict with metadata
 
 .. code-block:: json
 
     {
-    "original": {
-                "size": ,
-                "min_frequency": ,
-                "timestamp": "",
-                "lib_version": "",
-                "system_info": "",
-                "timing": "",
-                "source_corpus": {
-                                }
-                }
-    "filtered": {
-                "size": ,
-                "timestamp": "",
-                "lib_version": "",
-                "system_info": "",
-                "timing": ""
+    "class": "vocabulary",
+    "size": ,
+    "min_frequency": ,
+    "lowercasing": "",
+    "execution_time": "",
+    "timestamp": "",
+    "lib_version": "",
+    "system_info": "",
+    "filtered_by": {
+                    },
+    "source":   {
                 }
     }
 
@@ -206,20 +204,18 @@ Some of the frequent parameters applicable to most-if-not-all models include:
 .. code-block:: json
 
     {
+    "class": "embeddings",
         "model": "",
         "window": ,
         "dimensionality": ,
         "context": "",
         "epochs": ,
         "cite": "",
-        "vocabulary": {
-                    }
-
+        "vocabulary":   {
+                        }
         "lib_version": "",
         "system_info": "",
     }
-
-:todo: what to do with the lib version and system info?
 
 The datasets metadata
 ~~~~~~~~~~~~~~~~~~~~~
@@ -241,7 +237,9 @@ The task datasets should be accompanied by the following metadata:
    date
       The date the resource was published.
    source
-      The source of the resource (e.g. a modification of another dataset, or something created by the authors from scratch or on the basis of some data that was not previously used as a dataset for the same task).
+      The source of the resource (e.g. a modification of another dataset, or something created by the authors from scratch or on the basis of some data that was not previously used for the same task).
+   project_page
+      The URL of the page describing the dataset (if any)
    version
       The version of the dataset (useful when you are developing one).
    size
@@ -252,6 +250,7 @@ The task datasets should be accompanied by the following metadata:
 .. code-block:: json
 
     {
+    "class": "dataset",
         "task": "",
         "language": ["english"],
         "name": "",
@@ -259,12 +258,12 @@ The task datasets should be accompanied by the following metadata:
         "domain": "",
         "date": "",
         "source": "",
+        "project_page": "",
         "version": "",
         "size": "",
         "cite": ""
     }
 
-:todo: ids? paths?
 
 The experiment metadata
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -283,10 +282,6 @@ Some of the generic metadata fields that are applicable to all experiments inclu
       A brief description of the implementation, preferably including its use case (e.g. a sample implementation in a some framework, a standard baseline for some task, a state-of-the-art model.)
    author
       The author of the code (for unpublished models).
-   implementation
-      The id of the implementation in the Vecto library, in case there are several alternative implementations for the same task.
-   framework
-      Machine learning library that this implementation uses, such as **scikit-learn**, **Chainer** or **Keras** (if any).
    version
       The version of the implementation, if any.
    date
@@ -299,12 +294,11 @@ Some of the generic metadata fields that are applicable to all experiments inclu
 .. code-block:: json
 
     {
+    "class": "experiment",
         "name": "",
         "task": "",
         "description": "",
         "author": "",
-        "implementation": "",
-        "framework": "",
         "version": "",
         "date": "",
         "source": "",
