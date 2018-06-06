@@ -27,6 +27,8 @@ project = 'vecto'
 copyright = '2018, vecto authors'
 author = 'vecto authors'
 
+todo_include_todos = False
+
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
