@@ -12,6 +12,7 @@ At the moment the following data formats are supported:
 *    .npy arrays with separate vocab files
 *    .txt plain-text vectors
 *    sparse vectors in hp5 format
+:todo: fasttext .vec format?
 
 Importing vectors
 -------------------

@@ -25,10 +25,9 @@ Vecto is work in progress. Everything that works at the moment is described in t
 +-------------------------------------------------------------+-----------------------------------------------------------+
 | **VSM evaluation:**                                                                                                     |
 +-------------------------------------------------------------+-----------------------------------------------------------+
-| - 6 methods of solving word analogies                       | - similarity and relatedness tests                        |
-|                                                             | - POS-tagging                                             |
-|                                                             | - chunking                                                |
-|                                                             | - sentence classification                                 |
-|                                                             | - sentiment analysis                                      |
+| - 6 methods of solving word analogies                       | - natural language inference                              |
+| - similarity and relatedness tests                          | - language modeling                                       |
+| - text classification                                       | - neural machine translation                              |
+| - sequence labeling (POS-tagging, chunking, NER)            | - subjectivity classification                             |
 |                                                             | - and more!                                               |
 +-------------------------------------------------------------+-----------------------------------------------------------+
