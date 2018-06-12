@@ -134,8 +134,10 @@ class WordEmbeddingsDense(WordEmbeddings):
                 str_vec = tokens[1:]
                 if vec_size == -1:
                     vec_size = len(str_vec)
+                if vec_size < len(str_vec): # hack for fasttext output
+                    str_vec = tokens[len(str_vec) - vec_size + 1 :]
                 if vec_size != len(str_vec):
-                    print(line)
+                    # print(line)
                     continue
                 row = np.zeros(len(str_vec), dtype=np.float32)
                 for j in range(len(str_vec)):
