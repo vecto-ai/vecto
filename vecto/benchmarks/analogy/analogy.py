@@ -369,7 +369,7 @@ class Analogy(Benchmark):
                     exit(-1)
         return pairs
 
-    def run(self, embs, path_dataset):
+    def run(self, embs, path_dataset, group_subcategory):
         self.embs = embs
 
         if self.normalize:
@@ -391,7 +391,8 @@ class Analogy(Benchmark):
                 results.append(out)
         print("")
         print(len(results))
-        # results.extend(self.group_subcategory_results(results))
+        if group_subcategory:
+            results.extend(self.group_subcategory_results(results))
         print(len(results))
         for r in results:
             print(r['experiment_setup'])
@@ -416,6 +417,8 @@ class Analogy(Benchmark):
                 new_results[k]['details'] += result['details']
             else:
                 new_results[k] = result.copy()
+                del new_results[k]['experiment_setup']['category']
+                new_results[k]['experiment_setup']['dataset'] = k
                 # new_results[k]['experiment_setup'] = r['experiment_setup'].copy()
                 new_results[k]['experiment_setup']['category'] = k
                 new_results[k]['experiment_setup']['subcategory'] = k
@@ -432,10 +435,10 @@ class Analogy(Benchmark):
         self.embs.matrix = self.embs.matrix[:, 0:newdim]
         self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
 
-    def get_result(self, embs, path_dataset):
+    def get_result(self, embs, path_dataset, group_subcategory=False):
         if self.normalize:
             embs.normalize()
-        results = self.run(embs, path_dataset)
+        results = self.run(embs, path_dataset, group_subcategory)
         return results
 
 
