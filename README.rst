@@ -33,3 +33,16 @@ How do I get set up?
 * ``pip3 install vecto`` for stable version
 * ``pip3 install git+https://github.com/vecto-ai/vecto.git`` for latest dev version
 * Python 3.5 or later is required
+
+📖 Documentation
+================
+
+=================== ===
+`Tutorial`_         vecto overview and end-to-end examples.
+`API Reference`_    The detailed reference for vecto API.
+`Contribute`_       How to contribute to the vecto project and code base.
+=================== ===
+
+.. _Tutorial: http://vecto.readthedocs.io/en/docs/tutorial/index.html
+.. _API Reference: http://vecto.readthedocs.io/en/docs/reference/index.html
+.. _Contribute: http://vecto.readthedocs.io/en/docs/contribution.html
