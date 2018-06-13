@@ -1,4 +1,4 @@
-"""Setup script for version_query package."""
+"""Setup script for vecto package."""
 
 import setup_boilerplate
 
