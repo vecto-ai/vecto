@@ -44,6 +44,24 @@ class Vocabulary(WithMetaData):
             return 0
         return(self.lst_frequencies[i])
 
+    def _populate_from_source_and_wordlist(self, source, wordlist):
+        self.metadata["source"] = source.metadata
+        self.metadata["class"] = "Vocabulary"
+        self.metadata["transform"] = "reduced by wordlist"
+        i = 0
+        for w in source.lst_words:
+            if w in wordlist:
+                self.lst_words.append(w)
+                self.lst_frequencies.append(source.get_frequency(w))
+                self.dic_words_ids[w] = i
+                i += 1
+        self.metadata["cnt_words"] = i
+
+    def filter_by_wordlist(self, wordlist):
+        new_vocab = Vocabulary()
+        new_vocab._populate_from_source_and_wordlist(self, wordlist)
+        return new_vocab
+
     def save_to_dir(self, path):
         os.makedirs(path, exist_ok=True)
         f = open(os.path.join(path, "vocab.tsv"), "w")

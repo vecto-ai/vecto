@@ -29,12 +29,7 @@ def load_from_dir(path):
 #        result.load(path)
 #        result.load_metadata(path)
 #        return result
-    if os.path.isfile(os.path.join(path, "vectors.bin")):
-        logger.info("this is w2v original binary format")
-        result = ModelW2V()
-        result.load_from_dir(path)
-        result.load_metadata(path)
-        return result
+
 #    if os.path.isfile(os.path.join(path, "sgns.words.npy")):
 #        result = ModelLevy()
 #        logger.info("this is Levi")
@@ -75,14 +70,5 @@ def load_from_dir(path):
             result.load_from_dir(path)
             result.load_metadata(path)
             return result
-#        if f.startswith("words") and f.endswith(".npy") \
-#               and os.path.isfile(os.path.join(path, f.replace(".npy", ".vocab"))):
-#            result = Model_Fun()
-#            result = ModelLevy()
-#            logger.info("Detected VSM in npy and vocab in plain text file format")
-#            result.load_from_dir(path, f[: -4])
-#            result.load_metadata(path)
-#            return result
 
     raise RuntimeError("Cannot detect the format of this VSM")
-

@@ -139,3 +139,8 @@ class Tests(unittest.TestCase):
         metadata = json.dumps(metadata, indent=4, sort_keys=True).strip()
         # TODO: add this when we define final metadata fromat
         # assert metadata == RIGHT_DICT_METADATA
+
+    def test_filter(self):
+        vocab = Vocabulary()
+        vocab.load(path_vocab)
+        vocab.filter_by_wordlist(["the"])
