@@ -9,6 +9,8 @@ class Tests(unittest.TestCase):
 
     def test_basic(self):
         WordEmbeddingsDense()
+        model = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
+        model.cmp_words("apple", "banana")
 
     def test_load(self):
         load_from_dir("tests/data/embeddings/text/plain_with_file_header")

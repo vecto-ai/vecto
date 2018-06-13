@@ -59,8 +59,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         self.name += os.path.basename(os.path.normpath(path))
 
     def save_to_dir(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
         self.vocabulary.save_to_dir(path)
         # self.matrix.tofile(os.path.join(path,"vectors.bin"))
         # np.save(os.path.join(path, "vectors.npy"), self.matrix)
