@@ -1,6 +1,7 @@
 """Tests for embeddings module."""
 
 import unittest
+import numpy as np
 from vecto.embeddings.dense import WordEmbeddingsDense
 from vecto.embeddings import load_from_dir
 
@@ -11,6 +12,10 @@ class Tests(unittest.TestCase):
         WordEmbeddingsDense()
         model = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
         model.cmp_words("apple", "banana")
+        model.cmp_words("apple", "bananaaaaa")
+        x = np.array([0.0, 0.0, 0.0])
+        x.fill(np.nan)
+        model.cmp_vectors(x, x)
 
     def test_load(self):
         load_from_dir("tests/data/embeddings/text/plain_with_file_header")
