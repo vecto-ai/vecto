@@ -2,6 +2,8 @@
 
 import unittest
 from vecto.benchmarks.similarity import Similarity
+from vecto.benchmarks.sequence_labeling import Sequence_labeling
+from vecto.benchmarks.language_modeling import Language_modeling
 from vecto.benchmarks.analogy import visualize as analogy_visualize
 from vecto.benchmarks.similarity import visualize as similarity_visualize
 from vecto.benchmarks.analogy import *
@@ -12,10 +14,11 @@ from vecto.benchmarks.fetch_benchmarks import fetch_benchmarks
 from os import path
 from shutil import rmtree
 
-
 path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'similarity')
 path_analogy_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'analogy')
 path_text_classification_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'text_classification')
+path_sequence_labeling_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'sequence_labeling')
+path_language_modeling_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'language_modeling')
 
 
 class Tests(unittest.TestCase):
@@ -66,7 +69,6 @@ class Tests(unittest.TestCase):
         # result = analogy.get_result(embs, "/home/bofang/Downloads/BATS_3.0_small")
         # print(result)
 
-
     def test_fetcher(self):
         if path.isdir(path.join('.', 'tests', 'data', 'benchmarks_test')):
             return
@@ -78,7 +80,6 @@ class Tests(unittest.TestCase):
 
     def test_text_classification(self):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
-
 
         tc = Text_classification(model='cnn')
         result = tc.get_result(embs, path_text_classification_dataset,
@@ -93,11 +94,17 @@ class Tests(unittest.TestCase):
                                "/tmp/tests/data/benchmarks_results/text_classification/")
         print(result)
 
-
-        model = text_classification.load_model("./tests/data/benchmarks_results/text_classification/args.json", embs.matrix)
+        model = text_classification.load_model("./tests/data/benchmarks_results/text_classification/args.json",
+                                               embs.matrix)
         print(text_classification.predict(model, "I like this"))
         print(text_classification.get_vectors(model, ["I like this", "I hate this"]))
 
+    def test_sequence_labeling(self):
+        embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
 
+        for method in ['lr', '2FFNN']:
+            sequence_labeling = Sequence_labeling(method='lr')
+            for subtask in ['chunk', 'pos', 'ner']:  # , 'chunk', 'pos', 'ner'
+                results = sequence_labeling.get_result(embs, os.path.join(path_sequence_labeling_dataset, subtask))
+                print(results)
 
-# Tests().test_text_classification()
