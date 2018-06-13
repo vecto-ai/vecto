@@ -62,3 +62,7 @@ class Tests(unittest.TestCase):
     def test_abc(self):
         obj = WordEmbeddings()
         obj.get_vector("banana")
+
+    def test_viz(self):
+        embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
+        embs.viz_wordlist(["the", "apple"], colored=True, show_legend=True)

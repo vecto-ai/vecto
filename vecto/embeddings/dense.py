@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 import brewer2mpl
 import os
+from matplotlib import pyplot as plt
 from vecto.utils.blas import normed
 from vecto.vocabulary import Vocabulary
 from vecto.utils.data import save_json, load_json, detect_archive_format_and_open
@@ -182,8 +183,8 @@ class WordEmbeddingsDense(WordEmbeddings):
         colors = brewer2mpl.get_map('Set2', 'qualitative', 8).mpl_colors
         cnt = 0
         for i in wl:
-            row = self.get_row(i)
-            row = row / np.linalg.norm(row)
+            row = self.get_vector(i)
+            row = normed(row)
             if colored:
                 plt.bar(range(0, len(row)), row, color=colors[cnt], linewidth=0, alpha=0.6, label=i)
             else:
