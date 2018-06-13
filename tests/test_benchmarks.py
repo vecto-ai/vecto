@@ -3,7 +3,6 @@
 import unittest
 from vecto.benchmarks.similarity import Similarity
 from vecto.benchmarks.sequence_labeling import Sequence_labeling
-from vecto.benchmarks.language_modeling import Language_modeling
 from vecto.benchmarks.analogy import visualize as analogy_visualize
 from vecto.benchmarks.similarity import visualize as similarity_visualize
 from vecto.benchmarks.analogy import *
@@ -107,4 +106,5 @@ class Tests(unittest.TestCase):
             for subtask in ['chunk', 'pos', 'ner']:  # , 'chunk', 'pos', 'ner'
                 results = sequence_labeling.get_result(embs, os.path.join(path_sequence_labeling_dataset, subtask))
                 print(results)
+
 
