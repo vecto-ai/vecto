@@ -1,8 +1,10 @@
 """Tests for embeddings module."""
 
 import unittest
+from unittest.mock import patch
 import numpy as np
 from vecto.embeddings.dense import WordEmbeddingsDense
+from vecto.embeddings.base import WordEmbeddings
 from vecto.embeddings import load_from_dir
 from vecto.vocabulary import Vocabulary
 
@@ -55,3 +57,8 @@ class Tests(unittest.TestCase):
         vocab = Vocabulary()
         vocab.load(path_vocab)
         embs.filter_by_vocab(["the", "apple"])
+
+    @patch.multiple(WordEmbeddings, __abstractmethods__=set())
+    def test_abc(self):
+        obj = WordEmbeddings()
+        obj.get_vector("banana")
