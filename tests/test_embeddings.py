@@ -54,4 +54,4 @@ class Tests(unittest.TestCase):
         path_vocab = "./tests/data/vocabs/plain"
         vocab = Vocabulary()
         vocab.load(path_vocab)
-        # embs.filter_by_vocab(["the", "apple"])
+        embs.filter_by_vocab(["the", "apple"])

@@ -149,8 +149,18 @@ class WordEmbeddingsDense(WordEmbeddings):
         self.vocabulary.lst_frequencies = np.zeros(len(self.vocabulary.lst_words), dtype=np.int32)
         self.name = os.path.basename(os.path.dirname(os.path.normpath(path)))
 
+    def _populate_from_source_and_wordlist(self, source, wordlist):
+        self.metadata["class"] = "embeddings"
+        self.metadata["source"] = source.metadata
+        self.vocabulary = source.vocabulary.filter_by_wordlist(wordlist)
+        self.metadata["vocabulary"] = self.vocabulary.metadata
+        lst_new_vectors = []
+        for w in self.vocabulary.lst_words:
+            lst_new_vectors.append(source.get_vector(w))
+        self.matrix = np.array(lst_new_vectors, dtype=np.float32)
+
     def filter_by_vocab(self, words):
-        """reduced embeddings to the provided list of words (which can be empty)
+        """reduced embeddings to the provided list of words
 
         Args:
             words: set or list of words to keep
@@ -161,19 +171,9 @@ class WordEmbeddingsDense(WordEmbeddings):
         """
         if len(words) == 0:
             return self
-        else:
-            new_embds = WordEmbeddingsDense()
-            new_embds.vocabulary = Vocabulary()
-            lst_new_vectors = []
-            i = 0
-            for w in self.vocabulary.lst_words:
-                if w in words:
-                    lst_new_vectors.append(self.get_vector(w))
-            new_embds.matrix = np.array(lst_new_vectors, dtype=np.float32)
-            #new_embds.vocabulary.metadata = {}
-            new_embds.metadata = self.metadata
-            new_embds.metadata["vocabulary"] = new_embds.vocabulary.metadata
-            return new_embds
+        new_embds = WordEmbeddingsDense()
+        new_embds._populate_from_source_and_wordlist(self, words)
+        return new_embds
 
     def get_x_label(self, i):
         return i
