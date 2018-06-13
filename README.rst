@@ -5,6 +5,10 @@ vecto
     :target: https://travis-ci.org/vecto-ai/vecto
     :alt: build status from Travis CI
 
+.. image:: https://ci.appveyor.com/api/projects/status/github/vecto-ai/vecto?branch=master&svg=true
+    :target: https://ci.appveyor.com/project/vecto-ai/vecto
+    :alt: build status from AppVeyor
+
 .. image:: https://coveralls.io/repos/github/vecto-ai/vecto/badge.svg?branch=master
     :target: https://coveralls.io/github/vecto-ai/vecto?branch=master
     :alt: coveralls badge
