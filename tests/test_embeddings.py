@@ -41,3 +41,4 @@ class Tests(unittest.TestCase):
         embs.save_to_dir(path_save)
         embs = load_from_dir(path_save)
         print(embs.matrix.shape)
+        embs.save_to_dir_plain_txt("/tmp/vecto/saved_plain")
