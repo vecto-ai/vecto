@@ -162,22 +162,15 @@ class WordEmbeddingsDense(WordEmbeddings):
         if len(words) == 0:
             return self
         else:
-            new_embds = ModelDense()
+            new_embds = WordEmbeddingsDense()
             new_embds.vocabulary = Vocabulary()
             lst_new_vectors = []
             i = 0
             for w in self.vocabulary.lst_words:
                 if w in words:
-                    lst_new_vectors.append(self.get_row(w))
-                    new_embds.vocabulary.lst_words.append(w)
-                    new_embds.vocabulary.lst_frequencies.append(self.vocabulary.get_frequency(w))
-                    new_embds.vocabulary.dic_words_ids[w] = i
-                    i += 1
+                    lst_new_vectors.append(self.get_vector(w))
             new_embds.matrix = np.array(lst_new_vectors, dtype=np.float32)
-            new_embds.vocabulary.metadata = {}
-            new_embds.vocabulary.metadata["cnt_words"] = i
-            new_embds.vocabulary.metadata["transform"] = "reduced by wordlist"
-            new_embds.vocabulary.metadata["original"] = self.vocabulary.metadata
+            #new_embds.vocabulary.metadata = {}
             new_embds.metadata = self.metadata
             new_embds.metadata["vocabulary"] = new_embds.vocabulary.metadata
             return new_embds

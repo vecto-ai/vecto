@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 from vecto.embeddings.dense import WordEmbeddingsDense
 from vecto.embeddings import load_from_dir
+from vecto.vocabulary import Vocabulary
 
 
 class Tests(unittest.TestCase):
@@ -47,3 +48,10 @@ class Tests(unittest.TestCase):
         embs = load_from_dir(path_save)
         print(embs.matrix.shape)
         embs.save_to_dir_plain_txt("/tmp/vecto/saved_plain")
+
+    def test_filter(self):
+        embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
+        path_vocab = "./tests/data/vocabs/plain"
+        vocab = Vocabulary()
+        vocab.load(path_vocab)
+        # embs.filter_by_vocab(["the", "apple"])
