@@ -68,8 +68,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         save_json(self.metadata, os.path.join(path, "metadata.json"))
 
     def save_to_dir_plain_txt(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
         with open(os.path.join(path, 'vectors.txt'), 'w') as output:
             for i, w in enumerate(self.vocabulary.lst_words):
                 if len(w.strip()) == 0:
