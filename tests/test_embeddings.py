@@ -51,6 +51,7 @@ class Tests(unittest.TestCase):
 
         results = embs.get_most_similar_words(embs.get_vector('apple'), 5)
         print(results)
+        embs.get_x_label(0)
 
     def test_save(self):
         embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
