@@ -30,18 +30,6 @@ def load_from_dir(path):
 #        result.load_metadata(path)
 #        return result
 
-#    if os.path.isfile(os.path.join(path, "sgns.words.npy")):
-#        result = ModelLevy()
-#        logger.info("this is Levi")
-#        result.load_from_dir(path)
-#        result.load_metadata(path)
-#        return result
-    if os.path.isfile(os.path.join(path, "vectors.npy")):
-        result = ModelNumbered()
-        logger.info("detected as dense ")
-        result.load_npy(path)
-        result.load_metadata(path)
-        return result
     if os.path.isfile(os.path.join(path, "vectors.h5p")):
         result = vecto.embeddings.dense.WordEmbeddingsDense()
         logger.info("detected as vecto format ")
