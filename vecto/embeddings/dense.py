@@ -136,7 +136,7 @@ class WordEmbeddingsDense(WordEmbeddings):
                     vec_size = len(str_vec)
                 if vec_size != len(str_vec):
                     print(line)
-                    continue
+                    raise RuntimeError("line size changed")
                 row = np.zeros(len(str_vec), dtype=np.float32)
                 for j in range(len(str_vec)):
                     row[j] = float(str_vec[j])
