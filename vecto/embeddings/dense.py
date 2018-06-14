@@ -68,8 +68,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         save_json(self.metadata, os.path.join(path, "metadata.json"))
 
     def save_to_dir_plain_txt(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
         with open(os.path.join(path, 'vectors.txt'), 'w') as output:
             for i, w in enumerate(self.vocabulary.lst_words):
                 if len(w.strip()) == 0:
@@ -136,7 +135,7 @@ class WordEmbeddingsDense(WordEmbeddings):
                     vec_size = len(str_vec)
                 if vec_size != len(str_vec):
                     print(line)
-                    continue
+                    raise RuntimeError("line size changed")
                 row = np.zeros(len(str_vec), dtype=np.float32)
                 for j in range(len(str_vec)):
                     row[j] = float(str_vec[j])
