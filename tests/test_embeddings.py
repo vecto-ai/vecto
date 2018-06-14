@@ -57,6 +57,7 @@ class Tests(unittest.TestCase):
         vocab = Vocabulary()
         vocab.load(path_vocab)
         embs.filter_by_vocab(["the", "apple"])
+        embs.filter_by_vocab([])
 
     @patch.multiple(WordEmbeddings, __abstractmethods__=set())
     def test_abc(self):
@@ -66,3 +67,4 @@ class Tests(unittest.TestCase):
     def test_viz(self):
         embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
         embs.viz_wordlist(["the", "apple"], colored=True, show_legend=True)
+        embs.viz_wordlist(["the", "apple"], colored=False, show_legend=False)
