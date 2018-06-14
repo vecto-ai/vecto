@@ -36,6 +36,11 @@ class Tests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             embs = load_from_dir("tests/data/embeddings/text")
 
+    def test_normalize(self):
+        embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
+        embs.normalize()
+        embs.cache_normalized_copy()
+
     def test_utils(self):
         embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
         results = embs.get_most_similar_words('apple', 5)
