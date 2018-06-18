@@ -3,6 +3,7 @@
 import unittest
 from vecto.benchmarks.similarity import Similarity
 from vecto.benchmarks.sequence_labeling import Sequence_labeling
+from vecto.benchmarks.language_modeling import Language_modeling
 from vecto.benchmarks.analogy import visualize as analogy_visualize
 from vecto.benchmarks.similarity import visualize as similarity_visualize
 from vecto.benchmarks.analogy import *
@@ -107,4 +108,13 @@ class Tests(unittest.TestCase):
                 results = sequence_labeling.get_result(embs, os.path.join(path_sequence_labeling_dataset, subtask))
                 print(results)
 
+    def test_path_language_modeling(self):
+        embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
 
+        for method in ['lr', '2FFNN', 'rnn', 'lstm']:
+            sequence_labeling = Language_modeling(test=True, method=method)
+            results = sequence_labeling.get_result(embs)
+            print(results)
+
+
+Tests().test_path_language_modeling()

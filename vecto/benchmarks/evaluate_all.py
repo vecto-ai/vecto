@@ -11,6 +11,8 @@ from multiprocessing import Pool
 from multiprocessing import Process
 import copy
 from vecto.benchmarks.similarity import Similarity
+from vecto.benchmarks.sequence_labeling import Sequence_labeling
+
 from vecto.benchmarks.analogy import visualize as analogy_visualize
 from vecto.benchmarks.similarity import visualize as similarity_visualize
 from vecto.benchmarks.analogy import *
@@ -21,14 +23,13 @@ from vecto.benchmarks.fetch_benchmarks import fetch_benchmarks
 from os import path
 
 test_word_similarity = True
-test_word_analogy_bats = False
-test_word_analogy_google = False
+test_word_analogy = False
 test_sequence_labeling = False
 test_text_classification = False
 test_machine_translation = False
 test_language_modeling = False
-default_path_root_dataset = "~/"
-default_folder_name_keys = []
+default_path_root_dataset = "/home/users/bofang/work/data/NLP/datasets/"
+default_folder_name_keys = ['task', 'dataset', 'method', 'measurement']
 
 
 def parse_args(args=None):
@@ -76,7 +77,9 @@ def worth_evaluate(path):
 
     if not os.path.isfile(os.path.join(path, "vectors.h5p")) \
             and not os.path.isfile(os.path.join(path, "vectors.txt")) \
-            and not os.path.isfile(os.path.join(path, "vectors.bin")) and not has_npy:
+            and not os.path.isfile(os.path.join(path, "vectors.bin")) \
+            and not os.path.isfile(os.path.join(path, "vectors.vec")) \
+            and not has_npy:
         return False
     return True
 
@@ -92,8 +95,26 @@ def run(args):
     print(args.path_vector)
     if test_word_similarity is True:
         similarity = Similarity()
-        result = similarity.get_result(embs, args.path_root_dataset)
-        write_results(args, result)
+        results = similarity.get_result(embs, os.path.join(args.path_root_dataset, "similarity"))
+        write_results(args, results)
+
+    if test_word_analogy is True:
+        analogy = LRCos()
+
+        results = analogy.get_result(embs, os.path.join(args.path_root_dataset, "analogies", "Google_dir"),
+                                     group_subcategory=True)
+        write_results(args, results)
+
+        # result = analogy.get_result(embs, os.path.join(args.path_root_dataset, "analogies", "BATS_3.0"), group_subcategory=True)
+        # write_results(args, result)
+
+    if test_sequence_labeling is True:
+        sequence_labeling = Sequence_labeling()
+
+        for subtask in ['chunk', 'pos', 'ner']:  # , 'chunk', 'pos', 'ner'
+            results = sequence_labeling.get_result(embs,
+                                                   os.path.join(args.path_root_dataset, "sequence_labeling", subtask))
+            write_results(args, results)
 
 
 def main(args=None):
