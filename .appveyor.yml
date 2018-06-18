@@ -37,14 +37,14 @@ build_script:
   - "%CMD_IN_ENV% python setup.py build"
 
 test_script:
-  - "%CMD_IN_ENV% python -m unittest discover"
+  # - "%CMD_IN_ENV% python -m unittest discover"
   - "%CMD_IN_ENV% python -m coverage run --branch --source . -m unittest discover --verbose"
-  - "%CMD_IN_ENV% python -m coverage run --source . setup.py test"
+  # - "%CMD_IN_ENV% python -m coverage run --source . setup.py test"
 
 after_test:
   - "%CMD_IN_ENV% python setup.py bdist_wheel"
-  - "%CMD_IN_ENV% python setup.py bdist_wininst"
-  - "%CMD_IN_ENV% python setup.py bdist_msi"
+  # - "%CMD_IN_ENV% python setup.py bdist_wininst"
+  # - "%CMD_IN_ENV% python setup.py bdist_msi"
   - ps: "ls dist"
 
 artifacts:

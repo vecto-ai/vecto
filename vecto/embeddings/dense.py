@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 import brewer2mpl
 import os
+from matplotlib import pyplot as plt
 from vecto.utils.blas import normed
 from vecto.vocabulary import Vocabulary
 from vecto.utils.data import save_json, load_json, detect_archive_format_and_open
@@ -59,8 +60,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         self.name += os.path.basename(os.path.normpath(path))
 
     def save_to_dir(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
         self.vocabulary.save_to_dir(path)
         # self.matrix.tofile(os.path.join(path,"vectors.bin"))
         # np.save(os.path.join(path, "vectors.npy"), self.matrix)
@@ -68,8 +68,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         save_json(self.metadata, os.path.join(path, "metadata.json"))
 
     def save_to_dir_plain_txt(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
         with open(os.path.join(path, 'vectors.txt'), 'w') as output:
             for i, w in enumerate(self.vocabulary.lst_words):
                 if len(w.strip()) == 0:
@@ -152,8 +151,18 @@ class WordEmbeddingsDense(WordEmbeddings):
         self.vocabulary.lst_frequencies = np.zeros(len(self.vocabulary.lst_words), dtype=np.int32)
         self.name = os.path.basename(os.path.dirname(os.path.normpath(path)))
 
+    def _populate_from_source_and_wordlist(self, source, wordlist):
+        self.metadata["class"] = "embeddings"
+        self.metadata["source"] = source.metadata
+        self.vocabulary = source.vocabulary.filter_by_wordlist(wordlist)
+        self.metadata["vocabulary"] = self.vocabulary.metadata
+        lst_new_vectors = []
+        for w in self.vocabulary.lst_words:
+            lst_new_vectors.append(source.get_vector(w))
+        self.matrix = np.array(lst_new_vectors, dtype=np.float32)
+
     def filter_by_vocab(self, words):
-        """reduced embeddings to the provided list of words (which can be empty)
+        """reduced embeddings to the provided list of words
 
         Args:
             words: set or list of words to keep
@@ -164,26 +173,9 @@ class WordEmbeddingsDense(WordEmbeddings):
         """
         if len(words) == 0:
             return self
-        else:
-            new_embds = ModelDense()
-            new_embds.vocabulary = Vocabulary()
-            lst_new_vectors = []
-            i = 0
-            for w in self.vocabulary.lst_words:
-                if w in words:
-                    lst_new_vectors.append(self.get_row(w))
-                    new_embds.vocabulary.lst_words.append(w)
-                    new_embds.vocabulary.lst_frequencies.append(self.vocabulary.get_frequency(w))
-                    new_embds.vocabulary.dic_words_ids[w] = i
-                    i += 1
-            new_embds.matrix = np.array(lst_new_vectors, dtype=np.float32)
-            new_embds.vocabulary.metadata = {}
-            new_embds.vocabulary.metadata["cnt_words"] = i
-            new_embds.vocabulary.metadata["transform"] = "reduced by wordlist"
-            new_embds.vocabulary.metadata["original"] = self.vocabulary.metadata
-            new_embds.metadata = self.metadata
-            new_embds.metadata["vocabulary"] = new_embds.vocabulary.metadata
-            return new_embds
+        new_embds = WordEmbeddingsDense()
+        new_embds._populate_from_source_and_wordlist(self, words)
+        return new_embds
 
     def get_x_label(self, i):
         return i
@@ -192,8 +184,8 @@ class WordEmbeddingsDense(WordEmbeddings):
         colors = brewer2mpl.get_map('Set2', 'qualitative', 8).mpl_colors
         cnt = 0
         for i in wl:
-            row = self.get_row(i)
-            row = row / np.linalg.norm(row)
+            row = self.get_vector(i)
+            row = normed(row)
             if colored:
                 plt.bar(range(0, len(row)), row, color=colors[cnt], linewidth=0, alpha=0.6, label=i)
             else:

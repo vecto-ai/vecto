@@ -4,10 +4,18 @@ import os
 import math
 from ..base import Benchmark
 import csv
+from json import load
+from collections import defaultdict
+from os import path
+
+METADATA = 'metadata'
+BENCHMARK = 'benchmark'
+METADATA_EXT = '.json'
+PLAINTEXT_EXT = '.txt'
+OTHER_EXT = 'None'
 
 
 class Similarity(Benchmark):
-
     def __init__(self, normalize=True, ignore_oov=True):
         self.normalize = normalize
         self.ignore_oov = ignore_oov
@@ -63,29 +71,60 @@ class Similarity(Benchmark):
         # print(actual)
         return spearmanr(actual, expected)[0], cnt_found_pairs_total, details
 
+    def read_single_dataset(self, path_to_dir, file_name):
+        dataset_name, file_extension = path.splitext(file_name)
+        if file_extension == METADATA_EXT:
+            with open(os.path.join(path_to_dir, file_name)) as f:
+                data = load(f, strict=False)
+            return METADATA, dataset_name, data
+        elif file_extension == PLAINTEXT_EXT:
+            data = self.read_test_set(os.path.join(path_to_dir, file_name))
+            return BENCHMARK, dataset_name, data
+        else:
+            return OTHER_EXT, None, None
+
+    def read_datasets_from_dir(self, path_to_dir):
+        datasets = defaultdict(lambda: {})
+        for file in os.listdir(path_to_dir):
+            type, dataset_name, dataset_data = self.read_single_dataset(path_to_dir, file)
+            if type != OTHER_EXT:
+                datasets[dataset_name][type] = dataset_data
+        return datasets
+
+    def make_metadata_dict(self, metadata, found_pairs, benchmark_len, dataset_name, embeddings_metadata):
+        experiment_setup = {}
+        experiment_setup['cnt_found_pairs_total'] = found_pairs
+        experiment_setup['cnt_pairs_total'] = benchmark_len
+        experiment_setup['embeddings'] = embeddings_metadata
+        experiment_setup['category'] = "default"
+        experiment_setup['dataset'] = dataset_name
+        experiment_setup['method'] = "cosine_distance"
+        experiment_setup['language'] = metadata['language']
+        experiment_setup['description'] = metadata['description']
+        experiment_setup['version'] = metadata['version']
+        experiment_setup['measurement'] = "spearman"
+        experiment_setup['task'] = metadata['task']
+        experiment_setup['timestamp'] = datetime.datetime.now().isoformat()
+        return experiment_setup
+
+    def make_result(self, result, details, metadata_dict):
+        out = {}
+        out["experiment_setup"] = metadata_dict
+        out['result'] = result
+        out['details'] = details
+        return out
+
     def run(self, embs, path_dataset):
         results = []
-        for file in os.listdir(path_dataset):
-            if file.endswith('json'):
-                continue
-            testset = self.read_test_set(os.path.join(path_dataset, file))
-
-            out = dict()
-            out["result"], cnt_found_pairs_total, out["details"] = self.evaluate(embs, testset)
-
-            experiment_setup = dict()
-            experiment_setup["cnt_found_pairs_total"] = cnt_found_pairs_total
-            experiment_setup["cnt_pairs_total"] = len(testset)
-            experiment_setup["embeddings"] = embs.metadata
-            experiment_setup["category"] = "default"
-            experiment_setup["dataset"] = os.path.splitext(file)[0]
-            experiment_setup["method"] = "cosine_distance"
-            experiment_setup["measurement"] = "spearman"
-            experiment_setup["task"] = "word_similarity"
-            experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
-            out["experiment_setup"] = experiment_setup
-            results.append(out)
-
+        datasets = self.read_datasets_from_dir(path_dataset)
+        for dataset_name, dataset_data in datasets.items():
+            result, cnt_found_pairs_total, details = self.evaluate(embs, dataset_data[BENCHMARK])
+            metadata_dict = self.make_metadata_dict(dataset_data[METADATA],
+                                                    found_pairs=cnt_found_pairs_total,
+                                                    benchmark_len=len(dataset_data[BENCHMARK]),
+                                                    dataset_name=dataset_name,
+                                                    embeddings_metadata=embs.metadata)
+            results.append(self.make_result(result, details, metadata_dict))
         return results
 
     def get_result(self, embs, path_dataset):

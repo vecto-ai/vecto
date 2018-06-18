@@ -557,7 +557,7 @@ class ThreeCosMul2(PairWise):
 #         return result
 
 
-class TheeCosAvg(Analogy):
+class ThreeCosAvg(Analogy):
 
     def do_test_on_pairs(self, p_train, p_test):
         cnt_total = 0

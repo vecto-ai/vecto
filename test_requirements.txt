@@ -1,5 +1,7 @@
 pip >= 10.0
 setuptools >= 20.5
+docutils
+pygments
 wheel
 fabric3
 progressbar2
