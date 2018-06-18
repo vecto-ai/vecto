@@ -12,6 +12,7 @@ METADATA = 'metadata'
 BENCHMARK = 'benchmark'
 METADATA_EXT = '.json'
 PLAINTEXT_EXT = '.txt'
+CSV_EXT = '.csv'
 OTHER_EXT = 'None'
 
 
@@ -78,6 +79,9 @@ class Similarity(Benchmark):
                 data = load(f, strict=False)
             return METADATA, dataset_name, data
         elif file_extension == PLAINTEXT_EXT:
+            data = self.read_test_set(os.path.join(path_to_dir, file_name))
+            return BENCHMARK, dataset_name, data
+        elif file_extension == CSV_EXT:
             data = self.read_test_set(os.path.join(path_to_dir, file_name))
             return BENCHMARK, dataset_name, data
         else:
