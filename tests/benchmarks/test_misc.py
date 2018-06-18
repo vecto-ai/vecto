@@ -1,7 +1,7 @@
 """Tests for embeddings module."""
 
 import unittest
-from os import path
+import os
 
 import vecto
 from vecto.benchmarks import text_classification
@@ -34,20 +34,6 @@ class Tests(unittest.TestCase):
         print(result)
 
         similarity_visualize.plot_accuracy()
-
-    def test_fetcher(self):
-        if path.isdir(path.join('.', 'tests', 'data', 'benchmarks_test')):
-            return
-        fetch_benchmarks(path.join('.', 'tests', 'data', 'benchmarks_test'))
-#         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
-#         similarity = Similarity()
-#         path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks_test', 'benchmarks', 'similarity', 'en')
-#         result = similarity.get_result(embs, path_similarity_dataset),
-
-        # big embs and dataset test
-        # embs = load_from_dir("/home/bofang/Documents/embeddings/negative_sampling/fair/")
-        # result = analogy.get_result(embs, "/home/bofang/Downloads/BATS_3.0_small")
-        # print(result)
 
     def test_fetcher(self):
         if path.isdir(path.join('.', 'tests', 'data', 'benchmarks_test')):
@@ -89,7 +75,7 @@ class Tests(unittest.TestCase):
                 results = sequence_labeling.get_result(embs, os.path.join(path_sequence_labeling_dataset, subtask))
                 print(results)
 
-    def test_path_language_modeling(self):
+    def test_language_modeling(self):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
 
         for method in ['lr', '2FFNN', 'rnn', 'lstm']:
@@ -102,4 +88,4 @@ class Tests(unittest.TestCase):
         base = vecto.benchmarks.base.Benchmark()
         base.get_result(1, 2)
 
-# Tests().test_path_language_modeling()
+# Tests().test_language_modeling()
