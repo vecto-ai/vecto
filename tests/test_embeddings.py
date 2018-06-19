@@ -77,5 +77,3 @@ class Tests(unittest.TestCase):
         embs = load_from_dir("tests/data/embeddings/text/plain_with_file_header")
         embs.viz_wordlist(["the", "apple"], colored=True, show_legend=True)
         embs.viz_wordlist(["the", "apple"], colored=False, show_legend=False)
-
-# Tests().test_load()
