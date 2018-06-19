@@ -217,10 +217,10 @@ class BPTTUpdater(training.StandardUpdater):
 
 # Routine to rewrite the result dictionary of LogReport to add perplexity
 # values
-# def compute_perplexity(result):
-#     result['perplexity'] = np.exp(result['main/loss'])
-#     if 'validation/main/loss' in result:
-#         result['val_perplexity'] = np.exp(result['validation/main/loss'])
+def compute_perplexity(result):
+    result['perplexity'] = np.exp(result['main/loss'])
+    if 'validation/main/loss' in result:
+        result['val_perplexity'] = np.exp(result['validation/main/loss'])
 
 
 class Language_modeling(Benchmark):
