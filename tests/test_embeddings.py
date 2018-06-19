@@ -31,8 +31,7 @@ class Tests(unittest.TestCase):
         embs.get_vector('apple')
         with self.assertRaises(RuntimeError):
             embs.get_vector('word_that_not_in_vocabulary_27')
-        with self.assertRaises(AssertionError):
-            embs = load_from_dir("tests/data/embeddings/text/corrupted")
+        embs = load_from_dir("tests/data/embeddings/text/corrupted")
         with self.assertRaises(RuntimeError):
             embs = load_from_dir("tests/data/embeddings/text")
 

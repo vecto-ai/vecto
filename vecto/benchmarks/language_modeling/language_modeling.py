@@ -150,11 +150,11 @@ class ParallelSequentialIterator(chainer.dataset.Iterator):
         # Floating point version of epoch.
         return self.iteration * self.batch_size / len(self.dataset)
 
-    @property
-    def previous_epoch_detail(self):
-        if self._previous_epoch_detail < 0:
-            return None
-        return self._previous_epoch_detail
+    # @property
+    # def previous_epoch_detail(self):
+    #     if self._previous_epoch_detail < 0:
+    #         return None
+    #     return self._previous_epoch_detail
 
     def get_words(self):
         # It returns a list of current words.
