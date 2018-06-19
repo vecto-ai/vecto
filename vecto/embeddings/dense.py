@@ -118,12 +118,12 @@ class WordEmbeddingsDense(WordEmbeddings):
         header = False
         vec_size = -1
         with detect_archive_format_and_open(path) as f:
-            for line in f:
+            for line_number, line in enumerate(f):
                 tokens = line.split()
                 if i == 0 and len(tokens) == 2:
                     header = True
                     cnt_words = int(tokens[0])
-                    size_embedding = int(tokens[1])
+                    vec_size = int(tokens[1])
                     continue
                 # word = tokens[0].decode('ascii',errors="ignore")
                 # word = tokens[0].decode('UTF-8', errors="ignore")
@@ -134,8 +134,11 @@ class WordEmbeddingsDense(WordEmbeddings):
                 if vec_size == -1:
                     vec_size = len(str_vec)
                 if vec_size != len(str_vec):
-                    print(line)
-                    raise RuntimeError("line size changed")
+                    warning_message = "input error in line {}, expected tokens: {}, read tokens: {}, line: {}  ".format(
+                        line_number, vec_size,
+                        len(str_vec), line)
+                    warnings.warn(warning_message)
+                    continue
                 row = np.zeros(len(str_vec), dtype=np.float32)
                 for j in range(len(str_vec)):
                     row[j] = float(str_vec[j])
@@ -145,7 +148,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         #     assert cnt_words == len(rows)
         self.matrix = np.vstack(rows)
         if header:
-            assert size_embedding == self.matrix.shape[1]
+            assert vec_size == self.matrix.shape[1]
         self.vocabulary.lst_frequencies = np.zeros(len(self.vocabulary.lst_words), dtype=np.int32)
         self.name = os.path.basename(os.path.dirname(os.path.normpath(path)))
 
