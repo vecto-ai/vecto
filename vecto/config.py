@@ -8,5 +8,5 @@ def load_config():
         c = load_pyconfig_files(['config.py'], default_dir)
         return c
     else:
-        raise ValueError('configuration file not find, please create one in ~/.vecto/config.py')
+        raise ValueError('configuration file not found, please create one in ~/.vecto/config.py')
         exit(0)
