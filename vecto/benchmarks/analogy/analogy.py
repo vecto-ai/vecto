@@ -13,6 +13,7 @@ import re
 import json
 from itertools import product
 import logging
+from vecto.utils.data import jsonify
 
 
 class Analogy(Benchmark):
@@ -52,20 +53,6 @@ class Analogy(Benchmark):
     @property
     def method(self):
         return type(self).__name__
-
-    def jsonify(self, data):
-        json_data = dict()
-        for key, value in data.items():
-            if isinstance(value, list):  # for lists
-                value = [self.jsonify(item) if isinstance(item, dict) else item for item in value]
-            if isinstance(value, dict):  # for nested lists
-                value = self.jsonify(value)
-            if isinstance(key, int):  # if key is integer: > to string
-                key = str(key)
-            if type(value).__module__ == 'numpy':  # if value is numpy.*: > to python list
-                value = value.tolist()
-            json_data[key] = value
-        return json_data
 
     def normed(self, v):
         if self.normalize:
@@ -322,7 +309,7 @@ class Analogy(Benchmark):
             out['result'] = -1
         else:
             out['result'] = self.cnt_total_correct / self.cnt_total_total
-        str_results = json.dumps(self.jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
+        str_results = json.dumps(jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
         return out
 
     def get_pairs(self, fname):
