@@ -1,29 +1,18 @@
 import datetime
-from scipy.stats.stats import spearmanr
 import os
-import math
 from ..base import Benchmark
 import numpy as np
-import math
 import random
 import scipy
 from tqdm import tqdm
 import progressbar
-import os
 import fnmatch
 import sklearn
 from sklearn.linear_model import LogisticRegression
 import re
-import datetime
 import json
-import csv
-import sys
-import yaml
 from itertools import product
 import logging
-import inspect
-
-
 
 
 class Analogy(Benchmark):
@@ -46,14 +35,13 @@ class Analogy(Benchmark):
         self.size_cv_test = size_cv_test
         self.set_aprimes_test = set_aprimes_test
         self.inverse_regularization_strength = inverse_regularization_strength
-        self.exclude=exclude
+        self.exclude = exclude
         self.name_classifier = name_classifier
         self.name_kernel = name_kernel
 
         self.stats = {}
         self.cnt_total_correct = 0
         self.cnt_total_total = 0
-
 
         # this are some hard-coded bits which will be implemented later
         self.result_miss = {
@@ -312,11 +300,7 @@ class Analogy(Benchmark):
                 p_train = [pairs[i] for i in train]
                 # p_train = [x for x in p_train if not is_pair_missing(x)]
                 cnt += 1
-                # print("upgrading tqdm, total =", cnt_splits, "done = ", cnt)
                 my_prog.update(cnt)
-                # print("done")
-                # print(p_train)
-                # print(p_test)
                 details += self.do_test_on_pairs(p_train, p_test)
 
         out = dict()
@@ -440,7 +424,6 @@ class Analogy(Benchmark):
             embs.normalize()
         results = self.run(embs, path_dataset, group_subcategory)
         return results
-
 
 
 class PairWise(Analogy):
