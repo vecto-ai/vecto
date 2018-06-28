@@ -1,4 +1,4 @@
-"""Tests for embeddings module."""
+"""Tests for analogy benchmark."""
 
 import unittest
 from os import path
@@ -6,7 +6,6 @@ from os import path
 from vecto.benchmarks.analogy import *
 from vecto.benchmarks.analogy import visualize as analogy_visualize
 from vecto.embeddings import load_from_dir
-from os import path
 
 
 path_analogy_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'analogy')
@@ -46,10 +45,3 @@ class Tests(unittest.TestCase):
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
         analogy_visualize.plot_accuracy()
-
-        # big embs and dataset test
-        # embs = load_from_dir("/home/bofang/Documents/embeddings/negative_sampling/fair/")
-        # result = analogy.get_result(embs, "/home/bofang/Downloads/BATS_3.0_small")
-        # print(result)
-
-
