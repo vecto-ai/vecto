@@ -15,6 +15,8 @@ from itertools import product
 import logging
 from vecto.utils.data import jsonify
 
+logger = logging.getLogger(__name__)
+
 
 class Analogy(Benchmark):
 
@@ -275,7 +277,7 @@ class Analogy(Benchmark):
                     my_prog.update()
                     self.do_test_on_pairs(p_train, p_test, file_out)
                 if finished:
-                    print("finished")
+                    # print("finished")
                     break
 
         else:
@@ -355,18 +357,13 @@ class Analogy(Benchmark):
             for filename in fnmatch.filter(sorted(filenames), '*'):
                 if filename.endswith('json'):
                     continue
-                print(filename)
+                logger.info("processing" + filename)
                 pairs = self.get_pairs(os.path.join(root, filename))
                 # print(pairs)
                 out = self.run_category(pairs, name_category=os.path.basename(os.path.dirname(root)), name_subcategory=filename)
                 results.append(out)
-        print("")
-        print(len(results))
         if group_subcategory:
             results.extend(self.group_subcategory_results(results))
-        print(len(results))
-        for r in results:
-            print(r['experiment_setup'])
         return results
 
     def group_subcategory_results(self, results):
@@ -402,9 +399,9 @@ class Analogy(Benchmark):
             out.append(new_results[k])
         return out
 
-    def subsample_dims(self, newdim):
-        self.embs.matrix = self.embs.matrix[:, 0:newdim]
-        self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
+    #def subsample_dims(self, newdim):
+        #self.embs.matrix = self.embs.matrix[:, 0:newdim]
+        #self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
 
     def get_result(self, embs, path_dataset, group_subcategory=False):
         if self.normalize:
