@@ -78,11 +78,11 @@ class Analogy(Benchmark):
         scores = m_diff @ offset_target
         return scores
 
-    def is_at_least_one_word_present(self, words):
-        for w in words:
-            if self.embs.vocabulary.get_id(w) >= 0:
-                return True
-        return False
+    # def is_at_least_one_word_present(self, words):
+    #     for w in words:
+    #         if self.embs.vocabulary.get_id(w) >= 0:
+    #             return True
+    #     return False
 
     def is_pair_missing(self, pairs):
         for pair in pairs:
