@@ -7,12 +7,8 @@ class Dataset(WithMetaData):
     Arguments:
         path (str): local path to place files
     """
-    def __init__(self, filename, url, size, path='.', subset_pct=100):
-        # parameters to use in dataset config serialization
-        super(Dataset, self).__init__(name=None)
-        self.filename = filename
-        self.url = url
-        self.size = size
+
+    def __init__(self, path):
         self.path = path
 
     # define iterators?
