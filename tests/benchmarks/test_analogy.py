@@ -63,3 +63,10 @@ class Tests(unittest.TestCase):
                 "./tests/data/embeddings/text/plain_with_file_header/",
                 "./tests/data/benchmarks/analogy/",
                 "--path_out", "/tmp/vecto/r.json", "--method", "LRCos")
+
+        sio = io.StringIO()
+        with contextlib.redirect_stdout(sio):
+            run_module("vecto.benchmarks.analogy",
+                "./tests/data/embeddings/text/plain_with_file_header/",
+                "./tests/data/benchmarks/analogy/",
+                "--method", "3CosMul")
