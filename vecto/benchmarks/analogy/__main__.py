@@ -17,7 +17,7 @@ def print_json(data):
 def select_method(key):
     options = {}
     if key == "3CosAvg":
-        method = TheeCosAvg(options)
+        method = ThreeCosAvg(options)
     #elif key == "SimilarToAny":
     #    method = SimilarToAny(options)
     #elif key == "SimilarToB":
