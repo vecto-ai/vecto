@@ -110,14 +110,14 @@ class Analogy(Benchmark):
         Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
         return X, Y
 
-    def gen_vec_single_nonoise(self, pairs):
-        a, a_prime = zip(*pairs)
-        a_prime = [i for sublist in a_prime for i in sublist]
-        a_prime = [i for i in a_prime if self.embs.vocabulary.get_id(i) >= 0]
-        x = list(a_prime) + list(a)
-        X = np.array([self.embs.get_vector(i) for i in x])
-        Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
-        return X, Y
+    #def gen_vec_single_nonoise(self, pairs):
+    #    a, a_prime = zip(*pairs)
+    #    a_prime = [i for sublist in a_prime for i in sublist]
+    #    a_prime = [i for i in a_prime if self.embs.vocabulary.get_id(i) >= 0]
+    #    x = list(a_prime) + list(a)
+    #    X = np.array([self.embs.get_vector(i) for i in x])
+    #    Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
+    #    return X, Y
 
     def get_crowndedness(self, vector):
         scores = self.get_most_similar_fast(vector)
@@ -153,7 +153,6 @@ class Analogy(Benchmark):
 
     def process_prediction(self, p_test_one, scores, score_reg, score_sim, p_train=[]):
         ids_max = np.argsort(scores)[::-1]
-        id_question = self.embs.vocabulary.get_id(p_test_one[0])
         result = dict()
         cnt_answers_to_report = 6
         extr = ""
@@ -503,8 +502,6 @@ class ThreeCosMul2(PairWise):
 class ThreeCosAvg(Analogy):
 
     def do_test_on_pairs(self, p_train, p_test):
-        cnt_total = 0
-        cnt_correct = 0
         vecs_a = []
         vecs_a_prime = []
         for p in p_train:

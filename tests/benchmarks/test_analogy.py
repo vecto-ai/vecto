@@ -70,3 +70,11 @@ class Tests(unittest.TestCase):
                 "./tests/data/embeddings/text/plain_with_file_header/",
                 "./tests/data/benchmarks/analogy/",
                 "--method", "3CosMul")
+
+        sio = io.StringIO()
+        with self.assertRaises(RuntimeError):
+            with contextlib.redirect_stdout(sio):
+                run_module("vecto.benchmarks.analogy",
+                    "./tests/data/embeddings/text/plain_with_file_header/",
+                    "./tests/data/benchmarks/analogy/",
+                    "--method", "NONEXISTING")
