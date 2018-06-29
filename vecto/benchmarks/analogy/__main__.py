@@ -51,7 +51,7 @@ def main():
     benchmark = select_method(args.method)
     results = benchmark.get_result(embeddings, args.dataset)
     if args.path_out:
-        if os.path.isdir(args.path_out):
+        if os.path.isdir(args.path_out) or args.path_out.endswith("/"):
             dataset = os.path.basename(os.path.normpath(args.dataset))
             name_file_out = os.path.join(args.path_out, dataset, args.method, "results.json")
             save_json(results, name_file_out)
