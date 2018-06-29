@@ -1,8 +1,8 @@
 """Tests for analogy benchmark."""
 
 import unittest
+import sys
 from os import path
-
 from vecto.benchmarks.analogy import *
 from vecto.benchmarks.analogy import visualize as analogy_visualize
 from vecto.embeddings import load_from_dir
