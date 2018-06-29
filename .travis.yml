@@ -24,7 +24,7 @@ before_script: # configure a headless display to test plot generation
 script:
 # - python -m unittest discover
 - python -m coverage run --branch --source . -m unittest discover --verbose
-- python -m coverage run --branch --source . -m vecto.benchmarks.analogy ./tests/data/embeddings/text/plain_with_file_header/ ./tests/data/benchmarks/analogy/ --path_out=./ --method=3CosAdd
+# - python -m coverage run --branch --source . -m vecto.benchmarks.analogy ./tests/data/embeddings/text/plain_with_file_header/ ./tests/data/benchmarks/analogy/ --path_out=./ --method=3CosAdd
 # - python -m coverage run --source . setup.py test
 
 after_success:
