@@ -100,12 +100,11 @@ class Analogy(Benchmark):
         # a_prime=[i for sublist in a_prime for i in sublist]
         a_prime = [i for i in a_prime if self.embs.vocabulary.get_id(i) >= 0]
         a = [i for i in a if self.embs.vocabulary.get_id(i) >= 0]
-
-        noise = [random.choice(self.embs.vocabulary.lst_words) for i in range(l)]
+        cnt_noise = len(a)
+        noise = [random.choice(self.embs.vocabulary.lst_words) for i in range(cnt_noise)]
 
         if len(a_prime) == 0:
             a_prime.append(random.choice(self.embs.vocabulary.lst_words))
-
         x = list(a_prime) + list(a) + list(a) + list(a) + list(a) + noise
         X = np.array([self.embs.get_vector(i) for i in x])
         Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])

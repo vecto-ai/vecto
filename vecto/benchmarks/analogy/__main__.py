@@ -18,18 +18,16 @@ def select_method(key):
     options = {}
     if key == "3CosAvg":
         method = TheeCosAvg(options)
-    elif key == "SimilarToAny":
-        method = SimilarToAny(options)
-    elif key == "SimilarToB":
-        method = SimilarToB(options)
+    #elif key == "SimilarToAny":
+    #    method = SimilarToAny(options)
+    #elif key == "SimilarToB":
+    #    method = SimilarToB(options)
     elif key == "3CosMul":
         method = ThreeCosMul(options)
-    elif key == "3CosMul2":
-        method = ThreeCosMul2(options)
     elif key == "3CosAdd":
         method = LinearOffset(options)
-    elif key == "PairDistance":
-        method = PairDistance(options)
+    #elif key == "PairDistance":
+    #    method = PairDistance(options)
     elif key == "LRCos" or key == "SVMCos":
         method = LRCos(options)
     else:
