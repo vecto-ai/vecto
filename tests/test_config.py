@@ -9,6 +9,8 @@ class Tests(unittest.TestCase):
         default_dir = os.path.expanduser("~/.vecto/")
         os.makedirs(default_dir, exist_ok=True)
         path_config = os.path.join(default_dir, 'config.py')
+        with self.assertRaises(RuntimeError):
+            load_config()
         if not os.path.isfile(path_config):
             with open(path_config, "w") as f:
                 f.write("test=1")
