@@ -230,25 +230,6 @@ class Analogy(Benchmark):
             result["landing_a_prime"] = False
         return result
 
-    # def register_test_func(options):
-    #     if options["name_method"] == "3CosAvg":
-    #         do_test_on_pairs = TheeCosAvg(options)
-    #     elif options["name_method"] == "SimilarToAny":
-    #         do_test_on_pairs = SimilarToAny(options)
-    #     elif options["name_method"] == "SimilarToB":
-    #         do_test_on_pairs = SimilarToB(options)
-    #     elif options["name_method"] == "3CosMul":
-    #         do_test_on_pairs = ThreeCosMul(options)
-    #     elif options["name_method"] == "3CosMul2":
-    #         do_test_on_pairs = ThreeCosMul2(options)
-    #     elif options["name_method"] == "3CosAdd":
-    #         do_test_on_pairs = LinearOffset(options)
-    #     elif options["name_method"] == "PairDistance":
-    #         do_test_on_pairs = PairDistance(options)
-    #     elif options["name_method"] == "LRCos" or options["name_method"] == "SVMCos":
-    #         do_test_on_pairs = LRCos(options)
-    #     else:
-    #         raise Exception("method name not recognized")
 
     def run_category(self, pairs, name_category, name_subcategory):
 

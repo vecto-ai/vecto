@@ -14,16 +14,41 @@ def print_json(data):
     print(json.dumps(data, ensure_ascii=False, indent=4, sort_keys=False))
 
 
+def select_method(key):
+    options = {}
+    if key == "3CosAvg":
+        method = TheeCosAvg(options)
+    elif key == "SimilarToAny":
+        method = SimilarToAny(options)
+    elif key == "SimilarToB":
+        method = SimilarToB(options)
+    elif key == "3CosMul":
+        method = ThreeCosMul(options)
+    elif key == "3CosMul2":
+        method = ThreeCosMul2(options)
+    elif key == "3CosAdd":
+        method = LinearOffset(options)
+    elif key == "PairDistance":
+        method = PairDistance(options)
+    elif key == "LRCos" or key == "SVMCos":
+        method = LRCos(options)
+    else:
+        raise RuntimeError("method name not recognized")
+    return method
+
+
 def main():
     # config = load_config()
     # print(config)
     parser = argparse.ArgumentParser()
     parser.add_argument("embeddings")
     parser.add_argument("dataset")
+    parser.add_argument("--method", help="analogy solving method", default="LRCos")
     parser.add_argument("--path_out", help="destination folder to save results")
     args = parser.parse_args()
     embeddings = load_from_dir(args.embeddings)
-    benchmark = LRCos()
+    # choose methods
+    benchmark = select_method(args.method)
     results = benchmark.get_result(embeddings, args.dataset)
     if args.path_out:
         if os.path.isdir(args.path_out):
