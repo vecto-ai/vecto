@@ -1,14 +1,15 @@
 # requrements for vecto
+brewer2mpl
+chainer
+gitpython
 numpy
+nltk
+pandas
+progressbar2
+matplotlib
+scipy
+sklearn
 system-query
 tables
-scipy
+traitlets
 tqdm
-nltk
-brewer2mpl
-progressbar2
-gitpython
-sklearn
-pandas
-matplotlib
-chainer

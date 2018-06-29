@@ -1,29 +1,21 @@
 import datetime
-from scipy.stats.stats import spearmanr
 import os
-import math
 from ..base import Benchmark
 import numpy as np
-import math
 import random
 import scipy
 from tqdm import tqdm
 import progressbar
-import os
 import fnmatch
 import sklearn
 from sklearn.linear_model import LogisticRegression
 import re
-import datetime
 import json
-import csv
-import sys
-import yaml
 from itertools import product
 import logging
-import inspect
+from vecto.utils.data import jsonify
 
-
+logger = logging.getLogger(__name__)
 
 
 class Analogy(Benchmark):
@@ -46,14 +38,13 @@ class Analogy(Benchmark):
         self.size_cv_test = size_cv_test
         self.set_aprimes_test = set_aprimes_test
         self.inverse_regularization_strength = inverse_regularization_strength
-        self.exclude=exclude
+        self.exclude = exclude
         self.name_classifier = name_classifier
         self.name_kernel = name_kernel
 
         self.stats = {}
         self.cnt_total_correct = 0
         self.cnt_total_total = 0
-
 
         # this are some hard-coded bits which will be implemented later
         self.result_miss = {
@@ -64,20 +55,6 @@ class Analogy(Benchmark):
     @property
     def method(self):
         return type(self).__name__
-
-    def jsonify(self, data):
-        json_data = dict()
-        for key, value in data.items():
-            if isinstance(value, list):  # for lists
-                value = [self.jsonify(item) if isinstance(item, dict) else item for item in value]
-            if isinstance(value, dict):  # for nested lists
-                value = self.jsonify(value)
-            if isinstance(key, int):  # if key is integer: > to string
-                key = str(key)
-            if type(value).__module__ == 'numpy':  # if value is numpy.*: > to python list
-                value = value.tolist()
-            json_data[key] = value
-        return json_data
 
     def normed(self, v):
         if self.normalize:
@@ -101,11 +78,11 @@ class Analogy(Benchmark):
         scores = m_diff @ offset_target
         return scores
 
-    def is_at_least_one_word_present(self, words):
-        for w in words:
-            if self.embs.vocabulary.get_id(w) >= 0:
-                return True
-        return False
+    # def is_at_least_one_word_present(self, words):
+    #     for w in words:
+    #         if self.embs.vocabulary.get_id(w) >= 0:
+    #             return True
+    #     return False
 
     def is_pair_missing(self, pairs):
         for pair in pairs:
@@ -123,39 +100,35 @@ class Analogy(Benchmark):
         # a_prime=[i for sublist in a_prime for i in sublist]
         a_prime = [i for i in a_prime if self.embs.vocabulary.get_id(i) >= 0]
         a = [i for i in a if self.embs.vocabulary.get_id(i) >= 0]
-
-        l = len(a)
-        if l == 0:
-            l = 1
-        noise = [random.choice(self.embs.vocabulary.lst_words) for i in range(l)]
+        cnt_noise = len(a)
+        noise = [random.choice(self.embs.vocabulary.lst_words) for i in range(cnt_noise)]
 
         if len(a_prime) == 0:
             a_prime.append(random.choice(self.embs.vocabulary.lst_words))
-
         x = list(a_prime) + list(a) + list(a) + list(a) + list(a) + noise
         X = np.array([self.embs.get_vector(i) for i in x])
         Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
         return X, Y
 
-    def gen_vec_single_nonoise(self, pairs):
-        a, a_prime = zip(*pairs)
-        a_prime = [i for sublist in a_prime for i in sublist]
-        a_prime = [i for i in a_prime if self.embs.vocabulary.get_id(i) >= 0]
-        x = list(a_prime) + list(a)
-        X = np.array([self.embs.get_vector(i) for i in x])
-        Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
-        return X, Y
+    # def gen_vec_single_nonoise(self, pairs):
+    #     a, a_prime = zip(*pairs)
+    #     a_prime = [i for sublist in a_prime for i in sublist]
+    #     a_prime = [i for i in a_prime if self.embs.vocabulary.get_id(i) >= 0]
+    #     x = list(a_prime) + list(a)
+    #     X = np.array([self.embs.get_vector(i) for i in x])
+    #     Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
+    #     return X, Y
 
     def get_crowndedness(self, vector):
         scores = self.get_most_similar_fast(vector)
         scores.sort()
         return (scores[-11:-1][::-1]).tolist()
 
-    def create_list_test_right(self, pairs):
-        global set_aprimes_test
-        a, a_prime = zip(*pairs)
-        a_prime = [i for sublist in a_prime for i in sublist]
-        set_aprimes_test = set(a_prime)
+    # def create_list_test_right(self, pairs):
+    #     global set_aprimes_test
+    #     a, a_prime = zip(*pairs)
+    #     a_prime = [i for sublist in a_prime for i in sublist]
+    #     set_aprimes_test = set(a_prime)
 
     def get_distance_closest_words(self, center, cnt_words=1):
         scores = self.get_most_similar_fast(center)
@@ -180,7 +153,6 @@ class Analogy(Benchmark):
 
     def process_prediction(self, p_test_one, scores, score_reg, score_sim, p_train=[]):
         ids_max = np.argsort(scores)[::-1]
-        id_question = self.embs.vocabulary.get_id(p_test_one[0])
         result = dict()
         cnt_answers_to_report = 6
         extr = ""
@@ -253,25 +225,6 @@ class Analogy(Benchmark):
             result["landing_a_prime"] = False
         return result
 
-    # def register_test_func(options):
-    #     if options["name_method"] == "3CosAvg":
-    #         do_test_on_pairs = TheeCosAvg(options)
-    #     elif options["name_method"] == "SimilarToAny":
-    #         do_test_on_pairs = SimilarToAny(options)
-    #     elif options["name_method"] == "SimilarToB":
-    #         do_test_on_pairs = SimilarToB(options)
-    #     elif options["name_method"] == "3CosMul":
-    #         do_test_on_pairs = ThreeCosMul(options)
-    #     elif options["name_method"] == "3CosMul2":
-    #         do_test_on_pairs = ThreeCosMul2(options)
-    #     elif options["name_method"] == "3CosAdd":
-    #         do_test_on_pairs = LinearOffset(options)
-    #     elif options["name_method"] == "PairDistance":
-    #         do_test_on_pairs = PairDistance(options)
-    #     elif options["name_method"] == "LRCos" or options["name_method"] == "SVMCos":
-    #         do_test_on_pairs = LRCos(options)
-    #     else:
-    #         raise Exception("method name not recognized")
 
     def run_category(self, pairs, name_category, name_subcategory):
 
@@ -300,7 +253,7 @@ class Analogy(Benchmark):
                     my_prog.update()
                     self.do_test_on_pairs(p_train, p_test, file_out)
                 if finished:
-                    print("finished")
+                    # print("finished")
                     break
 
         else:
@@ -312,11 +265,7 @@ class Analogy(Benchmark):
                 p_train = [pairs[i] for i in train]
                 # p_train = [x for x in p_train if not is_pair_missing(x)]
                 cnt += 1
-                # print("upgrading tqdm, total =", cnt_splits, "done = ", cnt)
                 my_prog.update(cnt)
-                # print("done")
-                # print(p_train)
-                # print(p_test)
                 details += self.do_test_on_pairs(p_train, p_test)
 
         out = dict()
@@ -338,7 +287,7 @@ class Analogy(Benchmark):
             out['result'] = -1
         else:
             out['result'] = self.cnt_total_correct / self.cnt_total_total
-        str_results = json.dumps(self.jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
+        str_results = json.dumps(jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
         return out
 
     def get_pairs(self, fname):
@@ -384,18 +333,12 @@ class Analogy(Benchmark):
             for filename in fnmatch.filter(sorted(filenames), '*'):
                 if filename.endswith('json'):
                     continue
-                print(filename)
+                logger.info("processing " + filename)
                 pairs = self.get_pairs(os.path.join(root, filename))
-                # print(pairs)
                 out = self.run_category(pairs, name_category=os.path.basename(os.path.dirname(root)), name_subcategory=filename)
                 results.append(out)
-        print("")
-        print(len(results))
         if group_subcategory:
             results.extend(self.group_subcategory_results(results))
-        print(len(results))
-        for r in results:
-            print(r['experiment_setup'])
         return results
 
     def group_subcategory_results(self, results):
@@ -431,16 +374,15 @@ class Analogy(Benchmark):
             out.append(new_results[k])
         return out
 
-    def subsample_dims(self, newdim):
-        self.embs.matrix = self.embs.matrix[:, 0:newdim]
-        self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
+    #def subsample_dims(self, newdim):
+        #self.embs.matrix = self.embs.matrix[:, 0:newdim]
+        #self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
 
     def get_result(self, embs, path_dataset, group_subcategory=False):
         if self.normalize:
             embs.normalize()
         results = self.run(embs, path_dataset, group_subcategory)
         return results
-
 
 
 class PairWise(Analogy):
@@ -560,8 +502,6 @@ class ThreeCosMul2(PairWise):
 class ThreeCosAvg(Analogy):
 
     def do_test_on_pairs(self, p_train, p_test):
-        cnt_total = 0
-        cnt_correct = 0
         vecs_a = []
         vecs_a_prime = []
         for p in p_train:
