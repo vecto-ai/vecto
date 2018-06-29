@@ -101,9 +101,6 @@ class Analogy(Benchmark):
         a_prime = [i for i in a_prime if self.embs.vocabulary.get_id(i) >= 0]
         a = [i for i in a if self.embs.vocabulary.get_id(i) >= 0]
 
-        l = len(a)
-        if l == 0:
-            l = 1
         noise = [random.choice(self.embs.vocabulary.lst_words) for i in range(l)]
 
         if len(a_prime) == 0:

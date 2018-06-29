@@ -5,6 +5,7 @@ from vecto.config import load_config
 
 class Tests(unittest.TestCase):
 
+    @unittest.skipUnless(os.environ.get('CI'), 'skipping as local config likely exists')
     def test_file_corpus(self):
         default_dir = os.path.expanduser("~/.vecto/")
         os.makedirs(default_dir, exist_ok=True)
