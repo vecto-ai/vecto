@@ -23,7 +23,7 @@ before_script: # configure a headless display to test plot generation
 
 script:
 - python -m coverage run --source . -m unittest discover --verbose
-- python -m coverage run --source . setup.py test
+# - python -m coverage run --source . setup.py test
 
 after_success:
   # - python -m pylint --load-plugins=pylint.extensions.mccabe --docstring-min-length 5 --no-docstring-rgx "^(test)?_|.*Tests$" --unsafe-load-any-extension y --output-format colorized  --reports y $(find . -name "*.py")
