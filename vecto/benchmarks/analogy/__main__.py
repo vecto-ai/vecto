@@ -47,13 +47,14 @@ def main():
     parser.add_argument("--path_out", help="destination folder to save results")
     args = parser.parse_args()
     embeddings = load_from_dir(args.embeddings)
-    # choose methods
+    # print("embeddings", embeddings)
     benchmark = select_method(args.method)
     results = benchmark.get_result(embeddings, args.dataset)
     if args.path_out:
         if os.path.isdir(args.path_out):
-            filename = os.path.join(args.path_out, "results.json")
-            save_json(results, filename)
+            dataset = os.path.basename(os.path.normpath(args.dataset))
+            name_file_out = os.path.join(args.path_out, dataset, args.method, "results.json")
+            save_json(results, name_file_out)
         else:
             save_json(results, args.path_out)
     else:
