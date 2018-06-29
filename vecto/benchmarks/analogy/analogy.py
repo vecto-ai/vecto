@@ -357,9 +357,8 @@ class Analogy(Benchmark):
             for filename in fnmatch.filter(sorted(filenames), '*'):
                 if filename.endswith('json'):
                     continue
-                logger.info("processing" + filename)
+                logger.info("processing " + filename)
                 pairs = self.get_pairs(os.path.join(root, filename))
-                # print(pairs)
                 out = self.run_category(pairs, name_category=os.path.basename(os.path.dirname(root)), name_subcategory=filename)
                 results.append(out)
         if group_subcategory:
