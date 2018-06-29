@@ -110,25 +110,25 @@ class Analogy(Benchmark):
         Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
         return X, Y
 
-    #def gen_vec_single_nonoise(self, pairs):
-    #    a, a_prime = zip(*pairs)
-    #    a_prime = [i for sublist in a_prime for i in sublist]
-    #    a_prime = [i for i in a_prime if self.embs.vocabulary.get_id(i) >= 0]
-    #    x = list(a_prime) + list(a)
-    #    X = np.array([self.embs.get_vector(i) for i in x])
-    #    Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
-    #    return X, Y
+    # def gen_vec_single_nonoise(self, pairs):
+    #     a, a_prime = zip(*pairs)
+    #     a_prime = [i for sublist in a_prime for i in sublist]
+    #     a_prime = [i for i in a_prime if self.embs.vocabulary.get_id(i) >= 0]
+    #     x = list(a_prime) + list(a)
+    #     X = np.array([self.embs.get_vector(i) for i in x])
+    #     Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
+    #     return X, Y
 
     def get_crowndedness(self, vector):
         scores = self.get_most_similar_fast(vector)
         scores.sort()
         return (scores[-11:-1][::-1]).tolist()
 
-    def create_list_test_right(self, pairs):
-        global set_aprimes_test
-        a, a_prime = zip(*pairs)
-        a_prime = [i for sublist in a_prime for i in sublist]
-        set_aprimes_test = set(a_prime)
+    # def create_list_test_right(self, pairs):
+    #     global set_aprimes_test
+    #     a, a_prime = zip(*pairs)
+    #     a_prime = [i for sublist in a_prime for i in sublist]
+    #     set_aprimes_test = set(a_prime)
 
     def get_distance_closest_words(self, center, cnt_words=1):
         scores = self.get_most_similar_fast(center)
