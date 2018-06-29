@@ -9,4 +9,3 @@ def load_config():
         return c
     else:
         raise RuntimeError('configuration file not found, please create one in ~/.vecto/config.py')
-        exit(0)
