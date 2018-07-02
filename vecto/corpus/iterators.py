@@ -118,6 +118,13 @@ class SlidingWindowIterator(BaseIterator):
         self.base_corpus = base_corpus
         self.left_ctx_size = left_ctx_size
         self.right_ctx_size = right_ctx_size
+        self.__gen__  = self._generate_samples()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self.__gen__)
 
     def _generate_samples(self):
         for sample_elems in self.base_corpus:
