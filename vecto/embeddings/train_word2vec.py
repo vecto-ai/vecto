@@ -49,8 +49,6 @@ def parse_args():
                         help='number of epochs to learn')
     parser.add_argument('--model', '-m', choices=['skipgram', 'cbow'],
                         default='skipgram', help='model type ("skipgram", "cbow")')
-    parser.add_argument('--language', '-m', choices=['eng', 'jap'],
-                        default='eng', help='the language, current only support english and japanese')
     parser.add_argument('--subword', '-sw',
                         choices=['none', '_none', 'cnn1d', 'lstm', 'lstm_sum', 'bilstm', 'bilstm_sum', 'avg', 'sum'],
                         default='none',

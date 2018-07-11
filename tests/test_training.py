@@ -52,15 +52,3 @@ class Tests(unittest.TestCase):
             run_module('vecto.embeddings.train_word2vec',
                        ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
                         '--subword', '_none'])
-
-
-    def test_train_word2vec_subword_jap(self):
-        path_corpus = "./tests/data/corpora/plain/"
-        sio = io.StringIO()
-        with contextlib.redirect_stderr(sio):
-            run_module('vecto.embeddings.train_word2vec',
-                       ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
-                        '--subword', 'cnn1d'])
-
-
-Tests().test_train_word2vec_subword_jap()
