@@ -41,6 +41,7 @@ class BaseTokenizer(WithMetaData):
     """
     Base class for all tokenizer. It's a simple callable (functor) with metadata management infrastructure.
     """
+
     @abc.abstractmethod
     def __call__(self, txt):
         '''
@@ -57,6 +58,7 @@ class Tokenizer(BaseTokenizer):
     This nesting is necessary to unify output with SentenceTokenizer,
     which returns list of sentences (each is a list of tokens).
     """
+
     def __init__(self,
                  token_splitter=_DEFAULT_WORD_SPLITTER,
                  token_normalizer=default_token_normalizer,
@@ -88,6 +90,8 @@ ANNOTATED_TEXT_TOKENIZER = Tokenizer(token_splitter=_WHITESPACE_TOKEN_SPLITTER,
                                      good_token_re=ANY_TOKEN_IS_GOOD_RE,
                                      min_token_len=0)
 
+DEFAULT_JAP_TOKENIZER = Tokenizer(min_token_len=0)
+
 
 class SentenceTokenizer(BaseTokenizer):
     """
@@ -95,6 +99,7 @@ class SentenceTokenizer(BaseTokenizer):
     filters tokens by length and regex `good_token_re`.
     Returns a list of sentences (each is a list of tokens).
     """
+
     def __init__(self,
                  word_tokenizer=DEFAULT_TOKENIZER,
                  sentence_splitter=_SENT_SPLITTER_IMPL,
