@@ -39,8 +39,8 @@ class Corpus(WithMetaData):
             if self.language == 'jap':
                 tokenizer = DEFAULT_JAP_TOKENIZER
             else:
-                tokenizer = DEFAULT_TOKENIZER
-        return TokenizedSequenceIterator(self.get_line_iterator(), tokenizer=tokenizer, verbose=verbose)
+                tokenizer = DEFAULT_SENT_TOKENIZER
+        return TokenizedSequenceIterator(self.get_line_iterator(verbose=verbose), tokenizer=tokenizer, verbose=verbose)
 
 
 class FileCorpus(Corpus):
