@@ -1,8 +1,11 @@
 """Tests for categorization benchmark."""
 
 import unittest
+from io import StringIO
+from contextlib import redirect_stdout
 from vecto.benchmarks.categorization import *
 from vecto.embeddings import load_from_dir
+from ..test_setup import run_module
 from numpy import array
 
 path_categorization_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'categorization')
@@ -13,6 +16,30 @@ class Tests(unittest.TestCase):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         categorization = Categorization()
         result = categorization.get_result(embs, path_categorization_dataset)
+
+    def test_categorization_method(self):
+        embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
+        categorization = KMeansCategorization()
+        result = categorization.get_result(embs, path_categorization_dataset)
+
+        categorization = SpectralCategorization()
+        result = categorization.get_result(embs, path_categorization_dataset)
+
+    def test_cli(self):
+        sio = StringIO()
+        with redirect_stdout(sio):
+            run_module('vecto.benchmarks.categorization',
+                       './tests/data/embeddings/text/plain_with_file_header/',
+                       './tests/data/benchmarks/categorization/',
+                       '--path_out', '/tmp/vecto/', '--method', 'KMeansCategorization')
+
+    # def test_cli_2(self):
+    #     sio = StringIO()
+    #     with redirect_stdout(sio):
+    #         run_module('vecto.benchmarks.categorization',
+    #                    './tests/data/embeddings/text/plain_with_file_header/',
+    #                    './tests/data/benchmarks/categorization/',
+    #                    '--path_out', '/tmp/vecto/r.json', '--method', 'SpectralCategorization')
 
     def test_set_loading(self):
         test_set_path = path.join('.', 'tests', 'data', 'benchmarks', 'categorization', 'essli-2008.csv')

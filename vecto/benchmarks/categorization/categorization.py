@@ -1,7 +1,7 @@
 from ..base import Benchmark
 from collections import defaultdict
 from sklearn import preprocessing
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, SpectralClustering
 from vecto.benchmarks.categorization.metrics import purity_score
 from os import path, listdir
 import csv
@@ -9,10 +9,15 @@ import csv
 OTHER_EXT = 'None'
 BENCHMARK = 'benchmark'
 
+
 class Categorization(Benchmark):
     def __init__(self, normalize=True, ignore_oov=True):
         self.normalize = normalize
         self.ignore_oov = ignore_oov
+
+    @property
+    def method(self):
+        return type(self).__name__
 
     def read_test_set(self, path):
         test = defaultdict(lambda: [])
@@ -50,7 +55,7 @@ class Categorization(Benchmark):
         labels = le.transform(labels)
         if len(data.keys()) > len(vectors):
             return None
-        result = KMeans(n_clusters=len(data.keys()), random_state=10).fit_predict(vectors, labels)
+        result = self.compute_labels(data, vectors, labels)
         return purity_score(result, labels)
 
     def read_datasets_from_dir(self, path_to_dir):
@@ -80,3 +85,13 @@ class Categorization(Benchmark):
 
         results = self.run(embs, path_dataset)
         return results
+
+
+class KMeansCategorization(Categorization):
+    def compute_labels(self, data, vectors, labels):
+        return KMeans(n_clusters=len(data.keys()), random_state=10).fit_predict(vectors, labels)
+
+
+class SpectralCategorization(Categorization):
+    def compute_labels(self, data, vectors, labels):
+        return SpectralClustering(n_clusters=len(data.keys()), random_state=10).fit_predict(vectors, labels)
