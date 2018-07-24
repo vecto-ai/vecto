@@ -5,15 +5,43 @@ from sklearn.cluster import KMeans, SpectralClustering
 from vecto.benchmarks.categorization.metrics import purity_score
 from os import path, listdir
 import csv
+import numpy as np
+from scipy.spatial import distance
 
 OTHER_EXT = 'None'
 BENCHMARK = 'benchmark'
 
 
 class Categorization(Benchmark):
-    def __init__(self, normalize=True, ignore_oov=True):
+    def __init__(self, normalize=True,
+                 ignore_oov=True,
+                 do_top5=True,
+                 need_subsample=False,
+                 size_cv_test=1,
+                 set_aprimes_test=None,
+                 inverse_regularization_strength=1.0,
+                 exclude=True,
+                 random_state=10):
         self.normalize = normalize
         self.ignore_oov = ignore_oov
+        self.do_top5 = do_top5
+        self.need_subsample = need_subsample
+        self.normalize = normalize
+        self.size_cv_test = size_cv_test
+        self.set_aprimes_test = set_aprimes_test
+        self.inverse_regularization_strength = inverse_regularization_strength
+        self.exclude = exclude
+        self.random_state = random_state
+
+        self.stats = {}
+        self.cnt_total_correct = 0
+        self.cnt_total_total = 0
+
+        # this are some hard-coded bits which will be implemented later
+        self.result_miss = {
+            'rank': -1,
+            'reason': 'missing words'
+        }
 
     @property
     def method(self):
@@ -89,9 +117,56 @@ class Categorization(Benchmark):
 
 class KMeansCategorization(Categorization):
     def compute_labels(self, data, vectors, labels):
-        return KMeans(n_clusters=len(data.keys()), random_state=10).fit_predict(vectors, labels)
+        kmeans = KMeans(n_clusters=len(data.keys()),
+                        init='k-means++',
+                        n_init=10,
+                        max_iter=300,
+                        tol=0.0001,
+                        precompute_distances='auto',
+                        verbose=0,
+                        random_state=None,
+                        copy_x=True,
+                        n_jobs=1,
+                        algorithm='auto')
+        labels = kmeans.fit_predict(vectors, labels)
+        centroids = kmeans.cluster_centers_
+        inertia = kmeans.inertia_
+        params = str(kmeans.get_params())
+        return labels, centroids, inertia, params
+
+    def process_stats(self, word_vector, centroid, word, category, predicted_category):
+        stats = {}
+        if category == predicted_category:
+            hit = 'true'
+        else:
+            hit = 'false'
+        stats['true_category'] = category
+        stats['predicted_category'] = predicted_category
+        stats['hit'] = hit
+        stats['distance_to_centroid'] = 1 - distance.cosine(word_vector, centroid)
+        return stats
+
+    def process_global_stats(self, inertia, params):
+        global_stats = {}
+        global_stats['inertia'] = inertia
+        global_stats['params'] = params
+        return global_stats
+
+    def collect_stats(self, data, vectors, labels):
+        word_stats = defaultdict(lambda: {})
+        labels, centroids, inertia, params = self.compute_labels(data, vectors, labels)
+        categories = data.keys()
+        for category, words in data:
+            for word_id, word in enumerate(words):
+                word_vector = vectors[word_id]
+                centroid = centroids[labels[word_id]]
+                predicted_category = categories[labels[word_id]]
+                word_stats[word] = self.process_stats(word_vector, centroid, category, predicted_category)
+        global_stats = self.process_global_stats(inertia, params)
+        return word_stats, global_stats
 
 
 class SpectralCategorization(Categorization):
     def compute_labels(self, data, vectors, labels):
-        return SpectralClustering(n_clusters=len(data.keys()), random_state=10).fit_predict(vectors, labels)
+        return SpectralClustering(n_clusters=len(data.keys()), random_state=self.random_state).fit_predict(vectors,
+                                                                                                           labels)
