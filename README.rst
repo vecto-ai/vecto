@@ -1,6 +1,10 @@
 vecto
 *****
 
+.. image:: https://api.codacy.com/project/badge/Grade/096c506ede234a1da37647964f6e3075
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/app/undertherain/vecto?utm_source=github.com&utm_medium=referral&utm_content=vecto-ai/vecto&utm_campaign=badger
+
 .. image:: https://api.travis-ci.org/vecto-ai/vecto.svg?branch=master
     :target: https://travis-ci.org/vecto-ai/vecto
     :alt: build status from Travis CI
