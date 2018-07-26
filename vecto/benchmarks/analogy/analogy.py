@@ -130,13 +130,13 @@ class Analogy(Benchmark):
     #     a_prime = [i for sublist in a_prime for i in sublist]
     #     set_aprimes_test = set(a_prime)
 
-    def get_distance_closest_words(self, center, cnt_words=1):
-        scores = self.get_most_similar_fast(center)
-        ids_max = np.argsort(scores)[::-1]
-        distances = np.zeros(cnt_words)
-        for i in range(cnt_words):
-            distances[i] = scores[ids_max[i + 1]]
-        return distances.mean()
+    # def get_distance_closest_words(self, center, cnt_words=1):
+    #     scores = self.get_most_similar_fast(center)
+    #     ids_max = np.argsort(scores)[::-1]
+    #     distances = np.zeros(cnt_words)
+    #     for i in range(cnt_words):
+    #         distances[i] = scores[ids_max[i + 1]]
+    #     return distances.mean()
 
     def get_rank(self, source, center):
         if isinstance(center, str):
@@ -224,7 +224,6 @@ class Analogy(Benchmark):
         else:
             result["landing_a_prime"] = False
         return result
-
 
     def run_category(self, pairs, name_category, name_subcategory):
 
