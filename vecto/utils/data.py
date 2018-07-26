@@ -15,10 +15,10 @@ def detect_archive_format_and_open(path):
 def save_json(data, path):
     basedir = os.path.dirname(path)
     os.makedirs(basedir, exist_ok=True)
-    s = json.dumps(data, ensure_ascii=False, indent=4, sort_keys=False)
-    f = open(path, 'w')
-    f.write(s)
-    f.close()
+    str_data = json.dumps(data, ensure_ascii=False, indent=4, sort_keys=False)
+    file_out = open(path, 'w')
+    file_out.write(str_data)
+    file_out.close()
 
 
 def load_json(path):
