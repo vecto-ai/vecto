@@ -15,11 +15,11 @@ def save_metadata(data, base_path):
     save_json(data, make_metadata_path(base_path))
 
 
-def try_load_metadata(base_path, default=dict()):
+def try_load_metadata(base_path):
     try:
         return load_json(make_metadata_path(base_path))
     except IOError:
-        return default
+        return {}
 
 
 def get_full_typename(obj):
