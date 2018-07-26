@@ -16,8 +16,8 @@ class BaseIterator(WithMetaData):
         self._verbose = verbose
 
     def __iter__(self):
-        for s in self._generate_samples_outer():
-            yield s
+        for elem in self._generate_samples_outer():
+            yield elem
 
     def __len__(self):
         return self.metadata.get('samples_count', 0)

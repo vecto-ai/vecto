@@ -1,11 +1,11 @@
+import csv
 import datetime
 import math
 import os
 from json import load
 from scipy.stats.stats import spearmanr
-from ..base import Benchmark
-import csv
 from collections import defaultdict
+from ..base import Benchmark
 
 METADATA = 'metadata'
 BENCHMARK = 'benchmark'
