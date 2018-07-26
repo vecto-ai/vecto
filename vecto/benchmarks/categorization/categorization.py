@@ -2,7 +2,7 @@ from ..base import Benchmark
 from collections import defaultdict
 from sklearn import preprocessing
 from sklearn.cluster import KMeans, SpectralClustering
-from vecto.benchmarks.categorization.metrics import purity_score
+from vecto.benchmarks.categorization.metrics import *
 from os import path, listdir
 import csv
 import numpy as np
@@ -68,23 +68,39 @@ class Categorization(Benchmark):
                     test[category].append(word)
         return dict(test)
 
+    def round_scores(self, scores, after_comma=2):
+        new_items = {}
+        for key, score in scores.items():
+            new_items[key] = round(score, after_comma)
+        return new_items
+
+    def compute_metics(self, predicted_labels, true_labels):
+        results = {}
+        results['Purity'] = purity_score(predicted_labels, true_labels)
+        results['Ari'] = adjusted_rand_score(predicted_labels, true_labels)
+        results['Homogeneity'] = homogeneity_score(predicted_labels, true_labels)
+        results['Completeness'] = completeness_score(predicted_labels, true_labels)
+        results['V-measure'] = v_measure_score(predicted_labels, true_labels)
+        results['Mutual info'] = mutual_info_score(predicted_labels, true_labels)
+        results['Fowlkes-Mallows'] = fowlkes_mallows_score(predicted_labels, true_labels)
+        results = self.round_scores(results)
+        return results
+
     def evaluate(self, embs, data):
         vectors = []
         labels = []
-
         for key, value in data.items():
             for word in value:
                 if embs.has_word(word):
                     vectors.append(embs.get_vector(word))
                     labels.append(key)
-
         le = preprocessing.LabelEncoder()
         le.fit(labels)
         labels = le.transform(labels)
         if len(data.keys()) > len(vectors):
             return None
-        result = self.compute_labels(data, vectors, labels)
-        return purity_score(result, labels)
+        result = self.collect_stats(data, vectors, labels)
+        return result
 
     def read_datasets_from_dir(self, path_to_dir):
         datasets = defaultdict(lambda: {})
@@ -116,7 +132,7 @@ class Categorization(Benchmark):
 
 
 class KMeansCategorization(Categorization):
-    def compute_labels(self, data, vectors, labels):
+    def run_categorization(self, data, vectors, true_labels):
         kmeans = KMeans(n_clusters=len(data.keys()),
                         init='k-means++',
                         n_init=10,
@@ -128,13 +144,13 @@ class KMeansCategorization(Categorization):
                         copy_x=True,
                         n_jobs=1,
                         algorithm='auto')
-        labels = kmeans.fit_predict(vectors, labels)
+        predicted_labels = kmeans.fit_predict(vectors, true_labels)
         centroids = kmeans.cluster_centers_
         inertia = kmeans.inertia_
         params = str(kmeans.get_params())
-        return labels, centroids, inertia, params
+        return predicted_labels, true_labels, centroids, inertia, params
 
-    def process_stats(self, word_vector, centroid, word, category, predicted_category):
+    def process_stats(self, word_vector, centroid, category, predicted_category):
         stats = {}
         if category == predicted_category:
             hit = 'true'
@@ -146,23 +162,28 @@ class KMeansCategorization(Categorization):
         stats['distance_to_centroid'] = 1 - distance.cosine(word_vector, centroid)
         return stats
 
-    def process_global_stats(self, inertia, params):
+    def process_global_stats(self, inertia, params, metric_scores):
         global_stats = {}
         global_stats['inertia'] = inertia
         global_stats['params'] = params
+        global_stats['scores'] = metric_scores
         return global_stats
 
     def collect_stats(self, data, vectors, labels):
         word_stats = defaultdict(lambda: {})
-        labels, centroids, inertia, params = self.compute_labels(data, vectors, labels)
+        predicted_labels, true_labels, centroids, inertia, params = self.run_categorization(data, vectors, labels)
         categories = data.keys()
-        for category, words in data:
+        word_counter = 0
+        for category, words in data.items():
             for word_id, word in enumerate(words):
                 word_vector = vectors[word_id]
                 centroid = centroids[labels[word_id]]
-                predicted_category = categories[labels[word_id]]
-                word_stats[word] = self.process_stats(word_vector, centroid, category, predicted_category)
-        global_stats = self.process_global_stats(inertia, params)
+                predicted_category = list(categories)[labels[word_id]]
+                word_entry = '{}. {}'.format(word_counter, word)
+                word_counter += 1
+                word_stats[word_entry] = self.process_stats(word_vector, centroid, category, predicted_category)
+        metric_scores = super(KMeansCategorization, self).compute_metics(predicted_labels, true_labels)
+        global_stats = self.process_global_stats(inertia, params, metric_scores)
         return word_stats, global_stats
 
 
