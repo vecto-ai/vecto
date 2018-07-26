@@ -30,9 +30,4 @@ class BaseIterator(WithMetaData):
                 return get_tqdm(gen)
             else:
                 return get_tqdm(gen, total=cur_len)
-        else:
-            return gen
-
-    #@abc.abstractmethod
-    #def _generate_samples(self):
-    #    pass
+        return gen

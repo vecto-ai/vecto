@@ -13,6 +13,10 @@ vecto
     :target: https://coveralls.io/github/vecto-ai/vecto?branch=master
     :alt: coveralls badge
 
+.. image:: https://api.codacy.com/project/badge/Grade/65aabe10113d45819091d005414462ca    
+    :target: https://www.codacy.com/app/undertherain/vecto
+    :alt: grade from Codacy
+
 .. image:: https://badge.fury.io/py/vecto.svg
     :target: https://badge.fury.io/py/vecto
     :alt: pypi version

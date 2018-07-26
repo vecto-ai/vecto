@@ -9,7 +9,7 @@ import progressbar
 import fnmatch
 import sklearn
 from sklearn.linear_model import LogisticRegression
-import re
+# import re
 import json
 from itertools import product
 import logging
@@ -232,9 +232,9 @@ class Analogy(Benchmark):
         self.cnt_total_total = 0
 
         details = []
-        kf = sklearn.model_selection.KFold(n_splits=len(pairs) // self.size_cv_test)
-        cnt_splits = kf.get_n_splits(pairs)
-        loo = kf.split(pairs)
+        kfold = sklearn.model_selection.KFold(n_splits=len(pairs) // self.size_cv_test)
+        cnt_splits = kfold.get_n_splits(pairs)
+        loo = kfold.split(pairs)
         if self.need_subsample:
             file_out = open("/dev/null", "a", errors="replace")
             loo = sklearn.cross_validation.KFold(
@@ -292,19 +292,19 @@ class Analogy(Benchmark):
 
     def get_pairs(self, fname):
         pairs = []
-        with open(fname) as f:
+        with open(fname) as file_in:
             id_line = 0
-            for line in f:
+            for line in file_in:
                 if line.strip() == '':
                     continue
                 try:
                     id_line += 1
                     if "\t" in line:
-                        s = line.lower().split("\t")
+                        parts = line.lower().split("\t")
                     else:
-                        s = line.lower().split()
-                    left = s[0]
-                    right = s[1]
+                        parts = line.lower().split()
+                    left = parts[0]
+                    right = parts[1]
                     right = right.strip()
                     if "/" in right:
                         right = [i.strip() for i in right.split("/")]
