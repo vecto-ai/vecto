@@ -95,8 +95,11 @@ class Categorization(Benchmark):
                     vectors.append(embs.get_vector(word))
                     labels.append(list(data.keys()).index(key))
         if len(data.keys()) > len(vectors):
-            return None
-        result = self.collect_stats(data, vectors, labels)
+            raise Exception('Too poor vocabulary')
+        word_stats, global_stats = self.collect_stats(data, vectors, labels)
+        result = {}
+        result['word_stats'] = word_stats
+        result['global_stats'] = global_stats
         return result
 
     def read_datasets_from_dir(self, path_to_dir):
@@ -129,11 +132,11 @@ class Categorization(Benchmark):
 
 
 class KMeansCategorization(Categorization):
-    def run_categorization(self, data, vectors, true_labels):
-        kmeans = KMeans(n_clusters=len(data.keys()),
+    def run_categorization(self, clusters_amount, vectors, true_labels):
+        kmeans = KMeans(n_clusters=clusters_amount,
                         init='k-means++',
                         n_init=10,
-                        max_iter=300,
+                        max_iter=50,
                         tol=0.0001,
                         precompute_distances='auto',
                         verbose=0,
@@ -161,17 +164,18 @@ class KMeansCategorization(Categorization):
 
     def process_global_stats(self, inertia, params, metric_scores, categories, predicted_labels, true_labels):
         global_stats = {}
-        global_stats['inertia'] = inertia
+        global_stats['inertia'] = float(inertia)
         global_stats['params'] = params
         global_stats['scores'] = metric_scores
-        global_stats['categories'] = categories
-        global_stats['predicted_labels'] = predicted_labels
-        global_stats['true_labels'] = true_labels
+        global_stats['categories'] = list(categories)
+        global_stats['predicted_labels'] = list(int(label) for label in predicted_labels)
+        global_stats['true_labels'] = list(int(label) for label in true_labels)
         return global_stats
 
     def collect_stats(self, data, vectors, labels):
         word_stats = defaultdict(lambda: {})
-        predicted_labels, true_labels, centroids, inertia, params = self.run_categorization(data, vectors, labels)
+        predicted_labels, true_labels, centroids, inertia, params = self.run_categorization(len(data.keys()), vectors,
+                                                                                            labels)
         categories = data.keys()
         word_counter = 0
         for category, words in data.items():
@@ -183,8 +187,9 @@ class KMeansCategorization(Categorization):
                 word_counter += 1
                 word_stats[word_entry] = self.process_stats(word_vector, centroid, category, predicted_category)
         metric_scores = super(KMeansCategorization, self).compute_metics(predicted_labels, true_labels)
-        global_stats = self.process_global_stats(inertia, params, metric_scores, categories, predicted_labels, true_labels)
-        return word_stats, global_stats
+        global_stats = self.process_global_stats(inertia, params, metric_scores, categories, predicted_labels,
+                                                 true_labels)
+        return dict(word_stats), global_stats
 
 
 class SpectralCategorization(Categorization):
