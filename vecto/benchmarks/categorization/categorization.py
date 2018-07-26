@@ -93,10 +93,7 @@ class Categorization(Benchmark):
             for word in value:
                 if embs.has_word(word):
                     vectors.append(embs.get_vector(word))
-                    labels.append(key)
-        le = preprocessing.LabelEncoder()
-        le.fit(labels)
-        labels = le.transform(labels)
+                    labels.append(list(data.keys()).index(key))
         if len(data.keys()) > len(vectors):
             return None
         result = self.collect_stats(data, vectors, labels)
@@ -162,11 +159,14 @@ class KMeansCategorization(Categorization):
         stats['distance_to_centroid'] = 1 - distance.cosine(word_vector, centroid)
         return stats
 
-    def process_global_stats(self, inertia, params, metric_scores):
+    def process_global_stats(self, inertia, params, metric_scores, categories, predicted_labels, true_labels):
         global_stats = {}
         global_stats['inertia'] = inertia
         global_stats['params'] = params
         global_stats['scores'] = metric_scores
+        global_stats['categories'] = categories
+        global_stats['predicted_labels'] = predicted_labels
+        global_stats['true_labels'] = true_labels
         return global_stats
 
     def collect_stats(self, data, vectors, labels):
@@ -176,14 +176,14 @@ class KMeansCategorization(Categorization):
         word_counter = 0
         for category, words in data.items():
             for word_id, word in enumerate(words):
-                word_vector = vectors[word_id]
-                centroid = centroids[labels[word_id]]
-                predicted_category = list(categories)[labels[word_id]]
+                word_vector = vectors[word_counter]
+                centroid = centroids[predicted_labels[word_counter]]
+                predicted_category = list(categories)[predicted_labels[word_counter]]
                 word_entry = '{}. {}'.format(word_counter, word)
                 word_counter += 1
                 word_stats[word_entry] = self.process_stats(word_vector, centroid, category, predicted_category)
         metric_scores = super(KMeansCategorization, self).compute_metics(predicted_labels, true_labels)
-        global_stats = self.process_global_stats(inertia, params, metric_scores)
+        global_stats = self.process_global_stats(inertia, params, metric_scores, categories, predicted_labels, true_labels)
         return word_stats, global_stats
 
 
