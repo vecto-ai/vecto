@@ -1,13 +1,13 @@
 import os
 import pandas
+import time
 from pandas.io.json import json_normalize
 from matplotlib import pyplot as plt
 from vecto.utils.data import load_json
-from vecto.utils.data import save_json
-from vecto.benchmarks.analogy import *
+# from vecto.utils.data import save_json
+# from vecto.benchmarks.analogy import *
 from vecto.embeddings.dense import WordEmbeddingsDense
 from vecto.embeddings import load_from_dir
-import time
 
 
 
@@ -52,7 +52,6 @@ def plot_accuracy(path="tests/data/benchmarks_results/analogy/", group_xaxis=['e
 #             results = analogy.run(embs, path_analogy_dataset)
 #             print(results)
 #             save_json(results, os.path.join("/tmp/tests/data/benchmarks_results/analogy/", datetime.datetime.now().isoformat()))
-
 
 
 def main():

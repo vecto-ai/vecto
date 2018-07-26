@@ -8,19 +8,18 @@ METADATA_SUFFIX = 'metadata.json'
 def make_metadata_path(fname):
     if os.path.isdir(fname):
         return os.path.join(fname, METADATA_SUFFIX)
-    else:
-        return '{}.{}'.format(fname, METADATA_SUFFIX)
+    return '{}.{}'.format(fname, METADATA_SUFFIX)
 
 
 def save_metadata(data, base_path):
     save_json(data, make_metadata_path(base_path))
 
 
-def try_load_metadata(base_path, default={}):
+def try_load_metadata(base_path):
     try:
         return load_json(make_metadata_path(base_path))
     except IOError:
-        return default
+        return {}
 
 
 def get_full_typename(obj):
@@ -29,7 +28,7 @@ def get_full_typename(obj):
         clsname = obj.__name__
     else:
         clsname = obj.__class__.__name__
-    return '{}.{}'.format(obj.__module__,  clsname)
+    return '{}.{}'.format(obj.__module__, clsname)
 
 
 class WithMetaData(object):
