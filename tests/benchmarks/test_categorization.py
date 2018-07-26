@@ -14,15 +14,12 @@ path_categorization_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'cat
 class Tests(unittest.TestCase):
     def test_categorization(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
-        categorization = Categorization()
-        result = categorization.get_result(embs, path_categorization_dataset)
-
-    def test_categorization_method(self):
-        embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         categorization = KMeansCategorization()
         result = categorization.get_result(embs, path_categorization_dataset)
 
-        categorization = SpectralCategorization()
+    def test_categorization_method_works(self):
+        embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
+        categorization = KMeansCategorization()
         result = categorization.get_result(embs, path_categorization_dataset)
 
     def test_cli(self):
@@ -33,6 +30,32 @@ class Tests(unittest.TestCase):
                        './tests/data/benchmarks/categorization/',
                        '--path_out', '/tmp/vecto/', '--method', 'KMeansCategorization')
 
+    def test_categorization_scores(self):
+        embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
+        categorization = KMeansCategorization()
+        result = categorization.get_result(embs, path_categorization_dataset)
+        scores = result[0]['global_stats']['scores']
+        self.assertEqual(len(scores.keys()), 7)
+        self.assertEqual(len(result[0]['global_stats']['true_labels']), 7)
+        self.assertEqual(result[0]['global_stats']['true_labels'][3], 1)
+
+    def test_categorization_data(self):
+        embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
+        categorization = KMeansCategorization()
+        result = categorization.get_result(embs, path_categorization_dataset)
+        word_stats = result[0]['word_stats']
+        self.assertEqual(word_stats['4. banana']['true_category'], 'food')
+        self.assertEqual(len(word_stats.keys()), 7)
+
+    def test_kmeans(self):
+        data = [(0, 0, 0), (100, 100, 100), (99, 99, 99)]
+        keys_len = 2
+        labels = [0, 1]
+        categorization = KMeansCategorization()
+        predicted_labels, true_labels, centroids, inertia, params = categorization.run_categorization(keys_len, data, labels)
+        self.assertEqual(len(centroids), 2)
+        self.assertEqual(inertia, 1.5)
+
     # def test_cli_2(self):
     #     sio = StringIO()
     #     with redirect_stdout(sio):
@@ -42,8 +65,8 @@ class Tests(unittest.TestCase):
     #                    '--path_out', '/tmp/vecto/r.json', '--method', 'SpectralCategorization')
 
     def test_set_loading(self):
-        test_set_path = path.join('.', 'tests', 'data', 'benchmarks', 'categorization', 'essli-2008.csv')
-        test_set_categories_amount = 9
+        test_set_path = path.join('.', 'tests', 'data', 'benchmarks', 'categorization', 'essli-2008-lite.csv')
+        test_set_categories_amount = 3
 
         categorization = Categorization()
         test_set = categorization.read_test_set(test_set_path)
