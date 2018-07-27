@@ -5,6 +5,7 @@ from os import path, listdir
 import csv
 import numpy as np
 from scipy.spatial import distance
+from itertools import product
 
 OTHER_EXT = 'None'
 BENCHMARK = 'benchmark'
@@ -44,7 +45,7 @@ class Outliers(Benchmark):
         return type(self).__name__
 
     def read_test_set(self, path):
-        test = defaultdict(lambda: {})
+        test = defaultdict(lambda: [])
         if path.endswith('.csv'):
             with open(path, 'r') as csvfile:
                 reader = csv.reader(csvfile)
@@ -56,29 +57,32 @@ class Outliers(Benchmark):
                         category = row[1]
                         word = row[2]
                         is_outlier = row[3]
-                        test[category] = {'word': word, 'is_outlier': is_outlier}
+                        test[category].append({'word': word, 'is_outlier': is_outlier})
                     head = False
         else:
             with open(path) as f:
                 for line in f:
                     id, category, word, is_outlier = line.strip().split()
-                    test[category] = {'word': word, 'is_outlier': is_outlier}
+                    test[category].append({'word': word, 'is_outlier': is_outlier})
         return dict(test)
 
-    def collect_stats(self, data, vectors, labels):
-        pass
+    def collect_stats(self, categories):
+        result = self.run_outliers(categories)
+        return result
 
     def evaluate(self, embs, data):
-        categories = []
-        vectors = []
-        labels = []
-        for category, value in data.items():
-            if embs.has_word(value['word']):
-                vectors.append(embs.get_vector(value['word']))
-                labels.append(value['is_outlier'])
-                categories.append(category)
-        self.collect_stats(vectors, categories, labels)
-        result = {}
+        categories = defaultdict(lambda: defaultdict(lambda: []))
+        for category, words in data.items():
+            for value in words:
+                if embs.has_word(value['word']):
+                    categories[category]['words'].append([value['word'], embs.get_vector(value['word'])])
+                    if value['is_outlier'] == 'true':
+                        categories[category]['is_outlier'].append(True)
+                    elif value['is_outlier'] == 'false':
+                        categories[category]['is_outlier'].append(False)
+                    else:
+                        raise RuntimeError('Unexpected value occurred!')
+        result = self.collect_stats(dict(categories))
         return result
 
     def read_datasets_from_dir(self, path_to_dir):
@@ -110,6 +114,52 @@ class Outliers(Benchmark):
         return results
 
 
-class Pairwise(Outliers):
-    def run_outliers(self, vectors, categories, labels):
-        pass
+class AveragePairwiseCosine(Outliers):
+    def __init__(self, normalize=True,
+                 ignore_oov=True,
+                 do_top5=True,
+                 need_subsample=False,
+                 size_cv_test=1,
+                 set_aprimes_test=None,
+                 inverse_regularization_strength=1.0,
+                 exclude=True,
+                 threshold=0.5):
+        self.threshold = threshold
+        super().__init__(normalize,
+                         ignore_oov,
+                         do_top5,
+                         need_subsample,
+                         size_cv_test,
+                         set_aprimes_test,
+                         inverse_regularization_strength,
+                         exclude)
+
+    def run_outliers(self, categories):
+        result = defaultdict(lambda: {})
+        for category, values in categories.items():
+            word_result = self.compare_words(values)
+            result[category] = word_result
+        return dict(result)
+
+    def compute_average(self, distances):
+        return np.mean([value[1] for value in distances])
+
+    def compare_words(self, values):
+        result = defaultdict(lambda: {})
+        distances_to_other_words = defaultdict(lambda: [])
+        for word, compared_word in product(values['words'], repeat=2):
+            if word == compared_word:
+                continue
+            distances_to_other_words[word[0]].append([compared_word[0], 1 - distance.cosine(word[1], compared_word[1])])
+        for word_id, key in enumerate(distances_to_other_words.keys()):
+            result_dict = {}
+            result_dict['distances'] = distances_to_other_words[key]
+            result_dict['is_outlier'] = values['is_outlier'][word_id]
+            average = self.compute_average(distances_to_other_words[key])
+            result_dict['average'] = average
+            if average <= self.threshold:
+                result_dict['hit'] = False
+            else:
+                result_dict['hit'] = True
+            result[key] = result_dict
+        return dict(result)

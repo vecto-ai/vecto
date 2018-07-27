@@ -16,8 +16,8 @@ def print_json(data):
 
 def select_method(key):
     options = {}
-    if key == 'Pairwise':
-        method = Pairwise(options)
+    if key == 'AveragePairwiseCosine':
+        method = AveragePairwiseCosine(options)
     else:
         raise RuntimeError('The method name was not recognized.')
     return method
@@ -27,7 +27,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('embeddings')
     parser.add_argument('dataset')
-    parser.add_argument('--method', help='Categorization method', default='KMeansCategorization')
+    parser.add_argument('--method', help='Outlier detection method', default='AveragePairwiseCosine')
     parser.add_argument('--path_out', help='Destination folder to save the results')
     args = parser.parse_args()
     embeddings = load_from_dir(args.embeddings)
