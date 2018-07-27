@@ -43,6 +43,7 @@ class Outliers(Benchmark):
     def method(self):
         return type(self).__name__
 
+    @classmethod
     def read_test_set(self, path):
         test = defaultdict(lambda: [])
         if path.endswith('.csv'):

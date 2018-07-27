@@ -101,11 +101,11 @@ class SynonymyDetection(Benchmark):
             results[dataset_name] = result
         return dict(results)
 
-    def get_result(self, embs, path_dataset):
+    def get_result(self, embeds, path_dataset):
         if self.normalize:
-            embs.normalize()
+            embeds.normalize()
 
-        results = self.run(embs, path_dataset)
+        results = self.run(embeds, path_dataset)
         return results
 
 
