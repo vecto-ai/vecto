@@ -1,6 +1,5 @@
 import os
 import pandas
-import time
 from pandas.io.json import json_normalize
 from matplotlib import pyplot as plt
 from vecto.utils.data import load_json
@@ -10,26 +9,26 @@ from vecto.embeddings.dense import WordEmbeddingsDense
 from vecto.embeddings import load_from_dir
 
 
-
 def df_from_file(path):
     data = load_json(path)
     meta = [["experiment_setup", "subcategory"], ["experiment_setup", "method"], ["experiment_setup", "embeddings"]]
-    df = json_normalize(data, meta=meta)
+    dframe = json_normalize(data, meta=meta)
     # df["reciprocal_rank"] = 1 / (df["rank"] + 1)
-    return df
+    return dframe
 
 
 def df_from_dir(path):
     dfs = []
     for (dirpath, dirnames, filenames) in os.walk(path):
-        for f in filenames:
-            dfs.append(df_from_file(os.path.join(dirpath, f)))
-    df = pandas.concat(dfs)
-    return df
+        for filename in filenames:
+            dfs.append(df_from_file(os.path.join(dirpath, filename)))
+    dframe = pandas.concat(dfs)
+    return dframe
 
 
-def plot_accuracy(path="tests/data/benchmarks_results/analogy/", group_xaxis=['experiment_setup.embeddings.foldername', 'experiment_setup.method'][0]): # experiment_setup.embeddings
-
+def plot_accuracy(path="tests/data/benchmarks_results/analogy/",
+                group_xaxis=['experiment_setup.embeddings.foldername',
+                'experiment_setup.method'][0]):
     df = df_from_dir(path)
     group = df.groupby(["experiment_setup.subcategory", group_xaxis])
     means = group.mean()

@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 from ..base import Benchmark
 import numpy as np
@@ -9,8 +10,6 @@ import progressbar
 import fnmatch
 import sklearn
 from sklearn.linear_model import LogisticRegression
-# import re
-import json
 from itertools import product
 import logging
 from vecto.utils.data import jsonify
@@ -105,10 +104,10 @@ class Analogy(Benchmark):
 
         if len(a_prime) == 0:
             a_prime.append(random.choice(self.embs.vocabulary.lst_words))
-        x = list(a_prime) + list(a) + list(a) + list(a) + list(a) + noise
-        X = np.array([self.embs.get_vector(i) for i in x])
-        Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
-        return X, Y
+        train_vectors = list(a_prime) + list(a) + list(a) + list(a) + list(a) + noise
+        train_vectors = np.array([self.embs.get_vector(i) for i in train_vectors])
+        labels = np.hstack([np.ones(len(a_prime)), np.zeros(len(train_vectors) - len(a_prime))])
+        return train_vectors, labels
 
     # def gen_vec_single_nonoise(self, pairs):
     #     a, a_prime = zip(*pairs)
@@ -201,35 +200,17 @@ class Analogy(Benchmark):
         # result["closest words to answer 5"] = get_distance_closest_words(vec_b_prime,5)
         # where prediction lands:
         ans = self.embs.vocabulary.get_word_by_id(ids_max[0])
-        if ans == p_test_one[0]:
-            result["landing_b"] = True
-        else:
-            result["landing_b"] = False
-
-        if ans in p_test_one[1]:
-            result["landing_b_prime"] = True
-        else:
-            result["landing_b_prime"] = False
-
+        result["landing_b"] = (ans == p_test_one[0])
+        result["landing_b_prime"] = (ans in p_test_one[1])
         all_a = [i[0] for i in p_train]
         all_a_prime = [item for sublist in p_train for item in sublist[1]]
-
-        if ans in all_a:
-            result["landing_a"] = True
-        else:
-            result["landing_a"] = False
-
-        if ans in all_a_prime:
-            result["landing_a_prime"] = True
-        else:
-            result["landing_a_prime"] = False
+        result["landing_a"] = (ans in all_a)
+        result["landing_a_prime"] = (ans in all_a_prime)
         return result
 
     def run_category(self, pairs, name_category, name_subcategory):
-
         self.cnt_total_correct = 0
         self.cnt_total_total = 0
-
         details = []
         kfold = sklearn.model_selection.KFold(n_splits=len(pairs) // self.size_cv_test)
         cnt_splits = kfold.get_n_splits(pairs)
