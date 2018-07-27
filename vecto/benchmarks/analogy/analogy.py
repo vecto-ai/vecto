@@ -1,6 +1,6 @@
 import datetime
 import fnmatch
-import json
+# import json
 import os
 import random
 import scipy
@@ -11,7 +11,7 @@ import progressbar
 import sklearn
 from sklearn.linear_model import LogisticRegression
 from itertools import product
-from vecto.utils.data import jsonify
+# from vecto.utils.data import jsonify
 from ..base import Benchmark
 
 logger = logging.getLogger(__name__)
