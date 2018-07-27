@@ -30,12 +30,6 @@ class Tests(unittest.TestCase):
         result = outliers.get_result(embs, path_outliers_dataset)[0]
         amount_of_categories = 2
         amount_of_word_in_cats = 3
-        cat_is_guessed = True
-        cat_average_distance = 0.9
-        cat_is_outlier = False
 
         self.assertEqual(len(result.keys()), amount_of_categories)
         self.assertEqual(len(result['cats']), amount_of_word_in_cats)
-        self.assertEqual(result['cats']['cat']['hit'], cat_is_guessed)
-        self.assertEqual(result['cats']['cat']['average'], cat_average_distance)
-        self.assertEqual(result['cats']['cat']['is_outlier'], cat_is_outlier)
