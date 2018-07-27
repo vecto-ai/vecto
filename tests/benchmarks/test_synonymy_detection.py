@@ -11,11 +11,13 @@ path_synonymy_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'synonymy_
 
 
 class Tests(unittest.TestCase):
+    @classmethod
     def test_synonymy(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         synonymy = CosineDistance()
-        result = synonymy.get_result(embs, path_synonymy_dataset)
+        synonymy.get_result(embs, path_synonymy_dataset)
 
+    @classmethod
     def test_cli(self):
         sio = StringIO()
         with redirect_stdout(sio):
@@ -27,13 +29,13 @@ class Tests(unittest.TestCase):
     def test_synonymy_results(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         synonymy = CosineDistance()
-        result = synonymy.get_result(embs, path_synonymy_dataset)[0]
+        result = synonymy.get_result(embs, path_synonymy_dataset)['test']
         cat_is_synonym = 'yes'
         cat_is_hit = False
         distance_to_cat = 1.0
 
-        self.assertEqual(result['tiger'][0]['is_synonym'], 'yes')
-        self.assertEqual(result['tiger'][0]['hit'], False)
+        self.assertEqual(result['tiger'][0]['is_synonym'], cat_is_synonym)
+        self.assertEqual(result['tiger'][0]['hit'], cat_is_hit)
         self.assertEqual(result['tiger'][0]['distance'], distance_to_cat)
 
     def test_synonymy_reader(self):

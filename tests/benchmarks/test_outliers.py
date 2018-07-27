@@ -11,11 +11,13 @@ path_outliers_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'outliers'
 
 
 class Tests(unittest.TestCase):
+    @classmethod
     def test_outliers(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         outliers = AveragePairwiseCosine()
-        result = outliers.get_result(embs, path_outliers_dataset)
+        outliers.get_result(embs, path_outliers_dataset)
 
+    @classmethod
     def test_cli(self):
         sio = StringIO()
         with redirect_stdout(sio):
@@ -27,7 +29,7 @@ class Tests(unittest.TestCase):
     def test_outliers_results(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         outliers = AveragePairwiseCosine()
-        result = outliers.get_result(embs, path_outliers_dataset)[0]
+        result = outliers.get_result(embs, path_outliers_dataset)['test']
         amount_of_categories = 2
         amount_of_word_in_cats = 3
 

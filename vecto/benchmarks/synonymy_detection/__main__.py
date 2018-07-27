@@ -5,7 +5,6 @@ import logging
 from vecto.utils.data import save_json
 from vecto.benchmarks.synonymy_detection import *
 from vecto.embeddings import load_from_dir
-from vecto.config import load_config
 
 logging.basicConfig(level=logging.DEBUG)
 

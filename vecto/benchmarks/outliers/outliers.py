@@ -1,6 +1,5 @@
 from ..base import Benchmark
 from collections import defaultdict
-from sklearn import preprocessing
 from os import path, listdir
 import csv
 import numpy as np
@@ -62,7 +61,7 @@ class Outliers(Benchmark):
         else:
             with open(path) as f:
                 for line in f:
-                    id, category, word, is_outlier = line.strip().split()
+                    _, category, word, is_outlier = line.strip().split()
                     test[category].append({'word': word, 'is_outlier': is_outlier})
         return dict(test)
 
@@ -94,23 +93,23 @@ class Outliers(Benchmark):
         return datasets
 
     def read_single_dataset(self, path_to_dir, file_name):
-        dataset_name, file_extension = path.splitext(file_name)
+        dataset_name, _ = path.splitext(file_name)
         data = self.read_test_set(path.join(path_to_dir, file_name))
         return dataset_name, data
 
     def run(self, embs, path_dataset):
-        results = []
+        results = defaultdict(lambda: {})
         datasets = self.read_datasets_from_dir(path_dataset)
         for dataset_name, dataset_data in datasets.items():
             result = self.evaluate(embs, dataset_data)
-            results.append(result)
-        return results
+            results[dataset_name] = result
+        return dict(results)
 
-    def get_result(self, embs, path_dataset):
+    def get_result(self, embeds, path_dataset):
         if self.normalize:
-            embs.normalize()
+            embeds.normalize()
 
-        results = self.run(embs, path_dataset)
+        results = self.run(embeds, path_dataset)
         return results
 
 
@@ -141,6 +140,7 @@ class AveragePairwiseCosine(Outliers):
             result[category] = word_result
         return dict(result)
 
+    @classmethod
     def compute_average(self, distances):
         return np.mean([value[1] for value in distances])
 

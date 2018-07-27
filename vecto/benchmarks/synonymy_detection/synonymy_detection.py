@@ -1,11 +1,9 @@
 from ..base import Benchmark
 from collections import defaultdict
-from sklearn import preprocessing
 from os import path, listdir
 import csv
 import numpy as np
 from scipy.spatial import distance
-from itertools import product
 
 OTHER_EXT = 'None'
 BENCHMARK = 'benchmark'
@@ -44,6 +42,7 @@ class SynonymyDetection(Benchmark):
     def method(self):
         return type(self).__name__
 
+    @classmethod
     def read_test_set(self, path):
         data = defaultdict(lambda: [])
         if path.endswith('.csv'):
@@ -62,7 +61,7 @@ class SynonymyDetection(Benchmark):
         else:
             with open(path) as f:
                 for line in f:
-                    id, target_word, word, is_synonym = line.strip().split()
+                    _, target_word, word, is_synonym = line.strip().split()
                     data[target_word].append([word, is_synonym])
         return dict(data)
 
@@ -90,17 +89,17 @@ class SynonymyDetection(Benchmark):
         return datasets
 
     def read_single_dataset(self, path_to_dir, file_name):
-        dataset_name, file_extension = path.splitext(file_name)
+        dataset_name, _ = path.splitext(file_name)
         data = self.read_test_set(path.join(path_to_dir, file_name))
         return dataset_name, data
 
-    def run(self, embs, path_dataset):
-        results = []
+    def run(self, embeds, path_dataset):
+        results = defaultdict(lambda: {})
         datasets = self.read_datasets_from_dir(path_dataset)
         for dataset_name, dataset_data in datasets.items():
-            result = self.evaluate(embs, dataset_data)
-            results.append(result)
-        return results
+            result = self.evaluate(embeds, dataset_data)
+            results[dataset_name] = result
+        return dict(results)
 
     def get_result(self, embs, path_dataset):
         if self.normalize:
@@ -111,11 +110,12 @@ class SynonymyDetection(Benchmark):
 
 
 class CosineDistance(SynonymyDetection):
+    @classmethod
     def run_synonym_finding(self, embs, data):
         result = defaultdict(lambda: {})
         for word, suspicious_words in data.items():
             distances = []
-            for susp_word, is_synonym in suspicious_words:
+            for susp_word, _ in suspicious_words:
                 distances.append(1 - distance.cosine(embs.get_vector(susp_word), embs.get_vector(word)))
             guessed_word_index = distances.index(np.min(distances))
             results_for_word = []
