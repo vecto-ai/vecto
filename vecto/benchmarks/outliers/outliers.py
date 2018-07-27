@@ -150,13 +150,14 @@ class AveragePairwiseCosine(Outliers):
         for word, compared_word in product(values['words'], repeat=2):
             if word == compared_word:
                 continue
-            distances_to_other_words[word[0]].append([compared_word[0], 1 - distance.cosine(word[1], compared_word[1])])
+            distance_between_words = round(1 - distance.cosine(word[1], compared_word[1]), 2)
+            distances_to_other_words[word[0]].append([compared_word[0], distance_between_words])
         for word_id, key in enumerate(distances_to_other_words.keys()):
             result_dict = {}
             result_dict['distances'] = distances_to_other_words[key]
             result_dict['is_outlier'] = values['is_outlier'][word_id]
             average = self.compute_average(distances_to_other_words[key])
-            result_dict['average'] = average
+            result_dict['average'] = round(average, 2)
             if average <= self.threshold:
                 result_dict['hit'] = False
             else:

@@ -6,16 +6,15 @@ from contextlib import redirect_stdout
 from vecto.benchmarks.outliers import *
 from vecto.embeddings import load_from_dir
 from ..test_setup import run_module
-from numpy import array
 
-path_categorization_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'outliers')
+path_outliers_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'outliers')
 
 
 class Tests(unittest.TestCase):
-    def test_categorization(self):
+    def test_outliers(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
-        categorization = AveragePairwiseCosine()
-        result = categorization.get_result(embs, path_categorization_dataset)
+        outliers = AveragePairwiseCosine()
+        result = outliers.get_result(embs, path_outliers_dataset)
 
     def test_cli(self):
         sio = StringIO()
@@ -24,3 +23,19 @@ class Tests(unittest.TestCase):
                        './tests/data/embeddings/text/plain_with_file_header/',
                        './tests/data/benchmarks/outliers/',
                        '--path_out', '/tmp/vecto/', '--method', 'AveragePairwiseCosine')
+
+    def test_outliers_results(self):
+        embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
+        outliers = AveragePairwiseCosine()
+        result = outliers.get_result(embs, path_outliers_dataset)[0]
+        amount_of_categories = 2
+        amount_of_word_in_cats = 3
+        cat_is_guessed = True
+        cat_average_distance = 0.9
+        cat_is_outlier = False
+
+        self.assertEqual(len(result.keys()), amount_of_categories)
+        self.assertEqual(len(result['cats']), amount_of_word_in_cats)
+        self.assertEqual(result['cats']['cat']['hit'], cat_is_guessed)
+        self.assertEqual(result['cats']['cat']['average'], cat_average_distance)
+        self.assertEqual(result['cats']['cat']['is_outlier'], cat_is_outlier)
