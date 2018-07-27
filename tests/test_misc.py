@@ -13,4 +13,5 @@ class Tests(unittest.TestCase):
     def test_utils(self):
         from vecto.utils.data import jsonify
         data = {"test": 1}
-        jsonify(data)
+        res = jsonify(data)
+        self.assertIsInstance(res, dict)
