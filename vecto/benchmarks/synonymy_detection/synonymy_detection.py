@@ -55,28 +55,31 @@ class SynonymyDetection(Benchmark):
                         continue
                     if not head:
                         target_word = row[1]
-                        solution_word = row[2]
-                        other = row[3:]
-                        data['target_words'].append(target_word)
-                        data['solution_words'].append(solution_word)
-                        data['other_words'].append(other)
+                        word = row[2]
+                        is_synonym = row[3]
+                        data[target_word].append([word, is_synonym])
                     head = False
         else:
             with open(path) as f:
                 for line in f:
-                    id, target_word, solution_word = line.strip().split()[:3]
-                    other = line.strip().split()[3:]
-                    data['target_words'].append(target_word)
-                    data['solution_words'].append(solution_word)
-                    data['other_words'].append(other)
-        return data
+                    id, target_word, word, is_synonym = line.strip().split()
+                    data[target_word].append([word, is_synonym])
+        return dict(data)
 
-    def collect_stats(self, categories):
-        result = self.run_synonym_finding(categories)
+    def collect_stats(self, embs, data):
+        corrected_data = defaultdict(lambda: [])
+        for word, suspicious_words in data.items():
+            if not embs.has_word(word):
+                continue
+            for susp_word, is_synonym in suspicious_words:
+                if embs.has_word(susp_word):
+                    corrected_data[word].append([susp_word, is_synonym])
+        result = self.run_synonym_finding(embs, dict(corrected_data))
         return result
 
     def evaluate(self, embs, data):
-        pass
+        result = self.collect_stats(embs, data)
+        return result
 
     def read_datasets_from_dir(self, path_to_dir):
         datasets = defaultdict(lambda: {})
@@ -108,5 +111,23 @@ class SynonymyDetection(Benchmark):
 
 
 class CosineDistance(SynonymyDetection):
-    def run_synonym_finding(self, categories):
-        pass
+    def run_synonym_finding(self, embs, data):
+        result = defaultdict(lambda: {})
+        for word, suspicious_words in data.items():
+            distances = []
+            for susp_word, is_synonym in suspicious_words:
+                distances.append(1 - distance.cosine(embs.get_vector(susp_word), embs.get_vector(word)))
+            guessed_word_index = distances.index(np.min(distances))
+            results_for_word = []
+            for dist_id, cosine_distance in enumerate(distances):
+                d = {}
+                d['suspicious_word'] = suspicious_words[dist_id][0]
+                d['is_synonym'] = suspicious_words[dist_id][1]
+                if dist_id == guessed_word_index:
+                    d['hit'] = True
+                else:
+                    d['hit'] = False
+                d['distance'] = cosine_distance
+                results_for_word.append(d)
+            result[word] = results_for_word
+        return dict(result)
