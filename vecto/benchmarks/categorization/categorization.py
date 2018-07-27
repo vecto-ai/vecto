@@ -89,14 +89,16 @@ class Categorization(Benchmark):
     def evaluate(self, embs, data):
         vectors = []
         labels = []
+        new_data = defaultdict(lambda: [])
         for key, value in data.items():
             for word in value:
                 if embs.has_word(word):
                     vectors.append(embs.get_vector(word))
                     labels.append(list(data.keys()).index(key))
+                    new_data[key].append(word)
         if len(data.keys()) > len(vectors):
             raise Exception('Too poor vocabulary')
-        word_stats, global_stats = self.collect_stats(data, vectors, labels)
+        word_stats, global_stats = self.collect_stats(new_data, vectors, labels)
         result = {}
         result['word_stats'] = word_stats
         result['global_stats'] = global_stats
