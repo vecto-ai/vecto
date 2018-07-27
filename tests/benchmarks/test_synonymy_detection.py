@@ -15,6 +15,7 @@ class Tests(unittest.TestCase):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         synonymy = CosineDistance()
         result = synonymy.get_result(embs, path_synonymy_dataset)
+        print(result)
 
     def test_cli(self):
         sio = StringIO()
