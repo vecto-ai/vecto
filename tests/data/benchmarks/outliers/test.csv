@@ -1,0 +1,9 @@
+,category,word,is_outlier
+0,cats,cat,false
+1,cats,tiger,false
+2,cats,run,true
+3,cats,walk,true
+4,fruits,apple,false
+5,fruits,banana,false
+6,fruits,the,true
+7,fruits,fly,true
