@@ -1,10 +1,11 @@
 import argparse
 import json
 import logging
+import os
 
 from vecto.utils.data import save_json
-from vecto.benchmarks.analogy import *
-from vecto.config import load_config
+from vecto.benchmarks.analogy import ThreeCosAvg, ThreeCosMul, LinearOffset, LRCos
+# from vecto.config import load_config
 from vecto.embeddings import load_from_dir
 
 logging.basicConfig(level=logging.DEBUG)
