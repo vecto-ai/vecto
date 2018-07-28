@@ -106,11 +106,11 @@ class Outliers(Benchmark):
             results[dataset_name] = result
         return dict(results)
 
-    def get_result(self, embeds, path_dataset):
+    def get_result(self, embs, path_dataset):
         if self.normalize:
-            embeds.normalize()
+            embs.normalize()
 
-        results = self.run(embeds, path_dataset)
+        results = self.run(embs, path_dataset)
         return results
 
 

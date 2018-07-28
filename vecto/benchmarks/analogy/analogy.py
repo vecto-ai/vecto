@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 class Analogy(Benchmark):
-
     def __init__(self, normalize=True,
                  ignore_oov=True,
                  do_top5=True,
@@ -87,8 +86,8 @@ class Analogy(Benchmark):
                 return True
             if self.embs.vocabulary.get_id(pair[1][0]) < 0:
                 return True
-            # if not is_at_least_one_word_present(pair[1]):
-            # return True
+                # if not is_at_least_one_word_present(pair[1]):
+                # return True
         return False
 
     def gen_vec_single(self, pairs):
@@ -311,7 +310,8 @@ class Analogy(Benchmark):
                     continue
                 logger.info("processing " + filename)
                 pairs = self.get_pairs(os.path.join(root, filename))
-                out = self.run_category(pairs, name_category=os.path.basename(os.path.dirname(root)), name_subcategory=filename)
+                out = self.run_category(pairs, name_category=os.path.basename(os.path.dirname(root)),
+                                        name_subcategory=filename)
                 results.append(out)
         if group_subcategory:
             results.extend(self.group_subcategory_results(results))
@@ -344,15 +344,16 @@ class Analogy(Benchmark):
                 new_results[k]['experiment_setup']['cnt_questions_correct'] = cnt_correct
                 new_results[k]['experiment_setup']['cnt_questions_total'] = cnt_total
         for k, v in new_results.items():
-            new_results[k]['result'] = new_results[k]['experiment_setup']['cnt_questions_correct'] * 1.0 / new_results[k]['experiment_setup']['cnt_questions_total']
+            new_results[k]['result'] = new_results[k]['experiment_setup']['cnt_questions_correct'] * 1.0 / \
+                                       new_results[k]['experiment_setup']['cnt_questions_total']
         out = []
         for k, v in new_results.items():
             out.append(new_results[k])
         return out
 
-    #def subsample_dims(self, newdim):
-        #self.embs.matrix = self.embs.matrix[:, 0:newdim]
-        #self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
+        # def subsample_dims(self, newdim):
+        # self.embs.matrix = self.embs.matrix[:, 0:newdim]
+        # self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
 
     def get_result(self, embs, path_dataset, group_subcategory=False):
         if self.normalize:
@@ -476,7 +477,6 @@ class ThreeCosMul2(PairWise):
 
 
 class ThreeCosAvg(Analogy):
-
     def do_test_on_pairs(self, p_train, p_test):
         vecs_a = []
         vecs_a_prime = []
@@ -514,7 +514,6 @@ class ThreeCosAvg(Analogy):
 
 
 class LRCos(Analogy):
-
     def do_test_on_pairs(self, p_train, p_test):
         results = []
         X_train, Y_train = self.gen_vec_single(p_train)

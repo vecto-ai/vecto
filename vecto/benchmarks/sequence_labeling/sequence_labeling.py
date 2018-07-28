@@ -13,7 +13,6 @@ import numpy as np
 
 
 class Sequence_labeling(Benchmark):
-
     def __init__(self, normalize=True, window=2, method='lr'):
         self.normalize = normalize
         self.window = 2
