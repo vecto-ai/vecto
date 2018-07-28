@@ -81,7 +81,6 @@ def get_vectors(model, sentences):
 
 
 class Text_classification(Benchmark):
-
     def __init__(self, batchsize=64, epoch=5, gpu=-1, layer=1, dropout=0, model=['cnn', 'rnn', 'bow'][1],
                  char_based=False, shrink=100):
         self.current_datetime = '{}'.format(datetime.datetime.today())
@@ -105,13 +104,13 @@ class Text_classification(Benchmark):
         self.path_dataset = path_dataset
         if self.path_dataset == 'dbpedia':
             train, test, vocab = text_datasets.get_dbpedia(
-                char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, shrink=self.shrink )
+                char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, shrink=self.shrink)
         elif self.path_dataset.startswith('imdb.'):
             train, test, vocab = text_datasets.get_imdb(
                 fine_grained=self.path_dataset.endswith('.fine'),
                 char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, shrink=self.shrink)
         elif self.path_dataset in ['TREC', 'stsa.binary', 'stsa.fine',
-                              'custrev', 'mpqa', 'rt-polarity', 'subj']:
+                                   'custrev', 'mpqa', 'rt-polarity', 'subj']:
             train, test, vocab = text_datasets.get_other_text_dataset(
                 self.path_dataset, char_based=self.char_based, vocab=embs.vocabulary.dic_words_ids, shrink=self.shrink)
         else:  # finallly, if file is not downloadable, load from local path

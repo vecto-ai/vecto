@@ -30,7 +30,6 @@ import numpy as np
 
 # Definition of a recurrent net for language modeling
 class RNNForLM(chainer.Chain):
-
     def get_embed_from_wv(self, w):
         return self.wv[w]
 
@@ -90,7 +89,6 @@ class RNNForLM(chainer.Chain):
 # example is a part of sequences starting from the different offsets
 # equally spaced within the whole sequence.
 class ParallelSequentialIterator(chainer.dataset.Iterator):
-
     def __init__(self, dataset, batch_size, window_size, repeat=True):
         self.dataset = dataset
         self.batch_size = batch_size  # batch size
@@ -161,27 +159,26 @@ class ParallelSequentialIterator(chainer.dataset.Iterator):
         return [self.dataset[(offset + self.iteration) % len(self.dataset)]
                 for offset in self.offsets]
 
-    # def serialize(self, serializer):
-    #     # It is important to serialize the state to be recovered on resume.
-    #     self.iteration = serializer('iteration', self.iteration)
-    #     self.epoch = serializer('epoch', self.epoch)
-    #     try:
-    #         self._previous_epoch_detail = serializer(
-    #             'previous_epoch_detail', self._previous_epoch_detail)
-    #     except KeyError:
-    #         # guess previous_epoch_detail for older version
-    #         self._previous_epoch_detail = self.epoch + \
-    #                                       (self.current_position - self.batch_size) / len(self.dataset)
-    #         if self.epoch_detail > 0:
-    #             self._previous_epoch_detail = max(
-    #                 self._previous_epoch_detail, 0.)
-    #         else:
-    #             self._previous_epoch_detail = -1.
+        # def serialize(self, serializer):
+        #     # It is important to serialize the state to be recovered on resume.
+        #     self.iteration = serializer('iteration', self.iteration)
+        #     self.epoch = serializer('epoch', self.epoch)
+        #     try:
+        #         self._previous_epoch_detail = serializer(
+        #             'previous_epoch_detail', self._previous_epoch_detail)
+        #     except KeyError:
+        #         # guess previous_epoch_detail for older version
+        #         self._previous_epoch_detail = self.epoch + \
+        #                                       (self.current_position - self.batch_size) / len(self.dataset)
+        #         if self.epoch_detail > 0:
+        #             self._previous_epoch_detail = max(
+        #                 self._previous_epoch_detail, 0.)
+        #         else:
+        #             self._previous_epoch_detail = -1.
 
 
 # Custom updater for truncated BackProp Through Time (BPTT)
 class BPTTUpdater(training.StandardUpdater):
-
     def __init__(self, train_iter, optimizer, bprop_len, device):
         super(BPTTUpdater, self).__init__(
             train_iter, optimizer, device=device)
@@ -224,7 +221,6 @@ def compute_perplexity(result):
 
 
 class Language_modeling(Benchmark):
-
     def __init__(self, normalize=True, window_size=5, method='lstm', test=False):  # 'lr', '2FFNN', 'lstm'
         self.normalize = normalize
         self.window_size = window_size
