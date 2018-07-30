@@ -23,15 +23,24 @@ from vecto.vocabulary.vocabulary import create_from_dir, create_ngram_tokens_fro
 from vecto.corpus import DirSlidingWindowCorpus
 from vecto.embeddings.utils import subword
 import numpy as np
+from vecto.corpus.tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
 
 logger = logging.getLogger(__name__)
 
+
 class DirWindowIterator(chainer.dataset.Iterator):
-    def __init__(self, path, vocab, window_size, batch_size, repeat=True):
+    def __init__(self, path, vocab, window_size, batch_size, language='eng', repeat=True):
         self.path = path
         self.vocab = vocab
         self.window_size = window_size - 1
-        self.dswc = DirSlidingWindowCorpus(self.path, left_ctx_size=self.window_size, right_ctx_size=self.window_size)
+        self.language = language
+        if language == 'jap':
+            self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_JAP_TOKENIZER,
+                                               left_ctx_size=self.window_size,
+                                               right_ctx_size=self.window_size)
+        else:
+            self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_TOKENIZER,
+                                               left_ctx_size=self.window_size, right_ctx_size=self.window_size)
         self.batch_size = batch_size
         self._repeat = repeat
         self.epoch = 0
@@ -53,8 +62,13 @@ class DirWindowIterator(chainer.dataset.Iterator):
             except StopIteration:
                 self.epoch += 1
                 self.is_new_epoch = True
-                self.dswc = DirSlidingWindowCorpus(self.path, left_ctx_size=self.window_size,
-                                                   right_ctx_size=self.window_size)
+                if self.language == 'jap':
+                    self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_JAP_TOKENIZER,
+                                                       left_ctx_size=self.window_size,
+                                                       right_ctx_size=self.window_size)
+                else:
+                    self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_TOKENIZER,
+                                                       left_ctx_size=self.window_size, right_ctx_size=self.window_size)
             if self.epoch > 0 and self.cnt_words_total < 3:
                 print("corpus empty")
                 raise RuntimeError("Corpus is empty")
@@ -149,4 +163,3 @@ def convert(batch, device):
         center = cuda.to_gpu(center)
         context = cuda.to_gpu(context)
     return center, context
-

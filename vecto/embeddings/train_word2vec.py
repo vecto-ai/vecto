@@ -49,12 +49,18 @@ def parse_args():
                         help='number of epochs to learn')
     parser.add_argument('--model', '-m', choices=['skipgram', 'cbow'],
                         default='skipgram', help='model type ("skipgram", "cbow")')
+    parser.add_argument('--language', '-lang', choices=['eng', 'jap'],
+                        default='eng', help='the language, current only support english and japanese')
     parser.add_argument('--subword', '-sw',
                         choices=['none', '_none', 'cnn1d', 'lstm', 'lstm_sum', 'bilstm', 'bilstm_sum', 'avg', 'sum'],
                         default='none',
                         help='specify if subword-level approach should be used ')
     parser.add_argument('--negative-size', default=5, type=int,
                         help='number of negative samples')
+    parser.add_argument('--min_gram', default=1, type=int,
+                        help='the min number of ngram size')
+    parser.add_argument('--max_gram', default=5, type=int,
+                        help='the max number of ngram size')
     parser.add_argument('--out_type', '-o', choices=['hsm', 'ns', 'original'],
                         default='ns',
                         help='output model type ("hsm": hierarchical softmax, '
@@ -63,7 +69,8 @@ def parse_args():
                         default='',
                         help='path to the vocabulary', required=False)
     parser.add_argument('--path_word2chars',
-                        default='', help='path to the word2chars file', required=False)
+                        default='', help='path to the word2chars file, this is only used for japanese bushus',
+                        required=False)
     parser.add_argument('--path_vocab_ngram_tokens',
                         default='',
                         help='path to the vocabulary of ngram tokens (used for subword models)', required=False)
@@ -85,6 +92,15 @@ def print_params(args):
     print('Training model: {}'.format(args.model))
     print('Output type: {}'.format(args.out_type))
     print('')
+
+
+def get_word2chars(path):
+    word2chars = {}
+    with open(path, 'r') as input:
+        for line in input.readlines():
+            tokens = line.split()
+            word2chars[tokens[0]] = tokens[1]
+    return word2chars
 
 
 class SoftmaxCrossEntropyLoss(chainer.Chain):
@@ -160,7 +176,7 @@ def train(args):
         cuda.check_cuda_available()
 
     if args.path_vocab == '':
-        vocab = create_from_dir(args.path_corpus)
+        vocab = create_from_dir(args.path_corpus, language=args.language)
     else:
         vocab = Vocabulary()
         vocab.load(args.path_vocab)
@@ -174,10 +190,15 @@ def train(args):
     vocab_ngram_tokens = None
     if args.subword != 'none':
         if args.path_vocab_ngram_tokens == '':
-            vocab_ngram_tokens = create_ngram_tokens_from_dir(args.path_corpus, 1, 5)
+            vocab_ngram_tokens = create_ngram_tokens_from_dir(args.path_corpus, args.min_gram, args.max_gram)
         else:
             vocab_ngram_tokens = Vocabulary()
             vocab_ngram_tokens.load(args.path_vocab_ngram_tokens)
+
+        if args.path_word2chars == '':
+            word2chars = None
+        else:
+            word2chars = get_word2chars(args.path_word2chars)
 
     loss_func = get_loss_func(args, vocab_context)
     model = get_model(args, loss_func, vocab, vocab_ngram_tokens, current_utils)
@@ -195,11 +216,12 @@ def train(args):
     else:
         if args.subword == 'none':
             train_iter = current_utils.DirWindowIterator(path=args.path_corpus, vocab=vocab, window_size=args.window,
-                                                         batch_size=args.batchsize)
+                                                         batch_size=args.batchsize, language=args.language)
         else:
             train_iter = current_utils.DirWindowIterator(path=args.path_corpus, vocab=vocab,
-                                                         vocab_ngram_tokens=vocab_ngram_tokens,
-                                                         window_size=args.window, batch_size=args.batchsize)
+                                                         vocab_ngram_tokens=vocab_ngram_tokens, word2chars=word2chars,
+                                                         window_size=args.window, batch_size=args.batchsize,
+                                                         language=args.language)
     updater = training.StandardUpdater(train_iter, optimizer, converter=current_utils.convert, device=args.gpu)
     trainer = training.Trainer(updater, (args.epoch, 'epoch'), out=args.path_out)
 

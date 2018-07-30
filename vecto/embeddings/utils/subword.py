@@ -20,6 +20,7 @@ from vecto.vocabulary.vocabulary import get_ngram_tokensList_from_word
 import logging
 import os
 import time
+from vecto.corpus.tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +28,19 @@ args = None
 
 
 class DirWindowIterator(chainer.dataset.Iterator):
-    def __init__(self, path, vocab, vocab_ngram_tokens, window_size, batch_size, repeat=True):
+    def __init__(self, path, vocab, vocab_ngram_tokens, word2chars, window_size, batch_size, language='eng', repeat=True):
         self.path = path
         self.vocab = vocab
         self.vocab_ngram_tokens = vocab_ngram_tokens
+        self.word2chars = word2chars
         self.window_size = window_size - 1
-        self.dswc = DirSlidingWindowCorpus(self.path, left_ctx_size=self.window_size, right_ctx_size=self.window_size)
+        self.language = language
+        if language == 'jap':
+            self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_JAP_TOKENIZER, left_ctx_size=self.window_size,
+                                               right_ctx_size=self.window_size)
+        else:
+            self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_TOKENIZER,
+                                               left_ctx_size=self.window_size, right_ctx_size=self.window_size)
         self.batch_size = batch_size
         self._repeat = repeat
         self.epoch = 0
@@ -60,8 +68,13 @@ class DirWindowIterator(chainer.dataset.Iterator):
             except StopIteration:
                 self.epoch += 1
                 self.is_new_epoch = True
-                self.dswc = DirSlidingWindowCorpus(self.path, left_ctx_size=self.window_size,
-                                                   right_ctx_size=self.window_size)
+                if self.language == 'jap':
+                    self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_JAP_TOKENIZER,
+                                                       left_ctx_size=self.window_size,
+                                                       right_ctx_size=self.window_size)
+                else:
+                    self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_TOKENIZER,
+                                                       left_ctx_size=self.window_size, right_ctx_size=self.window_size)
             if self.epoch > 0 and self.cnt_words_total < 3:
                 print("corpus empty")
                 raise RuntimeError("Corpus is empty")
@@ -75,7 +88,7 @@ class DirWindowIterator(chainer.dataset.Iterator):
 
         wordIds = self.context
         words = [self.vocab.get_word_by_id(c) for c in wordIds]
-        tokenIdsListList = getTokenIdsListList(words, self.vocab_ngram_tokens)
+        tokenIdsListList = getTokenIdsListList(words, self.vocab_ngram_tokens, self.word2chars)
 
         return self.center, self.context, tokenIdsListList
 
@@ -142,7 +155,18 @@ def convert(batch, device):
     return center, context, tokenIdsList_merged, tokenIdsList_merged_b, argsort, argsort_reverse, pList
 
 
-def getTokenIdsListList(words, vocab_ngram_tokens, max_tokens_length=20):
+def get_subwords_from_word2chars(word, word2chars):
+    l = []
+    for w in word:
+        if w not in word2chars:
+            l.append(w)
+        else:
+            for c in word2chars[w]:
+                l.append(c)
+    return l
+
+
+def getTokenIdsListList(words, vocab_ngram_tokens, word2chars, max_tokens_length=20):
     tokenIdsListList = []
 
     min = vocab_ngram_tokens.metadata["min_gram"]
@@ -150,7 +174,11 @@ def getTokenIdsListList(words, vocab_ngram_tokens, max_tokens_length=20):
 
     for word in words:
         tokenIdsList = []
-        tokensList = get_ngram_tokensList_from_word(word, min, max)
+        tokensList = []
+        tokensList.extend(get_ngram_tokensList_from_word(word, min, max))
+        if word2chars is not None:
+            tokensList.append(get_subwords_from_word2chars(word, word2chars))
+        # print(tokensList)
         for tokens in tokensList:
             tokenIds = [vocab_ngram_tokens.get_id(token) for token in tokens]
             while len(tokenIds) > max_tokens_length:
@@ -159,69 +187,6 @@ def getTokenIdsListList(words, vocab_ngram_tokens, max_tokens_length=20):
 
         tokenIdsListList.append(tokenIdsList)
     return tokenIdsListList
-
-
-class CNN(chainer.Chain):
-    def __init__(self, vocab, vocab_ngram_tokens, n_units, n_units_char,
-                 dropout):  # dropout ratio, zero indicates no dropout
-        super(CNN, self).__init__()
-        with self.init_scope():
-            n_units_char = 10  # int(n_units_char / 10) #cnn is very slow!!!
-
-            self.embed = L.EmbedID(
-                len(vocab_ngram_tokens.lst_words) + 2, n_units_char,
-                initialW=I.Uniform(1. / n_units_char))  # ngram tokens embedding  plus 2 for OOV and end symbol.
-
-            self.n_ngram = vocab_ngram_tokens.metadata["max_gram"] - vocab_ngram_tokens.metadata["min_gram"] + 1
-
-            # n_filters = {i: min(200, i * 5) for i in range(1, 1 + 1)}
-            # self.cnns = (L.Convolution2D(1, v, (k, n_units_char),) for k, v in n_filters.items())
-            # self.out = L.Linear(sum([v for k, v in n_filters.items()]), n_units)
-
-            self.cnn1 = L.Convolution2D(1, 8, (1, n_units_char), )
-            self.cnn2 = L.Convolution2D(1, 8, (2, n_units_char), )
-            self.cnn3 = L.Convolution2D(1, 8, (3, n_units_char), )
-            self.cnn4 = L.Convolution2D(1, 8, (4, n_units_char), )
-            self.cnn5 = L.Convolution2D(1, 8, (5, n_units_char), )
-            self.cnn6 = L.Convolution2D(1, 8, (6, n_units_char), )
-
-            self.out = L.Linear(48, n_units)
-
-            self.dropout = dropout
-            self.vocab = vocab
-            self.vocab_ngram_tokens = vocab_ngram_tokens
-
-    def __call__(self, tokenIdsList_merged, tokenIdsList_merged_b, argsort, argsort_reverse,
-                 pList):  # input a list of token ids, output a list of word embeddings
-
-        input = self.embed(tokenIdsList_merged)
-        input = input.reshape(input.shape[0], 1, input.shape[1], input.shape[2])
-        input = F.dropout(input, self.dropout)
-
-        h1 = self.cnn1(input)
-        h1 = F.max(h1, (2, 3))
-        h2 = self.cnn2(input)
-        h2 = F.max(h2, (2, 3))
-        h3 = self.cnn3(input)
-        h3 = F.max(h3, (2, 3))
-        h4 = self.cnn4(input)
-        h4 = F.max(h4, (2, 3))
-        h5 = self.cnn5(input)
-        h5 = F.max(h5, (2, 3))
-        h6 = self.cnn6(input)
-        h6 = F.max(h6, (2, 3))
-
-        h = F.concat((h1, h2, h3, h4, h5, h6))
-        h = F.dropout(h, self.dropout)
-        h = F.tanh(h)
-
-        y = self.out(h)
-        # print(y.shape)
-        e = y
-        e = F.reshape(e, (int(e.shape[0] / self.n_ngram),
-                          self.n_ngram, e.shape[1]))
-        e = F.sum(e, axis=1)
-        return e
 
 
 class CNN1D(chainer.Chain):
@@ -390,18 +355,22 @@ class RNN(chainer.Chain):
         if 'bilstm' in self.subword:
             y_b = self.out_b(y_b)
             y = y + y_b
-        # print(y.shape)
+
         e = y[argsort_reverse]
 
-        isSum = True
-        if isSum:
-            e = F.reshape(e, (int(e.shape[0] / self.n_ngram),
-                              self.n_ngram, e.shape[1]))
-            e = F.sum(e, axis=1)
-        else:
-            e = F.reshape(e, (int(e.shape[0] / self.n_ngram),
-                              self.n_ngram * e.shape[1]))
-            e = self.final_out(F.tanh(e))
+        # isSum = True
+        # if isSum:
+        #     e = F.reshape(e, (int(e.shape[0] / self.n_ngram),
+        #                       self.n_ngram, e.shape[1]))
+        #     e = F.sum(e, axis=1)
+        # else:
+        #     e = F.reshape(e, (int(e.shape[0] / self.n_ngram),
+        #                       self.n_ngram * e.shape[1]))
+        #     e = self.final_out(F.tanh(e))
+
+        e = F.reshape(e, (int(e.shape[0] / self.n_ngram),
+                          self.n_ngram, e.shape[1]))
+        e = F.sum(e, axis=1)
         return e
 
     def rnn(self, cur_word):
@@ -506,25 +475,20 @@ class SkipGram(chainer.Chain):
 
             if subword.startswith('_none'):
                 self.f = None
-            if subword.startswith('cnn_'):
-                self.f = CNN(vocab, vocab_ngram_tokens, dimensions, dimensions, dropout)
+            # if subword.startswith('cnn_'):
+            #     self.f = CNN(vocab, vocab_ngram_tokens, dimensions, dimensions, dropout)
             if subword.startswith('cnn1d'):
                 self.f = CNN1D(vocab, vocab_ngram_tokens, dimensions, dimensions, dropout, args.subword)
-            if subword.startswith('lstm'):
-                self.f = RNN(vocab, vocab_ngram_tokens, dimensions, dimensions, dropout, args.subword)
-            if subword.startswith('bilstm'):
+            if subword.startswith('bilstm') or subword.startswith('lstm'):
                 self.f = RNN(vocab, vocab_ngram_tokens, dimensions, dimensions, dropout, args.subword)
             if subword.startswith('avg') or subword.startswith('sum'):
                 self.f = SUMAVG(vocab, vocab_ngram_tokens, dimensions, dimensions, dropout, args.subword)
 
             self.loss_func = loss_func
+
     def getEmbeddings(self):
         if self.word_embed is None:
             return self.getEmbeddings_f()
-        return self.word_embed.W.data
-    def getEmbeddings_none(self):
-        if self.word_embed is None:
-            return None
         return self.word_embed.W.data
 
     def getEmbeddings_f(self, words=None, batchsize=1000, gpu=-1):
@@ -537,7 +501,7 @@ class SkipGram(chainer.Chain):
             e = None
             while i_words < len(words):
                 tokenIdsListList = getTokenIdsListList(words[i_words: i_words + batchsize],
-                                                       self.vocab_ngram_tokens)
+                                                       self.vocab_ngram_tokens, None)
 
                 local_max_tokens_length = 7
                 for tokenIdsList in tokenIdsListList:
