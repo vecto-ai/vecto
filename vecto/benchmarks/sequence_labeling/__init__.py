@@ -1,1 +1,1 @@
-from .sequence_labeling import Sequence_labeling
+from .sequence_labeling import SequenceLabeling
