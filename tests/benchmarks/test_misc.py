@@ -10,7 +10,7 @@ from vecto.benchmarks.sequence_labeling import Sequence_labeling
 from vecto.benchmarks.language_modeling import Language_modeling
 from vecto.benchmarks.analogy import visualize as analogy_visualize
 from vecto.benchmarks.similarity import visualize as similarity_visualize
-from vecto.benchmarks.text_classification import Text_classification
+from vecto.benchmarks.text_classification import TextClassification
 from vecto.embeddings import load_from_dir
 from vecto.utils.fetch_benchmarks import fetch_benchmarks
 from os import path
@@ -48,18 +48,17 @@ class Tests(unittest.TestCase):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
         output_dir = "/tmp/tests/data/benchmarks_results/text_classification/"
 
-
-        tc = Text_classification(model='cnn')
+        tc = TextClassification(model='cnn')
         tc.set_output_dir(output_dir)
         result = tc.get_result(embs, path_text_classification_dataset)
         print(result)
 
-        tc = Text_classification(model='rnn')
+        tc = TextClassification(model='rnn')
         tc.set_output_dir(output_dir)
         result = tc.get_result(embs, path_text_classification_dataset)
         print(result)
 
-        tc = Text_classification(model='bow')
+        tc = TextClassification(model='bow')
         tc.set_output_dir(output_dir)
         result = tc.get_result(embs, path_text_classification_dataset)
         print(result)
