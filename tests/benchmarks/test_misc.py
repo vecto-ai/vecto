@@ -46,18 +46,22 @@ class Tests(unittest.TestCase):
 
     def test_text_classification(self):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
+        output_dir = "/tmp/tests/data/benchmarks_results/text_classification/"
+
 
         tc = Text_classification(model='cnn')
-        result = tc.get_result(embs, path_text_classification_dataset,
-                               "/tmp/tests/data/benchmarks_results/text_classification/")
+        tc.set_output_dir(output_dir)
+        result = tc.get_result(embs, path_text_classification_dataset)
         print(result)
+
         tc = Text_classification(model='rnn')
-        result = tc.get_result(embs, path_text_classification_dataset,
-                               "/tmp/tests/data/benchmarks_results/text_classification/")
+        tc.set_output_dir(output_dir)
+        result = tc.get_result(embs, path_text_classification_dataset)
         print(result)
+
         tc = Text_classification(model='bow')
-        result = tc.get_result(embs, path_text_classification_dataset,
-                               "/tmp/tests/data/benchmarks_results/text_classification/")
+        tc.set_output_dir(output_dir)
+        result = tc.get_result(embs, path_text_classification_dataset)
         print(result)
 
         model = text_classification.load_model("./tests/data/benchmarks_results/text_classification/args.json",

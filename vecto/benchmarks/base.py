@@ -12,3 +12,7 @@ class Benchmark():
     @abc.abstractmethod
     def get_result(self, embeddings, path_dataset):
         raise NotImplementedError
+
+    @abc.abstractmethod
+    def read_test_set(self, path):
+        raise NotImplementedError

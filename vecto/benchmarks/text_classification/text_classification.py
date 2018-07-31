@@ -93,13 +93,16 @@ class Text_classification(Benchmark):
         self.model = model
         self.char_based = char_based
         self.shrink = shrink
+        self.set_output_dir()
 
-    def get_result(self, embeddings, path_dataset, path_output='/tmp/text_classification/'):
+    def set_output_dir(self, path_output='/tmp/text_classification/'):
         self.out = path_output
-        self.unit = embeddings.matrix.shape[1]
-
         if not os.path.isdir(path_output):
             os.makedirs(path_output)
+
+    def get_result(self, embeddings, path_dataset):
+
+        self.unit = embeddings.matrix.shape[1]
 
         # Load a dataset
         self.path_dataset = path_dataset
