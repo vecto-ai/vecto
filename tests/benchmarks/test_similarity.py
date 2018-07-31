@@ -24,6 +24,6 @@ class Tests(unittest.TestCase):
         self.assertEqual(result[0]['Experiment_setup']['Cnt_pairs_total'], 20)
         print(result)
 
-    @classmethod
-    def test_similarity_visualization(cls):
-        visualize.plot_accuracy(path.join('tests' 'data', 'benchmarks_results', 'similarity'))
+    # @classmethod
+    # def test_similarity_visualization(cls):
+    #     visualize.plot_accuracy(path.join('..', '..', 'tests' 'data', 'benchmarks_results', 'similarity'))
