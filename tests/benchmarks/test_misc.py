@@ -9,7 +9,6 @@ from vecto.benchmarks.similarity import Similarity
 from vecto.benchmarks.sequence_labeling import SequenceLabeling
 from vecto.benchmarks.language_modeling import LanguageModeling
 from vecto.benchmarks.analogy import visualize as analogy_visualize
-from vecto.benchmarks.similarity import visualize as similarity_visualize
 from vecto.benchmarks.text_classification import TextClassification
 from vecto.embeddings import load_from_dir
 from vecto.utils.fetch_benchmarks import fetch_benchmarks
@@ -23,27 +22,6 @@ path_language_modeling_dataset = path.join('.', 'tests', 'data', 'benchmarks', '
 
 
 class Tests(unittest.TestCase):
-    def test_similarity(self):
-        embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
-        similarity = Similarity()
-        result = similarity.get_result(embs, path_similarity_dataset)
-        print(result)
-
-        similarity = Similarity(ignore_oov=False)
-        result = similarity.get_result(embs, path_similarity_dataset)
-        print(result)
-
-        similarity_visualize.plot_accuracy()
-
-    def test_fetcher(self):
-        if path.isdir(path.join('.', 'tests', 'data', 'benchmarks_test')):
-            return
-        fetch_benchmarks(path.join('.', 'tests', 'data', 'benchmarks_test'))
-        embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
-        similarity = Similarity()
-        path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks_test', 'benchmarks', 'similarity', 'en')
-        result = similarity.get_result(embs, path_similarity_dataset),
-
     def test_text_classification(self):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
         output_dir = "/tmp/tests/data/benchmarks_results/text_classification/"

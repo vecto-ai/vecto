@@ -78,7 +78,8 @@ class Similarity(Benchmark):
             details = []
             return self.default_result_value, found_pairs_number, details
         actual, expected = zip(*results)
-        return spearmanr(actual, expected), found_pairs_number, details
+        scores = self.compute_total_score(actual, expected)
+        return scores, found_pairs_number, details
 
     def read_single_dataset(self, path_to_dir, file_name):
         dataset_name, file_extension = os.path.splitext(file_name)
@@ -106,39 +107,37 @@ class Similarity(Benchmark):
     @classmethod
     def make_metadata_dict(cls, metadata, found_pairs, benchmark_len, dataset_name, embeddings_metadata):
         experiment_setup = dict()
-        experiment_setup['cnt_found_pairs_total'] = found_pairs
-        experiment_setup['cnt_pairs_total'] = benchmark_len
-        experiment_setup['embeddings'] = embeddings_metadata
-        experiment_setup['category'] = 'default'
-        experiment_setup['dataset'] = dataset_name
-        experiment_setup['method'] = 'cosine_distance'
-        experiment_setup['language'] = metadata['language']
-        experiment_setup['description'] = metadata['description']
-        experiment_setup['version'] = metadata['version']
-        experiment_setup['measurement'] = 'spearman'
-        experiment_setup['task'] = metadata['task']
-        experiment_setup['timestamp'] = datetime.datetime.now().isoformat()
+        experiment_setup['Cnt_found_pairs_total'] = found_pairs
+        experiment_setup['Cnt_pairs_total'] = benchmark_len
+        experiment_setup['Embeddings'] = embeddings_metadata
+        experiment_setup['Category'] = 'default'
+        experiment_setup['Dataset'] = dataset_name
+        experiment_setup['Method'] = 'cosine_distance'
+        experiment_setup['Language'] = metadata['language']
+        experiment_setup['Description'] = metadata['description']
+        experiment_setup['Version'] = metadata['version']
+        experiment_setup['Task'] = metadata['task']
+        experiment_setup['Timestamp'] = datetime.datetime.now().isoformat()
         return experiment_setup
 
     @classmethod
     def make_result(cls, result, details, metadata_dict):
         out = dict()
-        out["experiment_setup"] = metadata_dict
-        out['correlation'] = result.correlation
-        out['p-value'] = result.pvalue
-        out['details'] = details
+        out['Experiment_setup'] = metadata_dict
+        out['Result'] = result
+        out['Details'] = details
         return out
 
-    def run(self, embs, path_dataset):
+    def run(self, embeddings, path_dataset):
         results = []
         datasets = self.read_datasets_from_dir(path_dataset)
         for dataset_name, dataset_data in datasets.items():
-            result, cnt_found_pairs_total, details = self.evaluate(embs, dataset_data[BENCHMARK])
+            result, cnt_found_pairs_total, details = self.evaluate(embeddings, dataset_data[BENCHMARK])
             metadata_dict = self.make_metadata_dict(dataset_data[METADATA],
                                                     found_pairs=cnt_found_pairs_total,
                                                     benchmark_len=len(dataset_data[BENCHMARK]),
                                                     dataset_name=dataset_name,
-                                                    embeddings_metadata=embs.metadata)
+                                                    embeddings_metadata=embeddings.metadata)
             results.append(self.make_result(result, details, metadata_dict))
         return results
 
@@ -147,3 +146,16 @@ class Similarity(Benchmark):
             embeddings.normalize()
         results = self.run(embeddings, path_dataset)
         return results
+
+
+class SpearmanCorrelation(Similarity):
+    def compute_total_score(self, actual, expected):
+        score = spearmanr(actual, expected)
+        return self.collect_stats(score)
+
+    @classmethod
+    def collect_stats(cls, score):
+        stats = dict()
+        stats['Correlation'] = score.correlation
+        stats['P-value'] = score.pvalue
+        return stats
