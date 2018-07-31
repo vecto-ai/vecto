@@ -10,5 +10,5 @@ class Benchmark():
         pass
 
     @abc.abstractmethod
-    def get_result(self, embeds, path_dataset):
+    def get_result(self, embs, path_dataset):
         pass
