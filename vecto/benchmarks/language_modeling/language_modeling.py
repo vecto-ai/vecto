@@ -223,7 +223,7 @@ def compute_perplexity(result):
         result['val_perplexity'] = np.exp(result['validation/main/loss'])
 
 
-class Language_modeling(Benchmark):
+class LanguageModeling(Benchmark):
 
     def __init__(self, normalize=True, window_size=5, method='lstm', test=False):  # 'lr', '2FFNN', 'lstm'
         self.normalize = normalize
@@ -243,6 +243,9 @@ class Language_modeling(Benchmark):
         print(tmpBasePath)
         self.out = tmpBasePath
         self.resume = ''
+
+    def read_test_set(self, path):
+        pass
 
     def get_result(self, embeddings):
 

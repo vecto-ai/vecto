@@ -7,7 +7,7 @@ import vecto
 from vecto.benchmarks import text_classification
 from vecto.benchmarks.similarity import Similarity
 from vecto.benchmarks.sequence_labeling import SequenceLabeling
-from vecto.benchmarks.language_modeling import Language_modeling
+from vecto.benchmarks.language_modeling import LanguageModeling
 from vecto.benchmarks.analogy import visualize as analogy_visualize
 from vecto.benchmarks.similarity import visualize as similarity_visualize
 from vecto.benchmarks.text_classification import TextClassification
@@ -83,7 +83,7 @@ class Tests(unittest.TestCase):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
 
         for method in ['lr', '2FFNN', 'rnn', 'lstm']:
-            sequence_labeling = Language_modeling(test=True, method=method)
+            sequence_labeling = LanguageModeling(test=True, method=method)
             results = sequence_labeling.get_result(embs)
             print(results)
 
