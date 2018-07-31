@@ -26,5 +26,4 @@ class Tests(unittest.TestCase):
 
     @classmethod
     def test_similarity_visualization(cls):
-        test_results = path.join('tests' 'data', 'benchmarks_results', 'similarity')
-        visualize.plot_accuracy(test_results)
+        visualize.plot_accuracy(path.join('tests' 'data', 'benchmarks_results', 'similarity'))
