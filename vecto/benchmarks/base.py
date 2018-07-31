@@ -7,8 +7,8 @@ class Benchmark():
 
     @abc.abstractmethod
     def __init__(self):
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def get_result(self, embs, path_dataset):
-        pass
+        raise NotImplementedError
