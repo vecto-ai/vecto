@@ -125,11 +125,11 @@ class Categorization(Benchmark):
             results.append(result)
         return results
 
-    def get_result(self, embs, path_dataset):
+    def get_result(self, embeddings, path_dataset):
         if self.normalize:
-            embs.normalize()
+            embeddings.normalize()
 
-        results = self.run(embs, path_dataset)
+        results = self.run(embeddings, path_dataset)
         return results
 
 
