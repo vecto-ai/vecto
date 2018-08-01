@@ -151,7 +151,7 @@ class Sequence_labeling(Benchmark):
 
         return {'p': precision, 'r': recall, 'measure': measure}
 
-    def run_lr(self, embeddings, my_train_x, my_train_y, my_test_x, my_test_y, method, idx2label, dataset):
+    def run_lr(self, embeddings, my_train_x, my_train_y, my_test_x, my_test_y, method, idx2label, dataset, task):
         print(idx2label)
         # fit LR classifier
         if method == 'lr':
@@ -186,7 +186,14 @@ class Sequence_labeling(Benchmark):
         print(res)
 
         out = {}
-        out["result"] = res['measure']
+        out["result"] = []
+        if task == 'pos':
+            name = "accuracy"
+        else:
+            name = "F1_score"
+        out['result'].append({"name": name, "value": res['measure']})
+        out['result'].append({"name": "precision", "value": res['p']})
+        out['result'].append({"name": "recall", "value": res['r']})
         out['res'] = res
         out['details'] = {}
         out['details']['my_test_y'] = my_test_y
@@ -214,8 +221,8 @@ class Sequence_labeling(Benchmark):
         # train_ne.extend(valid_ne)
         train_y.extend(valid_y)
 
-        vocsize = len(dic['words2idx'])
-        nclasses = len(dic['labels2idx'])
+        # vocsize = len(dic['words2idx'])
+        # nclasses = len(dic['labels2idx'])
         # print(nclasses)
 
         # get the training and test's input and output
@@ -226,7 +233,7 @@ class Sequence_labeling(Benchmark):
 
         if self.method == 'lr' or self.method == '2FFNN':
             out = self.run_lr(embs, my_train_x, my_train_y, my_test_x, my_test_y, self.method,
-                              idx2label, dataset)
+                              idx2label, dataset, task)
         if self.method == 'crf':
             # todo
             pass
@@ -241,10 +248,6 @@ class Sequence_labeling(Benchmark):
         experiment_setup["category"] = "default"
         experiment_setup["dataset"] = task
         experiment_setup["method"] = self.method
-        if task == 'pos':
-            experiment_setup["measurement"] = "accuracy"
-        else:
-            experiment_setup["measurement"] = "F1_score"
         experiment_setup["task"] = "sequence_labeling"
         experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
         out["experiment_setup"] = experiment_setup

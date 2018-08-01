@@ -87,5 +87,3 @@ class Tests(unittest.TestCase):
     def test_abc(self):
         base = vecto.benchmarks.base.Benchmark()
         base.get_result(1, 2)
-
-# Tests().test_language_modeling()
