@@ -80,7 +80,6 @@ class WordEmbeddingsDense(WordEmbeddings):
                 output.write("\n")
 
     def load_with_alpha(self, path, power=0.6):
-        # self.load_provenance(path)
         f = tables.open_file(os.path.join(path, 'vectors.h5p'), 'r')
         #        left = np.nan_to_num(f.root.vectors.read())
         left = f.root.vectors.read()
