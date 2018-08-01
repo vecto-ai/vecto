@@ -358,10 +358,10 @@ class Analogy(Benchmark):
         #self.embs.matrix = self.embs.matrix[:, 0:newdim]
         #self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
 
-    def get_result(self, embs, path_dataset, group_subcategory=False):
+    def get_result(self, embeddings, path_dataset, group_subcategory=False):
         if self.normalize:
-            embs.normalize()
-        results = self.run(embs, path_dataset, group_subcategory)
+            embeddings.normalize()
+        results = self.run(embeddings, path_dataset, group_subcategory)
         return results
 
 

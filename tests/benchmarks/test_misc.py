@@ -62,7 +62,8 @@ class Tests(unittest.TestCase):
 
         model = text_classification.load_model("./tests/data/benchmarks_results/text_classification/args.json",
                                                embs.matrix)
-        model = text_classification.load_model("./tests/data/benchmarks_results/text_classification/args.json", embs.matrix)
+        model = text_classification.load_model("./tests/data/benchmarks_results/text_classification/args.json",
+                                               embs.matrix)
         print(text_classification.predict(model, "I like this"))
         print(text_classification.get_vectors(model, ["I like this", "I hate this"]))
 
@@ -83,7 +84,9 @@ class Tests(unittest.TestCase):
             results = sequence_labeling.get_result(embs)
             print(results)
 
-
     def test_abc(self):
-        base = vecto.benchmarks.base.Benchmark()
-        base.get_result(1, 2)
+        with self.assertRaises(NotImplementedError):
+            base = vecto.benchmarks.base.Benchmark()
+            # base.get_result(1, 2)
+
+# Tests().test_language_modeling()

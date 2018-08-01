@@ -254,7 +254,7 @@ class Sequence_labeling(Benchmark):
 
         return out
 
-    def get_result(self, embs, path_dataset):
+    def get_result(self, embeddings, path_dataset):
         if self.normalize:
-            embs.normalize()
-        return [self.run(embs, path_dataset)]
+            embeddings.normalize()
+        return [self.run(embeddings, path_dataset)]

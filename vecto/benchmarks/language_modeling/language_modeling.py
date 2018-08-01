@@ -244,9 +244,9 @@ class Language_modeling(Benchmark):
         self.out = tmpBasePath
         self.resume = ''
 
-    def get_result(self, embs):
+    def get_result(self, embeddings):
 
-        self.unit = embs.matrix.shape[1]
+        self.unit = embeddings.matrix.shape[1]
 
         if self.test:
             train = [0, 1, 2, 3, 4, 5]
@@ -270,8 +270,8 @@ class Language_modeling(Benchmark):
         wv = np.zeros((n_vocab, self.unit), dtype=np.float32)
         for i in range(n_vocab):
             # print(id_to_word[i])
-            id = embs.vocabulary.get_id(id_to_word[i])
-            wv[i] = embs.matrix[id]
+            id = embeddings.vocabulary.get_id(id_to_word[i])
+            wv[i] = embeddings.matrix[id]
 
         if self.gpu >= 0:
             chainer.backends.cuda.get_device_from_id(self.gpu).use()
@@ -330,7 +330,7 @@ class Language_modeling(Benchmark):
         print('test perplexity: {}'.format(np.exp(float(eval_result['main/loss']))))
 
         experiment_setup = self.__dict__
-        experiment_setup["embeddings"] = embs.metadata
+        experiment_setup["embeddings"] = embeddings.metadata
         experiment_setup["category"] = "default"
         experiment_setup["dataset"] = 'ptb'
         experiment_setup["method"] = self.method
