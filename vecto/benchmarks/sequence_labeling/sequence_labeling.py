@@ -32,8 +32,8 @@ class Sequence_labeling(Benchmark):
             tag_position = -1
 
         for type in ["train", "test", "valid"]:
-            with open(os.path.join(path, type + ".txt")) as f:
-                for line in f:
+            with open(os.path.join(path, type + ".txt")) as file_in:
+                for line in file_in:
                     if len(line.strip()) is 0:
                         continue
                     lin = line.strip().split()

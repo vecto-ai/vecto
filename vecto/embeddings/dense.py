@@ -16,40 +16,40 @@ class WordEmbeddingsDense(WordEmbeddings):
 
     """
 
-    def cmp_vectors(self, r1, r2):
-        c = normed(r1) @ normed(r2)
-        if math.isnan(c):
+    def cmp_vectors(self, vec1, vec2):
+        cos = normed(vec1) @ normed(vec2)
+        if math.isnan(cos):
             return 0
-        return (c + 1) / 2
+        return (cos + 1) / 2
 
     def cmp_rows(self, id1, id2):
-        r1 = self.matrix[id1]
-        r2 = self.matrix[id2]
-        return self.cmp_vectors(r1, r2)
+        vec1 = self.matrix[id1]
+        vec2 = self.matrix[id2]
+        return self.cmp_vectors(vec1, vec2)
 
-    def cmp_words(self, w1, w2):
-        id1 = self.vocabulary.get_id(w1)
-        id2 = self.vocabulary.get_id(w2)
+    def cmp_words(self, word1, word2):
+        id1 = self.vocabulary.get_id(word1)
+        id2 = self.vocabulary.get_id(word2)
         if (id1 < 0) or (id2 < 0):
             return 0
         return self.cmp_rows(id1, id2)
 
     def save_matr_to_hdf5(self, path):
-        f = tables.open_file(os.path.join(path, 'vectors.h5p'), 'w')
+        file_out = tables.open_file(os.path.join(path, 'vectors.h5p'), 'w')
         atom = tables.Atom.from_dtype(self.matrix.dtype)
-        ds = f.create_carray(f.root, 'vectors', atom, self.matrix.shape)
+        ds = file_out.create_carray(file_out.root, 'vectors', atom, self.matrix.shape)
         ds[:] = self.matrix
         ds.flush()
-        f.close()
+        file_out.close()
 
     def load_hdf5(self, path):
         """loads embeddings from hdf5 format"""
-        f = tables.open_file(os.path.join(path, 'vectors.h5p'), 'r')
-        self.matrix = f.root.vectors.read()
+        file_in = tables.open_file(os.path.join(path, 'vectors.h5p'), 'r')
+        self.matrix = file_in.root.vectors.read()
         self.vocabulary = Vocabulary()
         self.vocabulary.load(path)
         # self.name += os.path.basename(os.path.normpath(path))
-        f.close()
+        file_in.close()
 
     def load_npy(self, path):
         """loads embeddings from numpy format"""
@@ -80,7 +80,6 @@ class WordEmbeddingsDense(WordEmbeddings):
                 output.write("\n")
 
     def load_with_alpha(self, path, power=0.6):
-        # self.load_provenance(path)
         f = tables.open_file(os.path.join(path, 'vectors.h5p'), 'r')
         #        left = np.nan_to_num(f.root.vectors.read())
         left = f.root.vectors.read()
@@ -117,13 +116,13 @@ class WordEmbeddingsDense(WordEmbeddings):
         rows = []
         header = False
         vec_size = -1
-        with detect_archive_format_and_open(path) as f:
-            for line in f:
+        with detect_archive_format_and_open(path) as file_in:
+            for line_number, line in enumerate(file_in):
                 tokens = line.split()
                 if i == 0 and len(tokens) == 2:
                     header = True
                     cnt_words = int(tokens[0])
-                    size_embedding = int(tokens[1])
+                    vec_size = int(tokens[1])
                     continue
                 # word = tokens[0].decode('ascii',errors="ignore")
                 # word = tokens[0].decode('UTF-8', errors="ignore")
@@ -133,10 +132,11 @@ class WordEmbeddingsDense(WordEmbeddings):
                 str_vec = tokens[1:]
                 if vec_size == -1:
                     vec_size = len(str_vec)
-                if vec_size < len(str_vec): # hack for fasttext output
-                    str_vec = tokens[len(str_vec) - vec_size + 1 :]
                 if vec_size != len(str_vec):
-                    # print(line)
+                    warning_message = "input error in line {}, expected tokens: {}, read tokens: {}, line: {}  ".format(
+                        line_number, vec_size,
+                        len(str_vec), line)
+                    warnings.warn(warning_message)
                     continue
                 row = np.zeros(len(str_vec), dtype=np.float32)
                 for j in range(len(str_vec)):
@@ -147,7 +147,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         #     assert cnt_words == len(rows)
         self.matrix = np.vstack(rows)
         if header:
-            assert size_embedding == self.matrix.shape[1]
+            assert vec_size == self.matrix.shape[1]
         self.vocabulary.lst_frequencies = np.zeros(len(self.vocabulary.lst_words), dtype=np.int32)
         self.name = os.path.basename(os.path.dirname(os.path.normpath(path)))
 

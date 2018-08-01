@@ -14,7 +14,7 @@ install:
   - pip install -U coveralls
   - pip install -U coverage
   - pip install -U pylint
-  - pip install -U -r test_requirements.txt
+  - pip install -r test_requirements.txt
 
 before_script: # configure a headless display to test plot generation
 - "export DISPLAY=:99.0"
@@ -22,10 +22,8 @@ before_script: # configure a headless display to test plot generation
 - sleep 3 # give xvfb some time to start
 
 script:
-# - python -m unittest discover
-- python -m coverage run --branch --source . -m unittest discover --verbose
-# - python setup.py build
-- python -m coverage run --source . setup.py test
+- python -m coverage run --source . -m unittest discover --verbose
+# - python -m coverage run --source . setup.py test
 
 after_success:
   # - python -m pylint --load-plugins=pylint.extensions.mccabe --docstring-min-length 5 --no-docstring-rgx "^(test)?_|.*Tests$" --unsafe-load-any-extension y --output-format colorized  --reports y $(find . -name "*.py")

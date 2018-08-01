@@ -3,8 +3,8 @@ import fnmatch
 import collections
 import logging
 
-from .base import BaseIterator
-from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER
+from vecto.corpus.base import BaseIterator
+from vecto.corpus.tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER
 from vecto.utils.data import detect_archive_format_and_open
 
 
@@ -45,6 +45,7 @@ class FileLineIterator(BaseIterator):
     """
     Receives a sequence of filenames from `base_corpus` and reads each file line-by-line.
     """
+
     def __init__(self, base_corpus, verbose=0):
         super(FileLineIterator, self).__init__(base_corpus=base_corpus.metadata,
                                                verbose=verbose)
@@ -52,8 +53,8 @@ class FileLineIterator(BaseIterator):
 
     def _generate_samples(self):
         for filename in self.base_corpus:
-            with detect_archive_format_and_open(filename) as f:
-                for line in f:
+            with detect_archive_format_and_open(filename) as file_in:
+                for line in file_in:
                     line = line.strip()
                     if line:
                         yield line
