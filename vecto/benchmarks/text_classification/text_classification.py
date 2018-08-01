@@ -196,5 +196,7 @@ class Text_classification(Benchmark):
         result = {}
         result['experiment_setup'] = experiment_setup
         result['log'] = load_json(os.path.join(self.out, 'log'))
-        result['result'] = result['log'][-1]['validation/main/accuracy']
+
+        result['result'] = []
+        result['result'].append({"name": "accuracy", "value": result['log'][-1]['validation/main/accuracy']})
         return result

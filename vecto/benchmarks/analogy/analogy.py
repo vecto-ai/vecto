@@ -3,6 +3,7 @@ import fnmatch
 import os
 import random
 import scipy
+import uuid
 import numpy as np
 import logging
 import progressbar
@@ -246,23 +247,26 @@ class Analogy(Benchmark):
 
         out = dict()
         experiment_setup = dict()
-        experiment_setup["cnt_questions_correct"] = self.cnt_total_correct
-        experiment_setup["cnt_questions_total"] = self.cnt_total_total
         experiment_setup["embeddings"] = self.embs.metadata
         experiment_setup["category"] = name_category
         experiment_setup["subcategory"] = name_subcategory
         experiment_setup["task"] = "word_analogy"
-        experiment_setup["measurement"] = "accuracy"
+        experiment_setup["default_measurement"] = "accuracy"
         experiment_setup["method"] = self.method
+        experiment_setup["uuid"] = str(uuid.uuid4())
         if not self.exclude:
             experiment_setup["method"] += "_honest"
         experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
         out["experiment_setup"] = experiment_setup
         out["details"] = details
+        results = {}
         if self.cnt_total_total == 0:
-            out['result'] = -1
+            results["accuracy"] = -1
         else:
-            out['result'] = self.cnt_total_correct / self.cnt_total_total
+            results["accuracy"] = self.cnt_total_correct / self.cnt_total_total
+            results["cnt_questions_correct"] = self.cnt_total_correct
+            results["cnt_questions_total"] = self.cnt_total_total
+        out["result"] = results
         # str_results = json.dumps(jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
         return out
 

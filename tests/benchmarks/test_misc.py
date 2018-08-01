@@ -84,8 +84,9 @@ class Tests(unittest.TestCase):
             results = sequence_labeling.get_result(embs)
             print(results)
 
-    # def test_abc(self):
-    #     base = vecto.benchmarks.base.Benchmark()
-    #     base.get_result(1, 2)
+    def test_abc(self):
+        with self.assertRaises(NotImplementedError):
+            vecto.benchmarks.base.Benchmark()
+            # base.get_result(1, 2)
 
 # Tests().test_language_modeling()

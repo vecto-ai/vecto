@@ -335,8 +335,8 @@ class Language_modeling(Benchmark):
         experiment_setup["dataset"] = 'ptb'
         experiment_setup["method"] = self.method
         experiment_setup['task'] = 'language_modeling'
-        experiment_setup['measurement'] = 'perplexity'
         result = {}
         result['experiment_setup'] = experiment_setup
-        result['result'] = np.exp(float(eval_result['main/loss']))
+        result['result'] = []
+        result['result'].append({"name": "perplexity", "value": np.exp(float(eval_result['main/loss']))})
         return result

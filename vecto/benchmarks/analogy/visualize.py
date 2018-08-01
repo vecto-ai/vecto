@@ -3,10 +3,6 @@ import pandas
 from pandas.io.json import json_normalize
 from matplotlib import pyplot as plt
 from vecto.utils.data import load_json
-# from vecto.utils.data import save_json
-# from vecto.benchmarks.analogy import *
-from vecto.embeddings.dense import WordEmbeddingsDense
-from vecto.embeddings import load_from_dir
 
 
 def df_from_file(path):
@@ -27,8 +23,8 @@ def df_from_dir(path):
 
 
 def plot_accuracy(path="tests/data/benchmarks_results/analogy/",
-                group_xaxis=['experiment_setup.embeddings.foldername',
-                'experiment_setup.method'][0]):
+                  group_xaxis=['experiment_setup.embeddings.foldername',
+                               'experiment_setup.method'][0]):
     df = df_from_dir(path)
     group = df.groupby(["experiment_setup.subcategory", group_xaxis])
     means = group.mean()
