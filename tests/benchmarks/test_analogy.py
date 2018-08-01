@@ -15,7 +15,7 @@ path_analogy_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'analogy')
 
 class Tests(unittest.TestCase):
 
-    def test_analogy(self):
+    def test_api(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         analogy = LinearOffset()
         result = analogy.get_result(embs, path_analogy_dataset)
@@ -61,7 +61,7 @@ class Tests(unittest.TestCase):
             run_module("vecto.benchmarks.analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
-                       "--path_out", "/tmp/vecto/benchmarks/r.json", "--method", "LRCos")
+                       "--path_out", "/tmp/vecto/benchmarks/specific_filename.json", "--method", "LRCos")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
