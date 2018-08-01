@@ -86,7 +86,7 @@ class Tests(unittest.TestCase):
 
     def test_abc(self):
         with self.assertRaises(NotImplementedError):
-            base = vecto.benchmarks.base.Benchmark()
+            vecto.benchmarks.base.Benchmark()
             # base.get_result(1, 2)
 
 # Tests().test_language_modeling()
