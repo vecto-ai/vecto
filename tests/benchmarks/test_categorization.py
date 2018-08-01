@@ -28,7 +28,7 @@ class Tests(unittest.TestCase):
             run_module('vecto.benchmarks.categorization',
                        './tests/data/embeddings/text/plain_with_file_header/',
                        './tests/data/benchmarks/categorization/',
-                       '--path_out', '/tmp/vecto/', '--method', 'KMeansCategorization')
+                       '--path_out', '/tmp/vecto/benchmarks', '--method', 'KMeansCategorization')
 
     def test_categorization_scores(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))

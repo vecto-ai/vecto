@@ -42,27 +42,27 @@ class Tests(unittest.TestCase):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         similarity = Similarity()
         path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks_test', 'benchmarks', 'similarity', 'en')
-        result = similarity.get_result(embs, path_similarity_dataset),
+        similarity.get_result(embs, path_similarity_dataset)
 
     def test_text_classification(self):
         embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
 
         tc = Text_classification(model='cnn')
         result = tc.get_result(embs, path_text_classification_dataset,
-                               "/tmp/tests/data/benchmarks_results/text_classification/")
+                               "/tmp/vecto/benchmarks/text_classification/")
         print(result)
         tc = Text_classification(model='rnn')
         result = tc.get_result(embs, path_text_classification_dataset,
-                               "/tmp/tests/data/benchmarks_results/text_classification/")
+                               "/tmp/vecto/benchmarks/text_classification/")
         print(result)
         tc = Text_classification(model='bow')
         result = tc.get_result(embs, path_text_classification_dataset,
-                               "/tmp/tests/data/benchmarks_results/text_classification/")
+                               "/tmp/vecto/benchmarks/text_classification/")
         print(result)
 
-        model = text_classification.load_model("./tests/data/benchmarks_results/text_classification/args.json",
+        model = text_classification.load_model("/tmp/vecto/benchmarks/text_classification/args.json",
                                                embs.matrix)
-        model = text_classification.load_model("./tests/data/benchmarks_results/text_classification/args.json",
+        model = text_classification.load_model("/tmp/vecto/benchmarks/text_classification/args.json",
                                                embs.matrix)
         print(text_classification.predict(model, "I like this"))
         print(text_classification.get_vectors(model, ["I like this", "I hate this"]))

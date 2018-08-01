@@ -55,11 +55,11 @@ class Tests(unittest.TestCase):
 
     def test_save(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
-        path_save = path.join('tmp', 'vecto', 'saved')
+        path_save = path.join('/tmp', 'vecto', 'saved')
         embs.save_to_dir(path_save)
         embs = load_from_dir(path_save)
         print(embs.matrix.shape)
-        embs.save_to_dir_plain_txt(path.join('tmp', 'vecto', 'saved_plain'))
+        embs.save_to_dir_plain_txt(path.join('/tmp', 'vecto', 'saved_plain'))
 
     def test_filter(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))

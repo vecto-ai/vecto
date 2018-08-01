@@ -24,7 +24,7 @@ class Tests(unittest.TestCase):
             run_module('vecto.benchmarks.outliers',
                        './tests/data/embeddings/text/plain_with_file_header/',
                        './tests/data/benchmarks/outliers/',
-                       '--path_out', '/tmp/vecto/', '--method', 'AveragePairwiseCosine')
+                       '--path_out', '/tmp/vecto/benchmarks', '--method', 'AveragePairwiseCosine')
 
     def test_outliers_results(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))

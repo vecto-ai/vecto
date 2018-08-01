@@ -24,7 +24,7 @@ class Tests(unittest.TestCase):
             run_module('vecto.benchmarks.synonymy_detection',
                        './tests/data/embeddings/text/plain_with_file_header/',
                        './tests/data/benchmarks/synonymy_detection',
-                       '--path_out', '/tmp/vecto/', '--method', 'CosineDistance')
+                       '--path_out', '/tmp/vecto/benchmarks', '--method', 'CosineDistance')
 
     def test_synonymy_results(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
