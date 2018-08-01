@@ -2,7 +2,6 @@
 
 import contextlib
 import unittest
-import sys
 import io
 from os import path
 from vecto.benchmarks.analogy import *
@@ -53,35 +52,35 @@ class Tests(unittest.TestCase):
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
             run_module("vecto.benchmarks.analogy",
-                "./tests/data/embeddings/text/plain_with_file_header/",
-                "./tests/data/benchmarks/analogy/",
-                "--path_out", "/tmp/vecto/", "--method", "3CosAdd")
+                       "./tests/data/embeddings/text/plain_with_file_header/",
+                       "./tests/data/benchmarks/analogy/",
+                       "--path_out", "/tmp/vecto/benchmarks/", "--method", "3CosAdd")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
             run_module("vecto.benchmarks.analogy",
-                "./tests/data/embeddings/text/plain_with_file_header/",
-                "./tests/data/benchmarks/analogy/",
-                "--path_out", "/tmp/vecto/r.json", "--method", "LRCos")
+                       "./tests/data/embeddings/text/plain_with_file_header/",
+                       "./tests/data/benchmarks/analogy/",
+                       "--path_out", "/tmp/vecto/benchmarks/r.json", "--method", "LRCos")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
             run_module("vecto.benchmarks.analogy",
-                "./tests/data/embeddings/text/plain_with_file_header/",
-                "./tests/data/benchmarks/analogy/",
-                "--method", "3CosMul")
+                       "./tests/data/embeddings/text/plain_with_file_header/",
+                       "./tests/data/benchmarks/analogy/",
+                       "--method", "3CosMul")
 
         sio = io.StringIO()
         with self.assertRaises(RuntimeError):
             with contextlib.redirect_stdout(sio):
                 run_module("vecto.benchmarks.analogy",
-                    "./tests/data/embeddings/text/plain_with_file_header/",
-                    "./tests/data/benchmarks/analogy/",
-                    "--method", "NONEXISTING")
+                           "./tests/data/embeddings/text/plain_with_file_header/",
+                           "./tests/data/benchmarks/analogy/",
+                           "--method", "NONEXISTING")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
             run_module("vecto.benchmarks.analogy",
-                "./tests/data/embeddings/text/plain_with_file_header/",
-                "./tests/data/benchmarks/analogy/",
-                "--method", "3CosAvg")
+                       "./tests/data/embeddings/text/plain_with_file_header/",
+                       "./tests/data/benchmarks/analogy/",
+                       "--method", "3CosAvg")
