@@ -12,12 +12,15 @@ from sklearn.linear_model import LogisticRegression
 import numpy as np
 
 
-class Sequence_labeling(Benchmark):
+class SequenceLabeling(Benchmark):
 
     def __init__(self, normalize=True, window=2, method='lr'):
         self.normalize = normalize
         self.window = 2
         self.method = method
+
+    def read_test_set(self, path):
+        pass
 
     def load_data(self, path, task):
         dicts = {}
@@ -251,7 +254,7 @@ class Sequence_labeling(Benchmark):
 
         return out
 
-    def get_result(self, embs, path_dataset):
+    def get_result(self, embeddings, path_dataset):
         if self.normalize:
-            embs.normalize()
-        return [self.run(embs, path_dataset)]
+            embeddings.normalize()
+        return [self.run(embeddings, path_dataset)]

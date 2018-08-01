@@ -11,7 +11,6 @@ import time
 import datetime
 
 
-
 def df_from_file(path):
     data = load_json(path)
     meta = [["experiment_setup", "category"], ["experiment_setup", "method"], ["experiment_setup", "embeddings"]]
@@ -29,9 +28,8 @@ def df_from_dir(path):
     return df
 
 
-def plot_accuracy(path="tests/data/benchmarks_results/similarity/", group_xaxis=['experiment_setup.embeddings.foldername', 'experiment_setup.method'][0]): #
-
-    df = df_from_dir(path)
+def plot_accuracy(filepath, group_xaxis=['experiment_setup.embeddings.foldername', 'experiment_setup.method'][0]):
+    df = df_from_dir(filepath)
     group = df.groupby(["experiment_setup.category", group_xaxis])
     means = group.mean()
     means.reset_index(inplace=True)
