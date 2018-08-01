@@ -19,23 +19,23 @@ class Tests(unittest.TestCase):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         analogy = LinearOffset()
         result = analogy.get_result(embs, path_analogy_dataset)
-        print(result)
+        self.assertIsInstance(result[0], dict)
 
         analogy = PairDistance()
         result = analogy.get_result(embs, path_analogy_dataset)
-        print(result)
+        self.assertIsInstance(result[0], dict)
 
         analogy = ThreeCosMul()
         result = analogy.get_result(embs, path_analogy_dataset)
-        print(result)
+        self.assertIsInstance(result[0], dict)
 
         analogy = ThreeCosMul2()
         result = analogy.get_result(embs, path_analogy_dataset)
-        print(result)
+        self.assertIsInstance(result[0], dict)
 
         analogy = ThreeCosAvg()
         result = analogy.get_result(embs, path_analogy_dataset)
-        print(result)
+        self.assertIsInstance(result[0], dict)
 
         # analogy = SimilarToAny()
         # result = analogy.get_result(embs, path_analogy_dataset)
