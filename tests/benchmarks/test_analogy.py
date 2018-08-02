@@ -46,9 +46,6 @@ class Tests(unittest.TestCase):
         analogy = LRCos()
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
-        from matplotlib import pyplot as plt
-        visualize.plot_accuracy("/tmp/vecto/benchmarks/analogy")
-        plt.savefig("/tmp/vecto/benchmarks/analogy.pdf", bbox_inches="tight")
 
     def test_cli(self):
         sio = io.StringIO()
@@ -88,3 +85,7 @@ class Tests(unittest.TestCase):
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
                        "--method", "3CosAvg")
+
+        from matplotlib import pyplot as plt
+        visualize.plot_accuracy("/tmp/vecto/benchmarks/analogy")
+        plt.savefig("/tmp/vecto/benchmarks/analogy.pdf", bbox_inches="tight")
