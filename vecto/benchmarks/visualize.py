@@ -38,11 +38,3 @@ def plot_accuracy(path, key_primary="experiment_setup.method",
                   key_secondary="experiment_setup.subcategory"):
     unstacked = get_filtered_dataframe(path, key_primary, key_secondary)
     unstacked.plot.bar(rot=0)
-
-
-def main():
-    plot_accuracy()
-
-
-if __name__ == "__main__":
-    main()
