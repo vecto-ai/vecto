@@ -5,7 +5,7 @@ import unittest
 import io
 from os import path
 from vecto.benchmarks.analogy import *
-from vecto.benchmarks.analogy import visualize as analogy_visualize
+from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
 from ..test_setup import run_module
 
@@ -46,7 +46,6 @@ class Tests(unittest.TestCase):
         analogy = LRCos()
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
-        analogy_visualize.plot_accuracy()
 
     def test_cli(self):
         sio = io.StringIO()
@@ -61,13 +60,15 @@ class Tests(unittest.TestCase):
             run_module("vecto.benchmarks.analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
-                       "--path_out", "/tmp/vecto/benchmarks/specific_filename.json", "--method", "LRCos")
+                       "--path_out", "/tmp/vecto/benchmarks/specific_filename.json",
+                       "--method", "LRCos")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
             run_module("vecto.benchmarks.analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
+                       "--path_out", "/tmp/vecto/benchmarks/",
                        "--method", "3CosMul")
 
         sio = io.StringIO()
@@ -84,3 +85,7 @@ class Tests(unittest.TestCase):
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
                        "--method", "3CosAvg")
+
+        from matplotlib import pyplot as plt
+        visualize.plot_accuracy("/tmp/vecto/benchmarks/analogy")
+        plt.savefig("/tmp/vecto/benchmarks/analogy.pdf", bbox_inches="tight")
