@@ -17,7 +17,7 @@ def df_from_file(path):
 
 def df_from_dir(path):
     dfs = []
-    for (dirpath, dirnames, filenames) in os.walk(path):
+    for (dirpath, _, filenames) in os.walk(path):
         for filename in filenames:
             dfs.append(df_from_file(os.path.join(dirpath, filename)))
     dframe = pandas.concat(dfs)
