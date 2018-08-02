@@ -207,7 +207,7 @@ class Analogy(Benchmark):
         result["landing_a_prime"] = (ans in all_a_prime)
         return result
 
-    def run_category(self, pairs, name_category, name_subcategory):
+    def run_category(self, pairs):
         self.cnt_total_correct = 0
         self.cnt_total_total = 0
         details = []
@@ -246,18 +246,6 @@ class Analogy(Benchmark):
             details += self.do_test_on_pairs(p_train, p_test)
 
         out = dict()
-        experiment_setup = dict()
-        experiment_setup["embeddings"] = self.embs.metadata
-        experiment_setup["category"] = name_category
-        experiment_setup["subcategory"] = name_subcategory
-        experiment_setup["task"] = "word_analogy"
-        experiment_setup["default_measurement"] = "accuracy"
-        experiment_setup["method"] = self.method
-        experiment_setup["uuid"] = str(uuid.uuid4())
-        if not self.exclude:
-            experiment_setup["method"] += "_honest"
-        experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
-        out["experiment_setup"] = experiment_setup
         out["details"] = details
         results = {}
         if self.cnt_total_total == 0:
@@ -309,50 +297,68 @@ class Analogy(Benchmark):
         if not os.path.exists(dir_tests):
             raise Exception("test dataset dir does not exist:" + dir_tests)
         results = []
+        from vecto.data import Dataset
+        dataset = Dataset(dir_tests)
         for root, dirnames, filenames in os.walk(dir_tests):
             for filename in fnmatch.filter(sorted(filenames), '*'):
                 if filename.endswith('json'):
                     continue
                 logger.info("processing " + filename)
+
                 pairs = self.get_pairs(os.path.join(root, filename))
-                out = self.run_category(pairs, name_category=os.path.basename(os.path.dirname(root)), name_subcategory=filename)
+                name_category = os.path.basename(os.path.dirname(os.path.join(root, filename)))
+                name_subcategory = filename
+                out = self.run_category(pairs)
+                experiment_setup = dict()
+                experiment_setup["dataset"] = dataset.metadata
+                experiment_setup["embeddings"] = self.embs.metadata
+                experiment_setup["category"] = name_category
+                experiment_setup["subcategory"] = name_subcategory
+                experiment_setup["task"] = "word_analogy"
+                experiment_setup["default_measurement"] = "accuracy"
+                experiment_setup["method"] = self.method
+                experiment_setup["uuid"] = str(uuid.uuid4())
+                if not self.exclude:
+                    experiment_setup["method"] += "_honest"
+                experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
+                out["experiment_setup"] = experiment_setup
                 results.append(out)
-        if group_subcategory:
-            results.extend(self.group_subcategory_results(results))
+        # if group_subcategory:
+            # results.extend(self.group_subcategory_results(results))
         return results
 
-    def group_subcategory_results(self, results):
+    # def group_subcategory_results(self, results):  # todo: figure out if we need this
         # group analogy results, based on the category
-        new_results = {}
-        for result in results:
-            cnt_correct = 0
-            cnt_total = 0
-            for t in result['details']:
-                if t['rank'] == 0:
-                    cnt_correct += 1
-                cnt_total += 1
+    #    new_results = {}
+    #    for result in results:
+    #        cnt_correct = 0
+    #        cnt_total = 0
+    #        for t in result['details']:
+    #            if t['rank'] == 0:
+    #                cnt_correct += 1
+    #            cnt_total += 1
 
-            k = result['experiment_setup']['category']
+    #        k = result['experiment_setup']['category']
 
-            if k in new_results:
-                new_results[k]['experiment_setup']['cnt_questions_correct'] += cnt_correct
-                new_results[k]['experiment_setup']['cnt_questions_total'] += cnt_total
-                new_results[k]['details'] += result['details']
-            else:
-                new_results[k] = result.copy()
-                del new_results[k]['experiment_setup']['category']
-                new_results[k]['experiment_setup']['dataset'] = k
-                # new_results[k]['experiment_setup'] = r['experiment_setup'].copy()
-                new_results[k]['experiment_setup']['category'] = k
-                new_results[k]['experiment_setup']['subcategory'] = k
-                new_results[k]['experiment_setup']['cnt_questions_correct'] = cnt_correct
-                new_results[k]['experiment_setup']['cnt_questions_total'] = cnt_total
-        for k, v in new_results.items():
-            new_results[k]['result'] = new_results[k]['experiment_setup']['cnt_questions_correct'] * 1.0 / new_results[k]['experiment_setup']['cnt_questions_total']
-        out = []
-        for k, v in new_results.items():
-            out.append(new_results[k])
-        return out
+    #        if k in new_results:
+    #            new_results[k]['experiment_setup']['cnt_questions_correct'] += cnt_correct
+    #            new_results[k]['experiment_setup']['cnt_questions_total'] += cnt_total
+    #            new_results[k]['details'] += result['details']
+    #        else:
+    #            new_results[k] = result.copy()
+    #            del new_results[k]['experiment_setup']['category']
+    #           new_results[k]['experiment_setup']['dataset'] = k
+    #            # new_results[k]['experiment_setup'] = r['experiment_setup'].copy()
+    #            new_results[k]['experiment_setup']['category'] = k
+    #            new_results[k]['experiment_setup']['subcategory'] = k
+    #            new_results[k]['experiment_setup']['cnt_questions_correct'] = cnt_correct
+    #            new_results[k]['experiment_setup']['cnt_questions_total'] = cnt_total
+    #    for k, v in new_results.items():
+    #        new_results[k]['result'] = new_results[k]['experiment_setup']['cnt_questions_correct'] * 1.0 / new_results[k]['experiment_setup']['cnt_questions_total']
+    #    out = []
+    #    for k, v in new_results.items():
+    #        out.append(new_results[k])
+    #    return out
 
     #def subsample_dims(self, newdim):
         #self.embs.matrix = self.embs.matrix[:, 0:newdim]
@@ -388,7 +394,7 @@ class PairWise(Analogy):
             vec_b = vec_b.toarray()[0]
 
         scores, vec_b_prime_predicted = self.compute_scores(vec_a, vec_a_prime, vec_b)
-        ids_max = np.argsort(scores)[::-1]
+        # ids_max = np.argsort(scores)[::-1]
         result = self.process_prediction(p_test, scores, None, None, [p_train])
         self.collect_stats(result, vec_a, vec_a_prime, vec_b, vec_b_prime, vec_b_prime_predicted)
         return result
