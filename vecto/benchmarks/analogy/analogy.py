@@ -207,7 +207,7 @@ class Analogy(Benchmark):
         result["landing_a_prime"] = (ans in all_a_prime)
         return result
 
-    def run_category(self, pairs, name_category, name_subcategory):
+    def run_category(self, pairs):
         self.cnt_total_correct = 0
         self.cnt_total_total = 0
         details = []
@@ -246,18 +246,6 @@ class Analogy(Benchmark):
             details += self.do_test_on_pairs(p_train, p_test)
 
         out = dict()
-        experiment_setup = dict()
-        experiment_setup["embeddings"] = self.embs.metadata
-        experiment_setup["category"] = name_category
-        experiment_setup["subcategory"] = name_subcategory
-        experiment_setup["task"] = "word_analogy"
-        experiment_setup["default_measurement"] = "accuracy"
-        experiment_setup["method"] = self.method
-        experiment_setup["uuid"] = str(uuid.uuid4())
-        if not self.exclude:
-            experiment_setup["method"] += "_honest"
-        experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
-        out["experiment_setup"] = experiment_setup
         out["details"] = details
         results = {}
         if self.cnt_total_total == 0:
@@ -315,14 +303,27 @@ class Analogy(Benchmark):
                     continue
                 logger.info("processing " + filename)
                 pairs = self.get_pairs(os.path.join(root, filename))
-                out = self.run_category(pairs, name_category=os.path.basename(os.path.dirname(os.path.join(root, filename))),
-                                        name_subcategory=filename)
+                name_category = os.path.basename(os.path.dirname(os.path.join(root, filename)))
+                name_subcategory = filename
+                out = self.run_category(pairs)
+                experiment_setup = dict()
+                experiment_setup["embeddings"] = self.embs.metadata
+                experiment_setup["category"] = name_category
+                experiment_setup["subcategory"] = name_subcategory
+                experiment_setup["task"] = "word_analogy"
+                experiment_setup["default_measurement"] = "accuracy"
+                experiment_setup["method"] = self.method
+                experiment_setup["uuid"] = str(uuid.uuid4())
+                if not self.exclude:
+                    experiment_setup["method"] += "_honest"
+                experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
+                out["experiment_setup"] = experiment_setup
                 results.append(out)
         if group_subcategory:
             results.extend(self.group_subcategory_results(results))
         return results
 
-    def group_subcategory_results(self, results):
+    def group_subcategory_results(self, results):  # todo: figure out if we need this
         # group analogy results, based on the category
         new_results = {}
         for result in results:
@@ -389,7 +390,7 @@ class PairWise(Analogy):
             vec_b = vec_b.toarray()[0]
 
         scores, vec_b_prime_predicted = self.compute_scores(vec_a, vec_a_prime, vec_b)
-        ids_max = np.argsort(scores)[::-1]
+        # ids_max = np.argsort(scores)[::-1]
         result = self.process_prediction(p_test, scores, None, None, [p_train])
         self.collect_stats(result, vec_a, vec_a_prime, vec_b, vec_b_prime, vec_b_prime_predicted)
         return result
