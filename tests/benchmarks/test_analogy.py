@@ -5,7 +5,7 @@ import unittest
 import io
 from os import path
 from vecto.benchmarks.analogy import *
-from vecto.benchmarks.analogy import visualize as analogy_visualize
+from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
 from ..test_setup import run_module
 
@@ -47,7 +47,7 @@ class Tests(unittest.TestCase):
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
         from matplotlib import pyplot as plt
-        analogy_visualize.plot_accuracy("/tmp/vecto/benchmarks/analogy")
+        visualize.plot_accuracy("/tmp/vecto/benchmarks/analogy")
         plt.savefig("/tmp/vecto/benchmarks/analogy.pdf", bbox_inches="tight")
 
     def test_cli(self):
