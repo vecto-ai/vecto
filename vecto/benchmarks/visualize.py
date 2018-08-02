@@ -28,7 +28,6 @@ def get_filtered_dataframe(path, key_primary, key_secondary="experiment_setup.su
     df = df_from_dir(path)
     group = df.groupby([key_primary, key_secondary])
     means = group.mean()
-    print(means)
     means.reset_index(inplace=True)
     means = means.loc[:, [key_primary, key_secondary, "result"]]
     unstacked = means.groupby([key_secondary, key_primary])['result'].aggregate('first').unstack()
