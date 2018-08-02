@@ -297,16 +297,20 @@ class Analogy(Benchmark):
         if not os.path.exists(dir_tests):
             raise Exception("test dataset dir does not exist:" + dir_tests)
         results = []
+        from vecto.data import Dataset
+        dataset = Dataset(dir_tests)
         for root, dirnames, filenames in os.walk(dir_tests):
             for filename in fnmatch.filter(sorted(filenames), '*'):
                 if filename.endswith('json'):
                     continue
                 logger.info("processing " + filename)
+
                 pairs = self.get_pairs(os.path.join(root, filename))
                 name_category = os.path.basename(os.path.dirname(os.path.join(root, filename)))
                 name_subcategory = filename
                 out = self.run_category(pairs)
                 experiment_setup = dict()
+                experiment_setup["dataset"] = dataset.metadata
                 experiment_setup["embeddings"] = self.embs.metadata
                 experiment_setup["category"] = name_category
                 experiment_setup["subcategory"] = name_subcategory

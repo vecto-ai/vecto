@@ -39,6 +39,7 @@ class WithMetaData(object):
     User of this class is responsible for calling __init__ or init_metadata and save_metadata
     in proper places of inheritor.
     """
+
     def __init__(self, base_path=None, **other_metadata):
         """
         see init_metadata
@@ -51,7 +52,7 @@ class WithMetaData(object):
         :param base_path: path from which metadata.json path will be constructed
         :param other_metadata: anything json serializable
         """
-        self._metadata = { "vecto_version" : VERSION }
+        # self._metadata = {"vecto_version": VERSION}
         if base_path is not None:
             self.metadata['_base_path'] = base_path
             self.load_metadata(base_path)
