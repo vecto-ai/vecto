@@ -323,42 +323,42 @@ class Analogy(Benchmark):
                 experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
                 out["experiment_setup"] = experiment_setup
                 results.append(out)
-        if group_subcategory:
-            results.extend(self.group_subcategory_results(results))
+        # if group_subcategory:
+            # results.extend(self.group_subcategory_results(results))
         return results
 
-    def group_subcategory_results(self, results):  # todo: figure out if we need this
+    # def group_subcategory_results(self, results):  # todo: figure out if we need this
         # group analogy results, based on the category
-        new_results = {}
-        for result in results:
-            cnt_correct = 0
-            cnt_total = 0
-            for t in result['details']:
-                if t['rank'] == 0:
-                    cnt_correct += 1
-                cnt_total += 1
+    #    new_results = {}
+    #    for result in results:
+    #        cnt_correct = 0
+    #        cnt_total = 0
+    #        for t in result['details']:
+    #            if t['rank'] == 0:
+    #                cnt_correct += 1
+    #            cnt_total += 1
 
-            k = result['experiment_setup']['category']
+    #        k = result['experiment_setup']['category']
 
-            if k in new_results:
-                new_results[k]['experiment_setup']['cnt_questions_correct'] += cnt_correct
-                new_results[k]['experiment_setup']['cnt_questions_total'] += cnt_total
-                new_results[k]['details'] += result['details']
-            else:
-                new_results[k] = result.copy()
-                del new_results[k]['experiment_setup']['category']
-                new_results[k]['experiment_setup']['dataset'] = k
-                # new_results[k]['experiment_setup'] = r['experiment_setup'].copy()
-                new_results[k]['experiment_setup']['category'] = k
-                new_results[k]['experiment_setup']['subcategory'] = k
-                new_results[k]['experiment_setup']['cnt_questions_correct'] = cnt_correct
-                new_results[k]['experiment_setup']['cnt_questions_total'] = cnt_total
-        for k, v in new_results.items():
-            new_results[k]['result'] = new_results[k]['experiment_setup']['cnt_questions_correct'] * 1.0 / new_results[k]['experiment_setup']['cnt_questions_total']
-        out = []
-        for k, v in new_results.items():
-            out.append(new_results[k])
-        return out
+    #        if k in new_results:
+    #            new_results[k]['experiment_setup']['cnt_questions_correct'] += cnt_correct
+    #            new_results[k]['experiment_setup']['cnt_questions_total'] += cnt_total
+    #            new_results[k]['details'] += result['details']
+    #        else:
+    #            new_results[k] = result.copy()
+    #            del new_results[k]['experiment_setup']['category']
+    #           new_results[k]['experiment_setup']['dataset'] = k
+    #            # new_results[k]['experiment_setup'] = r['experiment_setup'].copy()
+    #            new_results[k]['experiment_setup']['category'] = k
+    #            new_results[k]['experiment_setup']['subcategory'] = k
+    #            new_results[k]['experiment_setup']['cnt_questions_correct'] = cnt_correct
+    #            new_results[k]['experiment_setup']['cnt_questions_total'] = cnt_total
+    #    for k, v in new_results.items():
+    #        new_results[k]['result'] = new_results[k]['experiment_setup']['cnt_questions_correct'] * 1.0 / new_results[k]['experiment_setup']['cnt_questions_total']
+    #    out = []
+    #    for k, v in new_results.items():
+    #        out.append(new_results[k])
+    #    return out
 
     #def subsample_dims(self, newdim):
         #self.embs.matrix = self.embs.matrix[:, 0:newdim]
