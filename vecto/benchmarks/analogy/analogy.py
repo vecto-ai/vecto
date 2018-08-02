@@ -315,7 +315,8 @@ class Analogy(Benchmark):
                     continue
                 logger.info("processing " + filename)
                 pairs = self.get_pairs(os.path.join(root, filename))
-                out = self.run_category(pairs, name_category=os.path.basename(os.path.dirname(root)), name_subcategory=filename)
+                out = self.run_category(pairs, name_category=os.path.basename(os.path.dirname(os.path.join(root, filename))),
+                                        name_subcategory=filename)
                 results.append(out)
         if group_subcategory:
             results.extend(self.group_subcategory_results(results))
