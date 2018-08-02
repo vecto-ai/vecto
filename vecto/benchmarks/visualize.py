@@ -24,8 +24,7 @@ def df_from_dir(path):
     return dframe
 
 
-def plot_accuracy(path, key_primary="experiment_setup.method",
-                  key_secondary="experiment_setup.subcategory"):
+def get_filtered_dataframe(path, key_primary, key_secondary="experiment_setup.subcategory"):
     df = df_from_dir(path)
     group = df.groupby([key_primary, key_secondary])
     means = group.mean()
@@ -33,6 +32,12 @@ def plot_accuracy(path, key_primary="experiment_setup.method",
     means.reset_index(inplace=True)
     means = means.loc[:, [key_primary, key_secondary, "result"]]
     unstacked = means.groupby([key_secondary, key_primary])['result'].aggregate('first').unstack()
+    return unstacked
+
+
+def plot_accuracy(path, key_primary="experiment_setup.method",
+                  key_secondary="experiment_setup.subcategory"):
+    unstacked = get_filtered_dataframe(path, key_primary, key_secondary)
     unstacked.plot.bar(rot=0)
 
 
