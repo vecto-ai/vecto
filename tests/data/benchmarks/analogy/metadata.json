@@ -1,0 +1,26 @@
+{
+    "class": "dataset",
+        "task": "analogy",
+        "language": ["english"],
+        "name": "TestAnalogy",
+        "description": "Test Analogy Set",
+        "domain": "general",
+        "date": "2016",
+        "source": "original",
+        "project_page": "http://vecto.space/",
+        "version": "3.0",
+        "size": "small",
+        "cite": 
+        {
+          "title": "Analogy-based detection of morphological and semantic relations with word embeddings: what works and what doesn't",
+          "author": "Gladkova, Anna and Drozd, Aleksandr and Matsuoka, Satoshi",
+          "doi":  "10.18653/v1/N16-2002",
+          "url": "https://www.aclweb.org/anthology/N/N16/N16-2002.pdf",
+          "booktitle": "Proceedings of the NAACL-HLT SRW",
+          "publisher": "ACL",
+          "year": 2016,
+          "pages": "47-54",
+          "type": "inproceedings",
+          "id":"GladkovaDrozdEtAl_2016"
+        }
+}
