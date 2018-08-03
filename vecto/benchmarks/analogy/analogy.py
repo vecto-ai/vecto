@@ -263,7 +263,7 @@ class Analogy(Benchmark):
         # str_results = json.dumps(jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
         return out
 
-    def get_pairs(self, fname):
+    def get_pairs(self, fname): #todo: optional lower-casing
         pairs = []
         with open(fname) as file_in:
             id_line = 0
@@ -298,34 +298,30 @@ class Analogy(Benchmark):
             self.embs.normalize()
         self.embs.cache_normalized_copy()
 
-        dir_tests = os.path.join(path_dataset)
+        # dir_tests = os.path.join(path_dataset)
         results = []
         from vecto.data import Dataset
-        dataset = Dataset(dir_tests)
-        for root, _, filenames in os.walk(dir_tests):
-            for filename in fnmatch.filter(sorted(filenames), '*'):
-                if filename.endswith('json'):
-                    continue
-                logger.info("processing " + filename)
-
-                pairs = self.get_pairs(os.path.join(root, filename))
-                name_category = os.path.basename(os.path.dirname(os.path.join(root, filename)))
-                name_subcategory = filename
-                experiment_setup = dict()
-                experiment_setup["dataset"] = dataset.metadata
-                experiment_setup["embeddings"] = self.embs.metadata
-                experiment_setup["category"] = name_category
-                experiment_setup["subcategory"] = name_subcategory
-                experiment_setup["task"] = "word_analogy"
-                experiment_setup["default_measurement"] = "accuracy"
-                experiment_setup["method"] = self.method
-                experiment_setup["uuid"] = str(uuid.uuid4())
-                if not self.exclude:
-                    experiment_setup["method"] += "_honest"
-                experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
-                result_for_category = self.run_category(pairs)
-                result_for_category["experiment_setup"] = experiment_setup
-                results.append(result_for_category)
+        dataset = Dataset(path_dataset)
+        for filename in dataset.file_iterator():
+            logger.info("processing " + filename)
+            pairs = self.get_pairs(filename)
+            name_category = os.path.basename(os.path.dirname(filename))
+            name_subcategory = os.path.basename(filename)
+            experiment_setup = dict()
+            experiment_setup["dataset"] = dataset.metadata
+            experiment_setup["embeddings"] = self.embs.metadata
+            experiment_setup["category"] = name_category
+            experiment_setup["subcategory"] = name_subcategory
+            experiment_setup["task"] = "word_analogy"
+            experiment_setup["default_measurement"] = "accuracy"
+            experiment_setup["method"] = self.method
+            experiment_setup["uuid"] = str(uuid.uuid4())
+            if not self.exclude:
+                experiment_setup["method"] += "_honest"
+            experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
+            result_for_category = self.run_category(pairs)
+            result_for_category["experiment_setup"] = experiment_setup
+            results.append(result_for_category)
         # if group_subcategory:
             # results.extend(self.group_subcategory_results(results))
         return results

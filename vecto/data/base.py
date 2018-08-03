@@ -1,3 +1,4 @@
+import fnmatch
 import os
 from vecto.utils.metadata import WithMetaData
 
@@ -15,6 +16,12 @@ class Dataset(WithMetaData):
         super().__init__(path)
         self.path = path
 
-    # define iterators?
+    def file_iterator(self):
+        for root, _, filenames in os.walk(self.path):
+            for filename in fnmatch.filter(sorted(filenames), '*'):
+                if filename.endswith('json'):
+                    continue
+                yield(os.path.join(root, filename))
+
     # download
     # abd for description
