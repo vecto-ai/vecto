@@ -1,3 +1,5 @@
+import fnmatch
+import os
 from vecto.utils.metadata import WithMetaData
 
 
@@ -9,9 +11,17 @@ class Dataset(WithMetaData):
     """
 
     def __init__(self, path):
-        super().__init__()
+        if not os.path.exists(path):
+            raise Exception("test dataset dir does not exist:" + path)
+        super().__init__(path)
         self.path = path
 
-    # define iterators?
+    def file_iterator(self):
+        for root, _, filenames in os.walk(self.path):
+            for filename in fnmatch.filter(sorted(filenames), '*'):
+                if filename.endswith('json'):
+                    continue
+                yield(os.path.join(root, filename))
+
     # download
     # abd for description
