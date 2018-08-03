@@ -26,11 +26,14 @@ def df_from_dir(path):
 
 def get_filtered_dataframe(path, key_primary, key_secondary="experiment_setup.subcategory"):
     df = df_from_dir(path)
-    group = df.groupby([key_primary, key_secondary])
+    groupby_items = [key_secondary, key_primary]
+
+    group = df.groupby(groupby_items)
     means = group.mean()
     means.reset_index(inplace=True)
-    means = means.loc[:, [key_primary, key_secondary, "result"]]
-    unstacked = means.groupby([key_secondary, key_primary])['result'].aggregate('first').unstack()
+    means = means.loc[:, groupby_items + ["result"]]
+    # means = pandas.concat((means, means))
+    unstacked = means.groupby(groupby_items)['result'].aggregate('first').unstack()
     return unstacked
 
 

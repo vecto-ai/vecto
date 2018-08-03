@@ -5,7 +5,7 @@ import unittest
 import io
 from os import path
 from vecto.benchmarks.similarity import *
-# from vecto.benchmarks import visualize
+from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
 from tests.test_setup import run_module
 
@@ -55,9 +55,6 @@ class Tests(unittest.TestCase):
                            path_similarity_dataset,
                            "--path_out", "/tmp/vecto/benchmarks/")
 
-#         from matplotlib import pyplot as plt
-#         visualize.plot_accuracy("/tmp/vecto/benchmarks/similarity", key_secondary=None)
-#         plt.savefig("/tmp/vecto/benchmarks/similarity.pdf", bbox_inches="tight")
-#
-#
-# Tests().test_cli()
+        from matplotlib import pyplot as plt
+        visualize.plot_accuracy("/tmp/vecto/benchmarks/similarity", key_secondary="experiment_setup.dataset")
+        plt.savefig("/tmp/vecto/benchmarks/similarity.pdf", bbox_inches="tight")
