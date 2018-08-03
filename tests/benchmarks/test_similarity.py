@@ -19,17 +19,17 @@ class Tests(unittest.TestCase):
         embs = load_from_dir(path_emb)
         similarity = Similarity()
         result = similarity.get_result(embs, path_similarity_dataset)
-        self.assertIsInstance(result, dict)
+        self.assertIsInstance(result[0], dict)
         print(result)
 
         similarity = Similarity(ignore_oov=False)
         result = similarity.get_result(embs, path_similarity_dataset)
-        self.assertIsInstance(result, dict)
+        self.assertIsInstance(result[0], dict)
         print(result)
 
         similarity = Similarity(normalize=False)
         result = similarity.get_result(embs, path_similarity_dataset)
-        self.assertIsInstance(result, dict)
+        self.assertIsInstance(result[0], dict)
         print(result)
 
     def test_cli(self):
@@ -47,7 +47,7 @@ class Tests(unittest.TestCase):
                        path_similarity_dataset,
                        "--path_out", "/tmp/vecto/benchmarks/tmp")
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(FileNotFoundError):
             sio = io.StringIO()
             with contextlib.redirect_stdout(sio):
                 run_module("vecto.benchmarks.similarity",
@@ -58,7 +58,6 @@ class Tests(unittest.TestCase):
 #         from matplotlib import pyplot as plt
 #         visualize.plot_accuracy("/tmp/vecto/benchmarks/similarity", key_secondary=None)
 #         plt.savefig("/tmp/vecto/benchmarks/similarity.pdf", bbox_inches="tight")
-#
 #
 #
 # Tests().test_cli()
