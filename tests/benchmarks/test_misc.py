@@ -22,17 +22,6 @@ path_language_modeling_dataset = path.join('.', 'tests', 'data', 'benchmarks', '
 
 
 class Tests(unittest.TestCase):
-    def test_similarity(self):
-        embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
-        similarity = Similarity()
-        result = similarity.get_result(embs, path_similarity_dataset)
-        print(result)
-
-        similarity = Similarity(ignore_oov=False)
-        result = similarity.get_result(embs, path_similarity_dataset)
-        print(result)
-
-        # similarity_visualize.plot_accuracy()
 
     def test_fetcher(self):
         if path.isdir(path.join('.', 'tests', 'data', 'benchmarks_test')):
@@ -87,5 +76,3 @@ class Tests(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             vecto.benchmarks.base.Benchmark()
             # base.get_result(1, 2)
-
-# Tests().test_language_modeling()
