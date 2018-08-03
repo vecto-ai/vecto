@@ -299,7 +299,7 @@ class Analogy(Benchmark):
         results = []
         from vecto.data import Dataset
         dataset = Dataset(dir_tests)
-        for root, dirnames, filenames in os.walk(dir_tests):
+        for root, _, filenames in os.walk(dir_tests):
             for filename in fnmatch.filter(sorted(filenames), '*'):
                 if filename.endswith('json'):
                     continue
@@ -308,7 +308,7 @@ class Analogy(Benchmark):
                 pairs = self.get_pairs(os.path.join(root, filename))
                 name_category = os.path.basename(os.path.dirname(os.path.join(root, filename)))
                 name_subcategory = filename
-                out = self.run_category(pairs)
+                result_for_category = self.run_category(pairs)
                 experiment_setup = dict()
                 experiment_setup["dataset"] = dataset.metadata
                 experiment_setup["embeddings"] = self.embs.metadata
@@ -321,8 +321,8 @@ class Analogy(Benchmark):
                 if not self.exclude:
                     experiment_setup["method"] += "_honest"
                 experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
-                out["experiment_setup"] = experiment_setup
-                results.append(out)
+                result_for_category["experiment_setup"] = experiment_setup
+                results.append(result_for_category)
         # if group_subcategory:
             # results.extend(self.group_subcategory_results(results))
         return results
