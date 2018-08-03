@@ -149,18 +149,23 @@ class Analogy(Benchmark):
         rank = i
         return rank
 
+    def get_verbose_question(self, pair_test, pairs_train):
+        extr = ""
+        if len(pairs_train) == 1:
+            extr = "as {} is to {}".format(pairs_train[0][1], pairs_train[0][0])
+        res = "What is to {} {}".format(pair_test[0], extr)
+        return res
+
     def process_prediction(self, p_test_one, scores, score_reg, score_sim, p_train=[]):
         ids_max = np.argsort(scores)[::-1]
         result = dict()
         cnt_answers_to_report = 6
-        extr = ""
+        set_exclude = set()
         if len(p_train) == 1:
-            extr = "as {} is to {}".format(p_train[0][1], p_train[0][0])
-            set_exclude = set([p_train[0][0]]) | set(p_train[0][1])
-        else:
-            set_exclude = set()
+            set_exclude.update(set([p_train[0][0]]) | set(p_train[0][1]))
+
         set_exclude.add(p_test_one[0])
-        result["question verbose"] = "What is to {} {}".format(p_test_one[0], extr)
+        result["question verbose"] = self.get_verbose_question(p_test_one, p_train)
         result["b"] = p_test_one[0]
         result["expected answer"] = p_test_one[1]
         result["predictions"] = []
@@ -376,10 +381,15 @@ class PairWise(Analogy):
         results = []
         for p_train, p_test in product(pairs_train, pairs_test):
             if self.is_pair_missing([p_train, p_test]):
-                continue
-            result = self.do_on_two_pairs(p_train, p_test)
-            result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
-            result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
+                self.cnt_total_total += 1
+                result = {}
+                result["rank"] = -1
+                result["question verbose"] = self.get_verbose_question(p_test, [p_train])
+                # todo: report which exaclt words are missing
+            else:
+                result = self.do_on_two_pairs(p_train, p_test)
+                result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
+                result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
             results.append(result)
         return results
 
@@ -540,7 +550,6 @@ class LRCos(Analogy):
                 cache_size=1000,
                 class_weight='balanced',
                 probability=True)
-        # print(Y_train)
         model_regression.fit(X_train, Y_train)
         score_reg = model_regression.predict_proba(self.embs.matrix)[:, 1]
         for p_test_one in p_test:
