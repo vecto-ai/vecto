@@ -20,7 +20,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("embeddings")
     parser.add_argument("dataset")
-    parser.add_argument("--path_out", help="destination folder to save results")
+    parser.add_argument("--path_out", default=False, help="destination folder to save results")
     args = parser.parse_args()
     embeddings = load_from_dir(args.embeddings)
     # print("embeddings", embeddings)
