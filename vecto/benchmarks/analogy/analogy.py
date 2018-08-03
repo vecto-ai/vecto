@@ -308,7 +308,6 @@ class Analogy(Benchmark):
                 pairs = self.get_pairs(os.path.join(root, filename))
                 name_category = os.path.basename(os.path.dirname(os.path.join(root, filename)))
                 name_subcategory = filename
-                result_for_category = self.run_category(pairs)
                 experiment_setup = dict()
                 experiment_setup["dataset"] = dataset.metadata
                 experiment_setup["embeddings"] = self.embs.metadata
@@ -321,6 +320,7 @@ class Analogy(Benchmark):
                 if not self.exclude:
                     experiment_setup["method"] += "_honest"
                 experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
+                result_for_category = self.run_category(pairs)
                 result_for_category["experiment_setup"] = experiment_setup
                 results.append(result_for_category)
         # if group_subcategory:
