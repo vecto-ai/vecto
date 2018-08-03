@@ -16,6 +16,35 @@ from ..base import Benchmark
 logger = logging.getLogger(__name__)
 
 
+def get_pairs(fname): #todo: optional lower-casing, move to some io module
+    pairs = []
+    with open(fname) as file_in:
+        id_line = 0
+        for line in file_in:
+            if line.strip() == '':
+                continue
+            try:
+                id_line += 1
+                if "\t" in line:
+                    parts = line.lower().split("\t")
+                else:
+                    parts = line.lower().split()
+                left = parts[0]
+                right = parts[1]
+                right = right.strip()
+                if "/" in right:
+                    right = [i.strip() for i in right.split("/")]
+                else:
+                    right = [i.strip() for i in right.split(",")]
+                pairs.append([left, right])
+            except:
+                print("error reading pairs")
+                print("in file", fname)
+                print("in line", id_line, line)
+                exit(-1)
+    return pairs
+
+
 class Analogy(Benchmark):
 
     def __init__(self, normalize=True,
@@ -149,7 +178,8 @@ class Analogy(Benchmark):
         rank = i
         return rank
 
-    def get_verbose_question(self, pair_test, pairs_train):
+    @staticmethod
+    def get_verbose_question(pair_test, pairs_train):
         extr = ""
         if len(pairs_train) == 1:
             extr = "as {} is to {}".format(pairs_train[0][1], pairs_train[0][0])
@@ -198,7 +228,7 @@ class Analogy(Benchmark):
         result["rank"] = rank
         if rank == 0:
             self.cnt_total_correct += 1
-        self.cnt_total_total += 1    
+        self.cnt_total_total += 1
         # vec_b_prime = self.embs.get_vector(p_test_one[1][0])
         # result["closest words to answer 1"] = get_distance_closest_words(vec_b_prime,1)
         # result["closest words to answer 5"] = get_distance_closest_words(vec_b_prime,5)
@@ -263,34 +293,6 @@ class Analogy(Benchmark):
         # str_results = json.dumps(jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
         return out
 
-    def get_pairs(self, fname): #todo: optional lower-casing
-        pairs = []
-        with open(fname) as file_in:
-            id_line = 0
-            for line in file_in:
-                if line.strip() == '':
-                    continue
-                try:
-                    id_line += 1
-                    if "\t" in line:
-                        parts = line.lower().split("\t")
-                    else:
-                        parts = line.lower().split()
-                    left = parts[0]
-                    right = parts[1]
-                    right = right.strip()
-                    if "/" in right:
-                        right = [i.strip() for i in right.split("/")]
-                    else:
-                        right = [i.strip() for i in right.split(",")]
-                    pairs.append([left, right])
-                except:
-                    print("error reading pairs")
-                    print("in file", fname)
-                    print("in line", id_line, line)
-                    exit(-1)
-        return pairs
-
     def run(self, embs, path_dataset):  # group_subcategory
         self.embs = embs
 
@@ -303,7 +305,7 @@ class Analogy(Benchmark):
         dataset = Dataset(path_dataset)
         for filename in dataset.file_iterator():
             logger.info("processing " + filename)
-            pairs = self.get_pairs(filename)
+            pairs = get_pairs(filename)
             name_category = os.path.basename(os.path.dirname(filename))
             name_subcategory = os.path.basename(filename)
             experiment_setup = dict()
