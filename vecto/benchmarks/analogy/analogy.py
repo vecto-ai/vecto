@@ -193,6 +193,7 @@ class Analogy(Benchmark):
         result["rank"] = rank
         if rank == 0:
             self.cnt_total_correct += 1
+        self.cnt_total_total += 1    
         # vec_b_prime = self.embs.get_vector(p_test_one[1][0])
         # result["closest words to answer 1"] = get_distance_closest_words(vec_b_prime,1)
         # result["closest words to answer 5"] = get_distance_closest_words(vec_b_prime,5)
