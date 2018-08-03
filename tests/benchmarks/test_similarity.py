@@ -5,7 +5,7 @@ import unittest
 import io
 from os import path
 from vecto.benchmarks.similarity import *
-from vecto.benchmarks import visualize
+# from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
 from tests.test_setup import run_module
 
