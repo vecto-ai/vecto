@@ -113,8 +113,7 @@ class Similarity(Benchmark):
     def make_result(self, result, details, metadata_dict):
         out = {}
         out["experiment_setup"] = metadata_dict
-        out['result'] = []
-        out['result'].append({"name": "spearman", "value": result})
+        out['result'] = {"spearman": result}
         out['details'] = details
         return out
 
@@ -137,3 +136,4 @@ class Similarity(Benchmark):
 
         results = self.run(embeddings, path_dataset)
         return results
+
