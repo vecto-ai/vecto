@@ -113,6 +113,7 @@ class Similarity(Benchmark):
     def make_result(self, result, details, metadata_dict):
         out = {}
         out["experiment_setup"] = metadata_dict
+        out["experiment_setup"]["default_measurement"] = "spearman"
         out['result'] = {"spearman": result}
         out['details'] = details
         return out
