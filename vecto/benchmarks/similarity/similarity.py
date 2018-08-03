@@ -137,3 +137,4 @@ class Similarity(Benchmark):
         results = self.run(embeddings, path_dataset)
         return results
 
+
