@@ -299,8 +299,6 @@ class Analogy(Benchmark):
         self.embs.cache_normalized_copy()
 
         dir_tests = os.path.join(path_dataset)
-        if not os.path.exists(dir_tests):
-            raise Exception("test dataset dir does not exist:" + dir_tests)
         results = []
         from vecto.data import Dataset
         dataset = Dataset(dir_tests)
