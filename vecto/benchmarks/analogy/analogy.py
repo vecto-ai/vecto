@@ -286,7 +286,7 @@ class Analogy(Benchmark):
                     exit(-1)
         return pairs
 
-    def run(self, embs, path_dataset, group_subcategory):
+    def run(self, embs, path_dataset):  # group_subcategory
         self.embs = embs
 
         if self.normalize:
@@ -364,10 +364,10 @@ class Analogy(Benchmark):
         #self.embs.matrix = self.embs.matrix[:, 0:newdim]
         #self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
 
-    def get_result(self, embeddings, path_dataset, group_subcategory=False):
+    def get_result(self, embeddings, path_dataset):  # , group_subcategory=False
         if self.normalize:
             embeddings.normalize()
-        results = self.run(embeddings, path_dataset, group_subcategory)
+        results = self.run(embeddings, path_dataset)  #group_subcategory
         return results
 
 
