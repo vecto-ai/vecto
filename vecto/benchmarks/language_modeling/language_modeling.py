@@ -337,6 +337,7 @@ class Language_modeling(Benchmark):
         experiment_setup['task'] = 'language_modeling'
         result = {}
         result['experiment_setup'] = experiment_setup
+        result['experiment_setup']['default_measurement'] = 'perplexity'
         result['result'] = []
-        result['result'].append({"name": "perplexity", "value": np.exp(float(eval_result['main/loss']))})
+        result['result'] = {"perplexity": np.exp(float(eval_result['main/loss']))}
         return [result]

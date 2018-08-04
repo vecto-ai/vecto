@@ -39,14 +39,14 @@ class Tests(unittest.TestCase):
     def test_cli(self):
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.similarity",
+            run_module("vecto.benchmarks.language_modeling",
                        path_emb,
                        "--window_size", "5",
                        "--path_out", "/tmp/vecto/benchmarks/")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.similarity",
+            run_module("vecto.benchmarks.language_modeling",
                        path_emb,
                        "--method", "lr",
                        "--path_out", "/tmp/vecto/benchmarks/tmp")
@@ -54,7 +54,7 @@ class Tests(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             sio = io.StringIO()
             with contextlib.redirect_stdout(sio):
-                run_module("vecto.benchmarks.similarity",
+                run_module("vecto.benchmarks.language_modeling",
                            path_emb + "NONEXISTING",
                            "--path_out", "/tmp/vecto/benchmarks/")
 
@@ -62,3 +62,5 @@ class Tests(unittest.TestCase):
         visualize.plot_accuracy("/tmp/vecto/benchmarks/language_modeling", key_secondary="experiment_setup.dataset")
         plt.savefig("/tmp/vecto/benchmarks/language_modeling.pdf", bbox_inches="tight")
 
+
+Tests().test_cli()

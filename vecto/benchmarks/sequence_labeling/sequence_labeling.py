@@ -191,9 +191,13 @@ class Sequence_labeling(Benchmark):
             name = "accuracy"
         else:
             name = "F1_score"
-        out['result'].append({"name": name, "value": res['measure']})
-        out['result'].append({"name": "precision", "value": res['p']})
-        out['result'].append({"name": "recall", "value": res['r']})
+
+        out['experiment_setup']['default_measurement'] = name
+
+        out['result'] = {}
+        out['result'][name] =  res['measure']
+        out['result']['precision'] =  res['p']
+        out['result']['recall'] =  res['r']
         out['res'] = res
         out['details'] = {}
         out['details']['my_test_y'] = my_test_y

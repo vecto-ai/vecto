@@ -19,9 +19,11 @@ def main():
     # print(config)
     parser = argparse.ArgumentParser()
     parser.add_argument("embeddings")
-    parser.add_argument("--window_size", default=5)
-    parser.add_argument("--test", default=True)
-    parser.add_argument("--method", default='lstm', choices=['lr', '2FFNN', 'lstm'])
+    parser.add_argument("--window_size", default=5, type=int)
+    parser.add_argument("--test", default=True,
+                        help='use small test dataset')
+    parser.add_argument("--method", default='lstm', choices=['lr', '2FFNN', 'lstm'],
+                        help='name of method')
     parser.add_argument("--path_out", default=False, help="destination folder to save results")
     args = parser.parse_args()
     embeddings = load_from_dir(args.embeddings)
