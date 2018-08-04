@@ -105,17 +105,19 @@ class Text_classification(Benchmark):
         self.path_dataset = path_dataset
         if self.path_dataset == 'dbpedia':
             train, test, vocab = text_datasets.get_dbpedia(
-                char_based=self.char_based, vocab=embeddings.vocabulary.dic_words_ids, shrink=self.shrink )
+                char_based=self.char_based, vocab=embeddings.vocabulary.dic_words_ids, shrink=self.shrink)
         elif self.path_dataset.startswith('imdb.'):
             train, test, vocab = text_datasets.get_imdb(
                 fine_grained=self.path_dataset.endswith('.fine'),
                 char_based=self.char_based, vocab=embeddings.vocabulary.dic_words_ids, shrink=self.shrink)
         elif self.path_dataset in ['TREC', 'stsa.binary', 'stsa.fine',
-                              'custrev', 'mpqa', 'rt-polarity', 'subj']:
+                                   'custrev', 'mpqa', 'rt-polarity', 'subj']:
             train, test, vocab = text_datasets.get_other_text_dataset(
-                self.path_dataset, char_based=self.char_based, vocab=embeddings.vocabulary.dic_words_ids, shrink=self.shrink)
+                self.path_dataset, char_based=self.char_based, vocab=embeddings.vocabulary.dic_words_ids,
+                shrink=self.shrink)
         else:  # finallly, if file is not downloadable, load from local path
-            train, test, vocab = text_datasets.get_dataset_from_path(path_dataset, vocab=embeddings.vocabulary.dic_words_ids,
+            train, test, vocab = text_datasets.get_dataset_from_path(path_dataset,
+                                                                     vocab=embeddings.vocabulary.dic_words_ids,
                                                                      char_based=self.char_based, shrink=self.shrink)
 
         print('# train data: {}'.format(len(train)))
@@ -195,8 +197,10 @@ class Text_classification(Benchmark):
 
         result = {}
         result['experiment_setup'] = experiment_setup
+        result['experiment_setup']['default_measurement'] = 'accuracy'
+        result['experiment_setup']['dataset'] = os.path.basename(os.path.normpath(path_dataset))
+        result['experiment_setup']['method'] = self.model
         result['log'] = load_json(os.path.join(self.out, 'log'))
 
-        result['result'] = []
-        result['result'].append({"name": "accuracy", "value": result['log'][-1]['validation/main/accuracy']})
-        return result
+        result['result'] = {"accuracy": result['log'][-1]['validation/main/accuracy']}
+        return [result]
