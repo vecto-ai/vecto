@@ -192,12 +192,10 @@ class Sequence_labeling(Benchmark):
         else:
             name = "F1_score"
 
-        out['experiment_setup']['default_measurement'] = name
-
         out['result'] = {}
-        out['result'][name] =  res['measure']
-        out['result']['precision'] =  res['p']
-        out['result']['recall'] =  res['r']
+        out['result'][name] = res['measure']
+        out['result']['precision'] = res['p']
+        out['result']['recall'] = res['r']
         out['res'] = res
         out['details'] = {}
         out['details']['my_test_y'] = my_test_y
@@ -255,6 +253,11 @@ class Sequence_labeling(Benchmark):
         experiment_setup["task"] = "sequence_labeling"
         experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
         out["experiment_setup"] = experiment_setup
+        if task == 'pos':
+            name = "accuracy"
+        else:
+            name = "F1_score"
+        out['experiment_setup']['default_measurement'] = name
 
         return out
 

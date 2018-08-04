@@ -20,23 +20,23 @@ class Tests(unittest.TestCase):
 
         tc = Text_classification(model='cnn')
         result = tc.get_result(embs, path_text_classification_dataset,
-                               "/tmp/vecto/benchmarks/text_classification/")
+                               "/tmp/vecto/benchmarks/text_classification_model/")
         self.assertIsInstance(result[0], dict)
         print(result)
 
         tc = Text_classification(model='rnn')
         result = tc.get_result(embs, path_text_classification_dataset,
-                               "/tmp/vecto/benchmarks/text_classification/")
+                               "/tmp/vecto/benchmarks/text_classification_model/")
         self.assertIsInstance(result[0], dict)
         print(result)
 
         tc = Text_classification(model='bow')
         result = tc.get_result(embs, path_text_classification_dataset,
-                               "/tmp/vecto/benchmarks/text_classification/")
+                               "/tmp/vecto/benchmarks/text_classification_model/")
         self.assertIsInstance(result[0], dict)
         print(result)
 
-        model = text_classification.load_model("/tmp/vecto/benchmarks/text_classification/args.json",
+        model = text_classification.load_model("/tmp/vecto/benchmarks/text_classification_model/args.json",
                                                embs.matrix)
         print(text_classification.predict(model, "I like this"))
         print(text_classification.get_vectors(model, ["I like this", "I hate this"]))
@@ -56,7 +56,7 @@ class Tests(unittest.TestCase):
                        path_emb,
                        path_text_classification_dataset,
                        "--model", "cnn",
-                       "--path_out", "/tmp/vecto/benchmarks/tmp")
+                       "--path_out", "/tmp/vecto/benchmarks/")
 
         with self.assertRaises(FileNotFoundError):
             sio = io.StringIO()
@@ -70,5 +70,3 @@ class Tests(unittest.TestCase):
         visualize.plot_accuracy("/tmp/vecto/benchmarks/text_classification", key_secondary="experiment_setup.dataset")
         plt.savefig("/tmp/vecto/benchmarks/text_classification.pdf", bbox_inches="tight")
 
-
-Tests().test_cli()
