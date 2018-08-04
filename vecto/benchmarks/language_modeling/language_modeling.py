@@ -225,7 +225,7 @@ def compute_perplexity(result):
 
 class Language_modeling(Benchmark):
 
-    def __init__(self, normalize=True, window_size=5, method='lstm', test=False):  # 'lr', '2FFNN', 'lstm'
+    def __init__(self, normalize=True, window_size=5, method='lstm', test=True):  # 'lr', '2FFNN', 'lstm'
         self.normalize = normalize
         self.window_size = window_size
         self.method = method
@@ -339,4 +339,4 @@ class Language_modeling(Benchmark):
         result['experiment_setup'] = experiment_setup
         result['result'] = []
         result['result'].append({"name": "perplexity", "value": np.exp(float(eval_result['main/loss']))})
-        return result
+        return [result]
