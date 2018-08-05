@@ -1,5 +1,4 @@
 import datetime
-import fnmatch
 import os
 import random
 import scipy
@@ -11,12 +10,13 @@ import progressbar
 import sklearn
 from sklearn.linear_model import LogisticRegression
 from itertools import product
+from vecto.data import Dataset
 from ..base import Benchmark
 
 logger = logging.getLogger(__name__)
 
 
-def get_pairs(fname): #todo: optional lower-casing, move to some io module
+def get_pairs(fname):  # todo: optional lower-casing, move to some io module
     pairs = []
     with open(fname) as file_in:
         id_line = 0
@@ -301,7 +301,6 @@ class Analogy(Benchmark):
         self.embs.cache_normalized_copy()
 
         results = []
-        from vecto.data import Dataset
         dataset = Dataset(path_dataset)
         for filename in dataset.file_iterator():
             logger.info("processing " + filename)
