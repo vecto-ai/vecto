@@ -15,6 +15,7 @@ class FileIterator(BaseIterator):
     """
     Iterator which yields only given filename.
     """
+
     def __init__(self, filename, verbose=0):
         super(FileIterator, self).__init__(base_path=filename,
                                            verbose=verbose)
@@ -28,6 +29,7 @@ class DirIterator(BaseIterator):
     """
     Iterator which yield all files in the given folder and all its subfolders.
     """
+
     def __init__(self, dirname, verbose=0):
         super(DirIterator, self).__init__(base_path=dirname,
                                           verbose=verbose)
@@ -65,6 +67,7 @@ class TokenizedSequenceIterator(BaseIterator):
     Receives any corpus yielding text (e.g. `FileLineIterator`) and produces tokenized sequences.
     Good for splitting texts on sentences.
     """
+
     def __init__(self, base_corpus, tokenizer=DEFAULT_TOKENIZER, verbose=0):
         super(TokenizedSequenceIterator, self).__init__(base_corpus=base_corpus.metadata,
                                                         tokenizer=tokenizer.metadata,
@@ -85,6 +88,7 @@ class TokenIterator(BaseIterator):
     """
     Receives any corpus yielding text (e.g. `FileLineIterator`) and produces a sequence of tokens.
     """
+
     def __init__(self, base_corpus, verbose=0):
         super(TokenIterator, self).__init__(base_corpus=base_corpus.metadata,
                                             verbose=verbose)
@@ -99,8 +103,8 @@ class TokenIterator(BaseIterator):
 def iter_sliding_window(seq, left_ctx_size, right_ctx_size):
     for i, current in enumerate(seq):
         ctx = []
-        ctx.extend(seq[i - left_ctx_size : i])
-        ctx.extend(seq[i + 1 : i + right_ctx_size + 1])
+        ctx.extend(seq[i - left_ctx_size: i])
+        ctx.extend(seq[i + 1: i + right_ctx_size + 1])
         yield i, current, ctx
 
 
@@ -110,6 +114,7 @@ class SlidingWindowIterator(BaseIterator):
     and produces training samples for prediction-based distributional semantic models (like Word2Vec etc).
     Example of one yielded value: {'current': 'long', 'context': ['family', 'dashwood', 'settled', 'sussex']}
     """
+
     def __init__(self, base_corpus, left_ctx_size=2, right_ctx_size=2, verbose=0):
         assert isinstance(next(iter(base_corpus)), collections.abc.Sequence)
         super(SlidingWindowIterator, self).__init__(base_corpus=base_corpus.metadata,
@@ -129,28 +134,28 @@ class SlidingWindowIterator(BaseIterator):
                            context=ctx)
 
 
-class SlidingWindowAndGlobal(BaseIterator):
-    def __init__(self, base_corpus, left_ctx_size=2, right_ctx_size=2, verbose=0):
-        assert isinstance(next(iter(base_corpus)), collections.abc.Sequence)
-        super(SlidingWindowAndGlobal, self).__init__(base_corpus=base_corpus.metadata,
-                                                     left_ctx_size=left_ctx_size,
-                                                     right_ctx_size=right_ctx_size,
-                                                     verbose=verbose)
-        self.base_corpus = base_corpus
-        self.left_ctx_size = left_ctx_size
-        self.right_ctx_size = right_ctx_size
+# class SlidingWindowAndGlobal(BaseIterator):
+#     def __init__(self, base_corpus, left_ctx_size=2, right_ctx_size=2, verbose=0):
+#         assert isinstance(next(iter(base_corpus)), collections.abc.Sequence)
+#         super(SlidingWindowAndGlobal, self).__init__(base_corpus=base_corpus.metadata,
+#                                                      left_ctx_size=left_ctx_size,
+#                                                      right_ctx_size=right_ctx_size,
+#                                                      verbose=verbose)
+#         self.base_corpus = base_corpus
+#         self.left_ctx_size = left_ctx_size
+#         self.right_ctx_size = right_ctx_size
 
-    def _generate_samples(self):
-        for sample_elems in self.base_corpus:
-            for _, current, ctx in iter_sliding_window(sample_elems,
-                                                       self.left_ctx_size,
-                                                       self.right_ctx_size):
-                yield dict(current=current,
-                           context=ctx,
-                           global_context=list(sample_elems))
+#     def _generate_samples(self):
+#         for sample_elems in self.base_corpus:
+#             for _, current, ctx in iter_sliding_window(sample_elems,
+#                                                        self.left_ctx_size,
+#                                                        self.right_ctx_size):
+#                 yield dict(current=current,
+#                            context=ctx,
+#                            global_context=list(sample_elems))
 
 
-#class IteratorChain(BaseIterator):
+# class IteratorChain(BaseIterator):
 #    """
 #    Like `itertools.chain`, but with proper metadata handling
 #    """
@@ -165,7 +170,7 @@ class SlidingWindowAndGlobal(BaseIterator):
 #                yield sample
 
 
-#class TruncatedCorpus(BaseIterator):
+# class TruncatedCorpus(BaseIterator):
 #    """
 #    Reads first `limit` samples from `base_corpus` and yields them sample-by-sample.
 #    Good for debugging.
