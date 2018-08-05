@@ -12,7 +12,7 @@ class Dataset(WithMetaData):
 
     def __init__(self, path):
         if not os.path.exists(path):
-            raise Exception("test dataset dir does not exist:" + path)
+            raise FileNotFoundError("test dataset dir does not exist:" + path)
         super().__init__(path)
         self.path = path
 
