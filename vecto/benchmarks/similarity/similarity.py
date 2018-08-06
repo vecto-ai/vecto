@@ -1,12 +1,11 @@
-import datetime
-from scipy.stats.stats import spearmanr
-import os
-import math
-from ..base import Benchmark
 import csv
+import datetime
+import math
+import os
 from json import load
+from scipy.stats.stats import spearmanr
 from collections import defaultdict
-from os import path
+from ..base import Benchmark
 
 METADATA = 'metadata'
 BENCHMARK = 'benchmark'
@@ -73,7 +72,7 @@ class Similarity(Benchmark):
         return spearmanr(actual, expected)[0], cnt_found_pairs_total, details
 
     def read_single_dataset(self, path_to_dir, file_name):
-        dataset_name, file_extension = path.splitext(file_name)
+        dataset_name, file_extension = os.path.splitext(file_name)
         if file_extension == METADATA_EXT:
             with open(os.path.join(path_to_dir, file_name)) as f:
                 data = load(f, strict=False)
@@ -114,7 +113,8 @@ class Similarity(Benchmark):
     def make_result(self, result, details, metadata_dict):
         out = {}
         out["experiment_setup"] = metadata_dict
-        out['result'] = result
+        out["experiment_setup"]["default_measurement"] = "spearman"
+        out['result'] = {"spearman": result}
         out['details'] = details
         return out
 
@@ -131,9 +131,11 @@ class Similarity(Benchmark):
             results.append(self.make_result(result, details, metadata_dict))
         return results
 
-    def get_result(self, embs, path_dataset):
+    def get_result(self, embeddings, path_dataset):
         if self.normalize:
-            embs.normalize()
+            embeddings.normalize()
 
-        results = self.run(embs, path_dataset)
+        results = self.run(embeddings, path_dataset)
         return results
+
+

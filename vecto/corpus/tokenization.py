@@ -20,8 +20,8 @@ ANY_TOKEN_IS_GOOD_RE = re.compile(r'.*')
 _default_tokenizer_patter = r"[\w\-']+|[.,!?…]"
 
 
-def default_token_normalizer(t):
-    return t.lower()
+def default_token_normalizer(token):
+    return token.lower()
 
 
 def word_tokenize_txt(txt,
@@ -31,10 +31,10 @@ def word_tokenize_txt(txt,
                       min_token_len=3,
                       stopwords=nltk.corpus.stopwords.words('english')):
     norm_tokens = map(token_normalizer, token_splitter(txt))
-    return [t for t in norm_tokens
-            if len(t) >= min_token_len
-            and (t not in stopwords)
-            and good_token_re.match(t)]
+    return [token for token in norm_tokens
+            if len(token) >= min_token_len and
+            (token not in stopwords) and
+            good_token_re.match(token)]
 
 
 class BaseTokenizer(WithMetaData):
