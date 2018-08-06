@@ -1,3 +1,9 @@
+"""Configuration support for vecto
+
+Config files are expected to be found in the .vecto folder in user's home.
+The format is the same as jupyter notebooks
+"""
+
 from traitlets.config.loader import load_pyconfig_files
 import os.path
 
