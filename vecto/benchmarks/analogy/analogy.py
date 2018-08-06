@@ -1,5 +1,4 @@
 import datetime
-import fnmatch
 import os
 import random
 import scipy
@@ -11,9 +10,39 @@ import progressbar
 import sklearn
 from sklearn.linear_model import LogisticRegression
 from itertools import product
+from vecto.data import Dataset
 from ..base import Benchmark
 
 logger = logging.getLogger(__name__)
+
+
+def get_pairs(fname):  # todo: optional lower-casing, move to some io module
+    pairs = []
+    with open(fname) as file_in:
+        id_line = 0
+        for line in file_in:
+            if line.strip() == '':
+                continue
+            try:
+                id_line += 1
+                if "\t" in line:
+                    parts = line.lower().split("\t")
+                else:
+                    parts = line.lower().split()
+                left = parts[0]
+                right = parts[1]
+                right = right.strip()
+                if "/" in right:
+                    right = [i.strip() for i in right.split("/")]
+                else:
+                    right = [i.strip() for i in right.split(",")]
+                pairs.append([left, right])
+            except:
+                print("error reading pairs")
+                print("in file", fname)
+                print("in line", id_line, line)
+                exit(-1)
+    return pairs
 
 
 class Analogy(Benchmark):
@@ -149,18 +178,24 @@ class Analogy(Benchmark):
         rank = i
         return rank
 
+    @staticmethod
+    def get_verbose_question(pair_test, pairs_train):
+        extr = ""
+        if len(pairs_train) == 1:
+            extr = "as {} is to {}".format(pairs_train[0][1], pairs_train[0][0])
+        res = "What is to {} {}".format(pair_test[0], extr)
+        return res
+
     def process_prediction(self, p_test_one, scores, score_reg, score_sim, p_train=[]):
         ids_max = np.argsort(scores)[::-1]
         result = dict()
         cnt_answers_to_report = 6
-        extr = ""
+        set_exclude = set()
         if len(p_train) == 1:
-            extr = "as {} is to {}".format(p_train[0][1], p_train[0][0])
-            set_exclude = set([p_train[0][0]]) | set(p_train[0][1])
-        else:
-            set_exclude = set()
+            set_exclude.update(set([p_train[0][0]]) | set(p_train[0][1]))
+
         set_exclude.add(p_test_one[0])
-        result["question verbose"] = "What is to {} {}".format(p_test_one[0], extr)
+        result["question verbose"] = self.get_verbose_question(p_test_one, p_train)
         result["b"] = p_test_one[0]
         result["expected answer"] = p_test_one[1]
         result["predictions"] = []
@@ -258,71 +293,35 @@ class Analogy(Benchmark):
         # str_results = json.dumps(jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
         return out
 
-    def get_pairs(self, fname):
-        pairs = []
-        with open(fname) as file_in:
-            id_line = 0
-            for line in file_in:
-                if line.strip() == '':
-                    continue
-                try:
-                    id_line += 1
-                    if "\t" in line:
-                        parts = line.lower().split("\t")
-                    else:
-                        parts = line.lower().split()
-                    left = parts[0]
-                    right = parts[1]
-                    right = right.strip()
-                    if "/" in right:
-                        right = [i.strip() for i in right.split("/")]
-                    else:
-                        right = [i.strip() for i in right.split(",")]
-                    pairs.append([left, right])
-                except:
-                    print("error reading pairs")
-                    print("in file", fname)
-                    print("in line", id_line, line)
-                    exit(-1)
-        return pairs
-
-    def run(self, embs, path_dataset, group_subcategory):
+    def run(self, embs, path_dataset):  # group_subcategory
         self.embs = embs
 
         if self.normalize:
             self.embs.normalize()
         self.embs.cache_normalized_copy()
 
-        dir_tests = os.path.join(path_dataset)
-        if not os.path.exists(dir_tests):
-            raise Exception("test dataset dir does not exist:" + dir_tests)
         results = []
-        from vecto.data import Dataset
-        dataset = Dataset(dir_tests)
-        for root, dirnames, filenames in os.walk(dir_tests):
-            for filename in fnmatch.filter(sorted(filenames), '*'):
-                if filename.endswith('json'):
-                    continue
-                logger.info("processing " + filename)
-
-                pairs = self.get_pairs(os.path.join(root, filename))
-                name_category = os.path.basename(os.path.dirname(os.path.join(root, filename)))
-                name_subcategory = filename
-                out = self.run_category(pairs)
-                experiment_setup = dict()
-                experiment_setup["dataset"] = dataset.metadata
-                experiment_setup["embeddings"] = self.embs.metadata
-                experiment_setup["category"] = name_category
-                experiment_setup["subcategory"] = name_subcategory
-                experiment_setup["task"] = "word_analogy"
-                experiment_setup["default_measurement"] = "accuracy"
-                experiment_setup["method"] = self.method
-                experiment_setup["uuid"] = str(uuid.uuid4())
-                if not self.exclude:
-                    experiment_setup["method"] += "_honest"
-                experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
-                out["experiment_setup"] = experiment_setup
-                results.append(out)
+        dataset = Dataset(path_dataset)
+        for filename in dataset.file_iterator():
+            logger.info("processing " + filename)
+            pairs = get_pairs(filename)
+            name_category = os.path.basename(os.path.dirname(filename))
+            name_subcategory = os.path.basename(filename)
+            experiment_setup = dict()
+            experiment_setup["dataset"] = dataset.metadata
+            experiment_setup["embeddings"] = self.embs.metadata
+            experiment_setup["category"] = name_category
+            experiment_setup["subcategory"] = name_subcategory
+            experiment_setup["task"] = "word_analogy"
+            experiment_setup["default_measurement"] = "accuracy"
+            experiment_setup["method"] = self.method
+            experiment_setup["uuid"] = str(uuid.uuid4())
+            if not self.exclude:
+                experiment_setup["method"] += "_honest"
+            experiment_setup["timestamp"] = datetime.datetime.now().isoformat()
+            result_for_category = self.run_category(pairs)
+            result_for_category["experiment_setup"] = experiment_setup
+            results.append(result_for_category)
         # if group_subcategory:
             # results.extend(self.group_subcategory_results(results))
         return results
@@ -364,10 +363,10 @@ class Analogy(Benchmark):
         #self.embs.matrix = self.embs.matrix[:, 0:newdim]
         #self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
 
-    def get_result(self, embeddings, path_dataset, group_subcategory=False):
+    def get_result(self, embeddings, path_dataset):  # , group_subcategory=False
         if self.normalize:
             embeddings.normalize()
-        results = self.run(embeddings, path_dataset, group_subcategory)
+        results = self.run(embeddings, path_dataset)  #group_subcategory
         return results
 
 
@@ -376,10 +375,15 @@ class PairWise(Analogy):
         results = []
         for p_train, p_test in product(pairs_train, pairs_test):
             if self.is_pair_missing([p_train, p_test]):
-                continue
-            result = self.do_on_two_pairs(p_train, p_test)
-            result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
-            result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
+                self.cnt_total_total += 1
+                result = {}
+                result["rank"] = -1
+                result["question verbose"] = self.get_verbose_question(p_test, [p_train])
+                # todo: report which exaclt words are missing
+            else:
+                result = self.do_on_two_pairs(p_train, p_test)
+                result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
+                result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
             results.append(result)
         return results
 
@@ -540,7 +544,6 @@ class LRCos(Analogy):
                 cache_size=1000,
                 class_weight='balanced',
                 probability=True)
-        # print(Y_train)
         model_regression.fit(X_train, Y_train)
         score_reg = model_regression.predict_proba(self.embs.matrix)[:, 1]
         for p_test_one in p_test:
