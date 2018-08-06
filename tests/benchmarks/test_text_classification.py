@@ -16,7 +16,7 @@ path_emb = path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_hea
 class Tests(unittest.TestCase):
 
     def test_api(self):
-        embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
+        embs = load_from_dir(path_emb)
 
         tc = Text_classification(model='cnn')
         result = tc.get_result(embs, path_text_classification_dataset,
