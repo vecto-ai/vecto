@@ -32,15 +32,6 @@ class Tests(unittest.TestCase):
         path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks_test', 'benchmarks', 'similarity', 'en')
         similarity.get_result(embs, path_similarity_dataset)
 
-    def test_sequence_labeling(self):
-        embs = load_from_dir("./tests/data/embeddings/text/plain_with_file_header")
-
-        for method in ['lr', '2FFNN']:
-            sequence_labeling = Sequence_labeling(method='lr')
-            for subtask in ['chunk', 'pos', 'ner']:  # , 'chunk', 'pos', 'ner'
-                results = sequence_labeling.get_result(embs, os.path.join(path_sequence_labeling_dataset, subtask))
-                print(results)
-
     def test_abc(self):
         with self.assertRaises(NotImplementedError):
             vecto.benchmarks.base.Benchmark()
