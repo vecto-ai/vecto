@@ -14,9 +14,9 @@ import numpy as np
 
 class Sequence_labeling(Benchmark):
 
-    def __init__(self, normalize=True, window=2, method='lr'):
+    def __init__(self, normalize=True, window_size=2, method='lr'):
         self.normalize = normalize
-        self.window = 2
+        self.window_size = window_size
         self.method = method
 
     def load_data(self, path, task):
@@ -228,9 +228,9 @@ class Sequence_labeling(Benchmark):
         # print(nclasses)
 
         # get the training and test's input and output
-        my_train_input, my_train_y = self.getInputOutput(train_lex, train_y, self.window, idx2word)
+        my_train_input, my_train_y = self.getInputOutput(train_lex, train_y, self.window_size, idx2word)
         my_train_x = self.getX(my_train_input, embs)
-        my_test_input, my_test_y = self.getInputOutput(test_lex, test_y, self.window, idx2word)
+        my_test_input, my_test_y = self.getInputOutput(test_lex, test_y, self.window_size, idx2word)
         my_test_x = self.getX(my_test_input, embs)
 
         if self.method == 'lr' or self.method == '2FFNN':
