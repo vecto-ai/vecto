@@ -1,16 +1,10 @@
 """Tests for embeddings module."""
 
 import unittest
-from unittest.mock import patch
-import numpy as np
 import io
 import contextlib
 import sys
 import runpy
-from vecto.embeddings.dense import WordEmbeddingsDense
-from vecto.embeddings.base import WordEmbeddings
-from vecto.embeddings import load_from_dir
-from vecto.vocabulary import Vocabulary
 
 
 def run_module(name: str, args, run_name: str = '__main__') -> None:
@@ -35,6 +29,11 @@ class Tests(unittest.TestCase):
             run_module('vecto.embeddings.train_word2vec',
                        ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--out_type', 'ns',
                         '--model', 'cbow'])
+            with self.assertRaises(FileNotFoundError):
+                run_module('vecto.embeddings.train_word2vec',
+                           ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
+                            '--out_type', 'ns',
+                            '--model', 'cbow'])
 
     def test_train_word2vec_subword(self):
         path_corpus = "./tests/data/corpora/plain/"
@@ -55,6 +54,11 @@ class Tests(unittest.TestCase):
             run_module('vecto.embeddings.train_word2vec',
                        ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
                         '--subword', 'bilstm_sum'])
+            with self.assertRaises(FileNotFoundError):
+                run_module('vecto.embeddings.train_word2vec',
+                           ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
+                            '--dimension', '5',
+                            '--subword', 'bilstm_sum'])
 
     def test_train_word2vec_subword_jap(self):
         path_corpus = "./tests/data/corpora/jap/tokenized/"
@@ -69,5 +73,8 @@ class Tests(unittest.TestCase):
                         '--subword', 'sum', '--language', 'jap', '--min_gram', '1', '--max_gram', '1',
                         '--path_word2chars', path_word2chars])
 
-
-Tests().test_train_word2vec_subword_jap()
+            with self.assertRaises(FileNotFoundError):
+                run_module('vecto.embeddings.train_word2vec',
+                           ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
+                            '--dimension', '5',
+                            '--subword', 'sum', '--language', 'jap', '--min_gram', '1', '--max_gram', '1'])
