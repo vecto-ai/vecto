@@ -89,7 +89,7 @@ class DirWindowIterator(chainer.dataset.Iterator):
         self.is_new_epoch = False
         centers = []
         contexts = []
-        for i in range(self.batch_size):
+        for _ in range(self.batch_size):
             center, context = self.next_single_sample()
             centers.append(center)
             contexts.append(context)

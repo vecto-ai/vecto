@@ -29,7 +29,7 @@ class Tests(unittest.TestCase):
             run_module('vecto.embeddings.train_word2vec',
                        ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--out_type', 'ns',
                         '--model', 'cbow'])
-            with self.assertRaises(FileNotFoundError):
+            with self.assertRaises(RuntimeError):
                 run_module('vecto.embeddings.train_word2vec',
                            ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
                             '--out_type', 'ns',
@@ -54,7 +54,7 @@ class Tests(unittest.TestCase):
             run_module('vecto.embeddings.train_word2vec',
                        ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
                         '--subword', 'bilstm_sum'])
-            with self.assertRaises(FileNotFoundError):
+            with self.assertRaises(RuntimeError):
                 run_module('vecto.embeddings.train_word2vec',
                            ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
                             '--dimension', '5',
@@ -73,7 +73,7 @@ class Tests(unittest.TestCase):
                         '--subword', 'sum', '--language', 'jap', '--min_gram', '1', '--max_gram', '1',
                         '--path_word2chars', path_word2chars])
 
-            with self.assertRaises(FileNotFoundError):
+            with self.assertRaises(RuntimeError):
                 run_module('vecto.embeddings.train_word2vec',
                            ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
                             '--dimension', '5',

@@ -5,20 +5,15 @@ This module implements skip-gram model and continuous-bow model.
 
 """
 import numpy as np
-import argparse
 import chainer
 from chainer import cuda
 import chainer.functions as F
 import chainer.initializers as I
 import chainer.links as L
-from timeit import default_timer as timer
 from chainer import reporter
-from chainer import training
-from chainer.training import extensions
-from vecto.corpus import load_file_as_ids, DirSlidingWindowCorpus
+from vecto.corpus import DirSlidingWindowCorpus
 from vecto.vocabulary.vocabulary import get_ngram_tokensList_from_word
 import logging
-import os
 import time
 from vecto.corpus.tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
 
@@ -28,7 +23,8 @@ args = None
 
 
 class DirWindowIterator(chainer.dataset.Iterator):
-    def __init__(self, path, vocab, vocab_ngram_tokens, word2chars, window_size, batch_size, language='eng', repeat=True):
+    def __init__(self, path, vocab, vocab_ngram_tokens, word2chars, window_size, batch_size, language='eng',
+                 repeat=True):
         self.path = path
         self.vocab = vocab
         self.vocab_ngram_tokens = vocab_ngram_tokens
@@ -36,7 +32,8 @@ class DirWindowIterator(chainer.dataset.Iterator):
         self.window_size = window_size - 1
         self.language = language
         if language == 'jap':
-            self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_JAP_TOKENIZER, left_ctx_size=self.window_size,
+            self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_JAP_TOKENIZER,
+                                               left_ctx_size=self.window_size,
                                                right_ctx_size=self.window_size)
         else:
             self.dswc = DirSlidingWindowCorpus(self.path, tokenizer=DEFAULT_TOKENIZER,
@@ -102,7 +99,7 @@ class DirWindowIterator(chainer.dataset.Iterator):
         centers = []
         contexts = []
         tokenIdsListListList = []
-        for i in range(self.batch_size):
+        for _ in range(self.batch_size):
             center, context, tokenIdsListList = self.next_single_sample()
             centers.append(center)
             contexts.append(context)
@@ -318,7 +315,6 @@ class RNN(chainer.Chain):
                     else:
                         tmp_y = (tmp_y + y)
                         y = tmp_y
-                    pass
 
                     # print(tokenIdsList_ordered_b.shape)
                     # print(tokenIdsList_ordered)
