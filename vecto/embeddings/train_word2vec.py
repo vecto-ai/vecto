@@ -155,7 +155,7 @@ def get_model(args, loss_func, vocab, vocab_ngram_tokens, current_utils=utils.wo
             model = utils.subword.SkipGram(args.subword, vocab, vocab_ngram_tokens, args.dimensions, loss_func, )
 
     if model is None:
-        raise Exception('Unknown model and word/subword type: {}'.format(args.model, args.subword))
+        raise Exception('Unknown model and word/subword type: {} "and" {}'.format(args.model, args.subword))
     return model
 
 
