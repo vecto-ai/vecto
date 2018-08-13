@@ -15,7 +15,7 @@ from vecto.corpus import DirSlidingWindowCorpus
 from vecto.vocabulary.vocabulary import get_ngram_tokensList_from_word
 import logging
 import time
-from vecto.corpus.tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
+from vecto.corpus.tokenization import DEFAULT_TOKENIZER, DEFAULT_JAP_TOKENIZER
 
 logger = logging.getLogger(__name__)
 

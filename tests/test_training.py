@@ -78,3 +78,5 @@ class Tests(unittest.TestCase):
                            ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
                             '--dimension', '5',
                             '--subword', 'sum', '--language', 'jap', '--min_gram', '1', '--max_gram', '1'])
+
+Tests().test_train_word2vec_subword()

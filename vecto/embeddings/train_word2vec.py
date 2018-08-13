@@ -246,9 +246,6 @@ def run(args):
     logger.info("model saved to " + args.path_out)
 
 
-global args
-
-
 def main():
     args = parse_args()
     print_params(args)
