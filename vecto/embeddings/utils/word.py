@@ -4,26 +4,16 @@
 This module implements skip-gram model and continuous-bow model.
 
 """
-import argparse
 import chainer
 from chainer import cuda
 import chainer.functions as F
 import chainer.initializers as I
 import chainer.links as L
-from timeit import default_timer as timer
 from chainer import reporter
-from chainer import training
-from chainer.training import extensions
 import logging
-import os
-import vecto
-from vecto.embeddings.dense import WordEmbeddingsDense
-from vecto.vocabulary import Vocabulary
-from vecto.vocabulary.vocabulary import create_from_dir, create_ngram_tokens_from_dir, create_from_annotated_dir
 from vecto.corpus import DirSlidingWindowCorpus
-from vecto.embeddings.utils import subword
 import numpy as np
-from vecto.corpus.tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
+from vecto.corpus.tokenization import DEFAULT_TOKENIZER, DEFAULT_JAP_TOKENIZER
 
 logger = logging.getLogger(__name__)
 

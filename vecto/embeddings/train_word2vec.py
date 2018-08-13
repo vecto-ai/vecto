@@ -92,8 +92,8 @@ def print_params(args):
 
 def get_word2chars(path):
     word2chars = {}
-    with open(path, 'r') as input:
-        for line in input.readlines():
+    with open(path, 'r') as input_file:
+        for line in input_file.readlines():
             tokens = line.split()
             word2chars[tokens[0]] = tokens[1]
     return word2chars
@@ -246,8 +246,10 @@ def run(args):
     logger.info("model saved to " + args.path_out)
 
 
+global args
+
+
 def main():
-    global args
     args = parse_args()
     print_params(args)
     if args.verbose:

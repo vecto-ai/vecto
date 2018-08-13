@@ -166,13 +166,13 @@ def get_subwords_from_word2chars(word, word2chars):
 def getTokenIdsListList(words, vocab_ngram_tokens, word2chars, max_tokens_length=20):
     tokenIdsListList = []
 
-    min = vocab_ngram_tokens.metadata["min_gram"]
-    max = vocab_ngram_tokens.metadata["max_gram"]
+    min_ = vocab_ngram_tokens.metadata["min_gram"]
+    max_ = vocab_ngram_tokens.metadata["max_gram"]
 
     for word in words:
         tokenIdsList = []
         tokensList = []
-        tokensList.extend(get_ngram_tokensList_from_word(word, min, max))
+        tokensList.extend(get_ngram_tokensList_from_word(word, min_, max_))
         if word2chars is not None:
             tokensList.append(get_subwords_from_word2chars(word, word2chars))
         # print(tokensList)
@@ -222,24 +222,24 @@ class CNN1D(chainer.Chain):
     def __call__(self, tokenIdsList_merged, tokenIdsList_merged_b, argsort, argsort_reverse,
                  pList):  # input a list of token ids, output a list of word embeddings
         tokenIdsList_merged += 2
-        input = self.embed(tokenIdsList_merged)
+        input_emb = self.embed(tokenIdsList_merged)
         # input = input.reshape(input.shape[0], input.shape[1], input.shape[2])
-        input = F.transpose(input, (0, 2, 1))
-        input = F.dropout(input, self.dropout)
+        input_emb = F.transpose(input_emb, (0, 2, 1))
+        input_emb = F.dropout(input_emb, self.dropout)
         # print(input.shape)
-        h1 = self.cnn1(input)
+        h1 = self.cnn1(input_emb)
         h1 = F.max(h1, (2,))
-        h2 = self.cnn2(input)
+        h2 = self.cnn2(input_emb)
         h2 = F.max(h2, (2,))
-        h3 = self.cnn3(input)
+        h3 = self.cnn3(input_emb)
         h3 = F.max(h3, (2,))
-        h4 = self.cnn4(input)
+        h4 = self.cnn4(input_emb)
         h4 = F.max(h4, (2,))
-        h5 = self.cnn5(input)
+        h5 = self.cnn5(input_emb)
         h5 = F.max(h5, (2,))
-        h6 = self.cnn6(input)
+        h6 = self.cnn6(input_emb)
         h6 = F.max(h6, (2,))
-        h7 = self.cnn7(input)
+        h7 = self.cnn7(input_emb)
         h7 = F.max(h7, (2,))
 
         h = F.concat((h1, h2, h3, h4, h5, h6, h7))
