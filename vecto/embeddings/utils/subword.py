@@ -340,7 +340,6 @@ class RNN(chainer.Chain):
                         else:
                             tmp_y = (tmp_y + y_b)
                             y_b = tmp_y
-                        pass
 
         if 'sum' not in self.subword:  # pure lstm, without sum/avg over all timestep
             y = F.dropout(self.mid.h, self.dropout)
