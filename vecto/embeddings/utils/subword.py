@@ -202,18 +202,18 @@ class CNN1D(chainer.Chain):
             # n_filters = {i: min(200, i * 5) for i in range(1, 1 + 1)}
             # self.cnns = (L.Convolution2D(1, v, (k, n_units_char),) for k, v in n_filters.items())
             # self.out = L.Linear(sum([v for k, v in n_filters.items()]), n_units)
-
-            self.cnn1 = L.ConvolutionND(1, n_units_char, 50, (1,), )
-            self.cnn2 = L.ConvolutionND(1, n_units_char, 100, (2,), )
-            self.cnn3 = L.ConvolutionND(1, n_units_char, 150, (3,), )
-            self.cnn4 = L.ConvolutionND(1, n_units_char, 200, (4,), )
-            self.cnn5 = L.ConvolutionND(1, n_units_char, 200, (5,), )
-            self.cnn6 = L.ConvolutionND(1, n_units_char, 200, (6,), )
-            self.cnn7 = L.ConvolutionND(1, n_units_char, 200, (7,), )
-            self.out = L.Linear(1100, n_units)
-
-            if 'highway' in self.subword:
-                self.highway = L.Highway(1100)
+            if 'small' in self.subword:
+                self.cnn1 = L.ConvolutionND(1, n_units_char, 50, (1,), )
+                self.out = L.Linear(50, n_units)
+            else:
+                self.cnn1 = L.ConvolutionND(1, n_units_char, 50, (1,), )
+                self.cnn2 = L.ConvolutionND(1, n_units_char, 100, (2,), )
+                self.cnn3 = L.ConvolutionND(1, n_units_char, 150, (3,), )
+                self.cnn4 = L.ConvolutionND(1, n_units_char, 200, (4,), )
+                self.cnn5 = L.ConvolutionND(1, n_units_char, 200, (5,), )
+                self.cnn6 = L.ConvolutionND(1, n_units_char, 200, (6,), )
+                self.cnn7 = L.ConvolutionND(1, n_units_char, 200, (7,), )
+                self.out = L.Linear(1100, n_units)
 
             self.dropout = dropout
             self.vocab = vocab
@@ -227,26 +227,28 @@ class CNN1D(chainer.Chain):
         input_emb = F.transpose(input_emb, (0, 2, 1))
         input_emb = F.dropout(input_emb, self.dropout)
         # print(input.shape)
-        h1 = self.cnn1(input_emb)
-        h1 = F.max(h1, (2,))
-        h2 = self.cnn2(input_emb)
-        h2 = F.max(h2, (2,))
-        h3 = self.cnn3(input_emb)
-        h3 = F.max(h3, (2,))
-        h4 = self.cnn4(input_emb)
-        h4 = F.max(h4, (2,))
-        h5 = self.cnn5(input_emb)
-        h5 = F.max(h5, (2,))
-        h6 = self.cnn6(input_emb)
-        h6 = F.max(h6, (2,))
-        h7 = self.cnn7(input_emb)
-        h7 = F.max(h7, (2,))
+        if 'small' in self.subword:
+            h = self.cnn1(input_emb)
+            h = F.max(h, (2,))
+        else:
+            h1 = self.cnn1(input_emb)
+            h1 = F.max(h1, (2,))
+            h2 = self.cnn2(input_emb)
+            h2 = F.max(h2, (2,))
+            h3 = self.cnn3(input_emb)
+            h3 = F.max(h3, (2,))
+            h4 = self.cnn4(input_emb)
+            h4 = F.max(h4, (2,))
+            h5 = self.cnn5(input_emb)
+            h5 = F.max(h5, (2,))
+            h6 = self.cnn6(input_emb)
+            h6 = F.max(h6, (2,))
+            h7 = self.cnn7(input_emb)
+            h7 = F.max(h7, (2,))
+            h = F.concat((h1, h2, h3, h4, h5, h6, h7))
 
-        h = F.concat((h1, h2, h3, h4, h5, h6, h7))
         h = F.dropout(h, self.dropout)
         h = F.tanh(h)
-        if 'highway' in self.subword:
-            h = self.highway(h)
         y = self.out(h)
         # print(y.shape)
         e = y

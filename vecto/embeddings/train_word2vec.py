@@ -48,7 +48,7 @@ def parse_args():
     parser.add_argument('--language', '-lang', choices=['eng', 'jap'],
                         default='eng', help='the language, current only support english and japanese')
     parser.add_argument('--subword', '-sw',
-                        choices=['none', '_none', 'cnn1d', 'lstm', 'lstm_sum', 'bilstm', 'bilstm_sum', 'avg', 'sum'],
+                        choices=['none', '_none', 'cnn1d', 'cnn1d_small', 'lstm', 'lstm_sum', 'bilstm', 'bilstm_sum', 'avg', 'sum'],
                         default='none',
                         help='specify if subword-level approach should be used ')
     parser.add_argument('--negative-size', default=5, type=int,
