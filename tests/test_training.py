@@ -50,6 +50,7 @@ class Tests(unittest.TestCase):
 
     def test_train_word2vec_subword(self):
         path_corpus = "./tests/data/corpora/plain/"
+        path_vocab = "./tests/data/vocabs/plain/"
         sio = io.StringIO()
         with contextlib.redirect_stderr(sio):
             run_module('vecto.embeddings.train_word2vec',
@@ -64,7 +65,7 @@ class Tests(unittest.TestCase):
                         '--subword', 'sum'])
             run_module('vecto.embeddings.train_word2vec',
                        ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
-                        '--subword', '_none'])
+                        '--subword', '_none', '--path_vocab', path_vocab])
             run_module('vecto.embeddings.train_word2vec',
                        ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
                         '--subword', 'bilstm_sum'])
