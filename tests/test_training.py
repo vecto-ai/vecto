@@ -5,6 +5,7 @@ import io
 import contextlib
 import sys
 import runpy
+import os
 
 
 def run_module(name: str, args, run_name: str = '__main__') -> None:
@@ -35,13 +36,21 @@ class Tests(unittest.TestCase):
                             '--out_type', 'ns',
                             '--model', 'cbow'])
 
+    @unittest.skipIf(os.environ.get('veyor'), 'skipping Appveyor due to memory error')
+    def test_train_word2vec_subword_cnn1d(self):
+        path_corpus = "./tests/data/corpora/plain/"
+        run_module('vecto.embeddings.train_word2vec',
+                   ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
+                    '--subword', 'cnn1d'])
+
     def test_train_word2vec_subword(self):
         path_corpus = "./tests/data/corpora/plain/"
         sio = io.StringIO()
         with contextlib.redirect_stderr(sio):
             run_module('vecto.embeddings.train_word2vec',
                        ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
-                        '--subword', 'cnn1d'])
+                        '--subword', 'cnn1d_small'])
+
             run_module('vecto.embeddings.train_word2vec',
                        ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
                         '--subword', 'bilstm'])
@@ -78,5 +87,3 @@ class Tests(unittest.TestCase):
                            ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
                             '--dimension', '5',
                             '--subword', 'sum', '--language', 'jap', '--min_gram', '1', '--max_gram', '1'])
-
-Tests().test_train_word2vec_subword()
