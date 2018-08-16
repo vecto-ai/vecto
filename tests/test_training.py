@@ -36,12 +36,17 @@ class Tests(unittest.TestCase):
                             '--out_type', 'ns',
                             '--model', 'cbow'])
 
-    @unittest.skipIf(os.environ.get('veyor'), 'skipping Appveyor due to memory error')
+    @unittest.skipIf(os.environ.get('APPVEYOR'), 'skipping Appveyor due to memory error')
     def test_train_word2vec_subword_cnn1d(self):
         path_corpus = "./tests/data/corpora/plain/"
         run_module('vecto.embeddings.train_word2vec',
                    ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
                     '--subword', 'cnn1d'])
+        with self.assertRaises(RuntimeError):
+            run_module('vecto.embeddings.train_word2vec',
+                       ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
+                        '--dimension', '5',
+                        '--subword', 'cnn1d'])
 
     def test_train_word2vec_subword(self):
         path_corpus = "./tests/data/corpora/plain/"
