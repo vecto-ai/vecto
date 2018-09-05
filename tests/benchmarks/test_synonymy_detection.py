@@ -36,7 +36,7 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(result['tiger'][0]['is_synonym'], cat_is_synonym)
         self.assertEqual(result['tiger'][0]['hit'], cat_is_hit)
-        self.assertEqual(result['tiger'][0]['distance'], distance_to_cat)
+        self.assertEqual(round(result['tiger'][0]['distance'], 1), distance_to_cat)
 
     def test_synonymy_reader(self):
         synonymy = CosineDistance()
