@@ -118,16 +118,16 @@ class Similarity(Benchmark):
         out['details'] = details
         return out
 
-    def run(self, embs, path_dataset):
+    def run(self, embeddings, path_dataset):
         results = []
         datasets = self.read_datasets_from_dir(path_dataset)
         for dataset_name, dataset_data in datasets.items():
-            result, cnt_found_pairs_total, details = self.evaluate(embs, dataset_data[BENCHMARK])
+            result, cnt_found_pairs_total, details = self.evaluate(embeddings, dataset_data[BENCHMARK])
             metadata_dict = self.make_metadata_dict(dataset_data[METADATA],
                                                     found_pairs=cnt_found_pairs_total,
                                                     benchmark_len=len(dataset_data[BENCHMARK]),
                                                     dataset_name=dataset_name,
-                                                    embeddings_metadata=embs.metadata)
+                                                    embeddings_metadata=embeddings.metadata)
             results.append(self.make_result(result, details, metadata_dict))
         return results
 
