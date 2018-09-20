@@ -10,11 +10,6 @@ import pickle as pkl
 
 
 
-embeddingsPath = './tests/data/embeddings/text/plain_with_file_header/emb.txt'
-
-folder = './tests/data/benchmarks/relation_extraction/'
-files = [folder+'train.txt', folder+'test.txt']
-
 #Mapping of the labels to integers
 labelsMapping = {'Other':0,
                  'Message-Topic(e1,e2)':1, 'Message-Topic(e2,e1)':2,
@@ -48,8 +43,7 @@ def getWordIdx(token, word2Idx):
         return word2Idx[token]
     elif token.lower() in word2Idx:
         return word2Idx[token.lower()]
-
-    return word2Idx["UNKNOWN_TOKEN"]
+    return 0
 
 def createTensor(file, word2Idx, maxSentenceLen=100):
     """Creates matrices for the events and sentence for the given file"""
@@ -111,7 +105,8 @@ def createTensor(file, word2Idx, maxSentenceLen=100):
 
 
 
-def load_data():
+def load_data(embeddings, path_dataset):
+    files = [os.path.join(path_dataset, 'train.txt'), os.path.join(path_dataset, 'test.txt')]
     for fileIdx in range(len(files)):
         file = files[fileIdx]
         for line in open(file):
@@ -131,36 +126,9 @@ def load_data():
 
     # :: Read in word embeddings ::
     # :: Read in word embeddings ::
-    word2Idx = {}
-    wordEmbeddings = []
+    word2Idx = embeddings.vocabulary.dic_words_ids
+    wordEmbeddings = embeddings.matrix
 
-
-    # :: Load the pre-trained embeddings file ::
-    fEmbeddings = open(embeddingsPath)
-
-    print("Load pre-trained embeddings file")
-    for line in fEmbeddings:
-        split = line.strip().split(" ")
-        if len(split) == 2:
-            continue
-        word = split[0]
-
-        if len(word2Idx) == 0: #Add padding+unknown
-            word2Idx["PADDING_TOKEN"] = len(word2Idx)
-            vector = np.zeros(len(split)-1) #Zero vector vor 'PADDING' word
-            wordEmbeddings.append(vector)
-
-            word2Idx["UNKNOWN_TOKEN"] = len(word2Idx)
-            vector = np.random.uniform(-0.25, 0.25, len(split)-1)
-            wordEmbeddings.append(vector)
-
-        if word.lower() in words:
-            vector = np.array([float(num) for num in split[1:]])
-            wordEmbeddings.append(vector)
-            word2Idx[word] = len(word2Idx)
-
-
-    wordEmbeddings = np.array(wordEmbeddings)
 
     print("Embeddings shape: ", wordEmbeddings.shape)
     print("Len words: ", len(words))
