@@ -1,0 +1,19 @@
+Message-Topic(e1,e2)	3	6	The most common audits were about waste and recycling .
+Product-Producer(e2,e1)	1	4	The company fabricates plastic chairs .
+Instrument-Agency(e2,e1)	2	8	The school master teaches the lesson with a stick .
+Entity-Destination(e1,e2)	5	9	The suspect dumped the dead body into a local reservoir .
+Cause-Effect(e2,e1)	1	16	Avian influenza is an infectious disease of birds caused by type A strains of the influenza virus .
+Component-Whole(e1,e2)	1	5	The ear of the African elephant is significantly larger -- measuring 183 cm by 114 cm in the bush elephant .
+Product-Producer(e1,e2)	5	11	A child is told a lie for several years by their parents before he/she realizes that a Santa Claus does not exist .
+Member-Collection(e2,e1)	8	12	Skype , a free software , allows a hookup of multiple computer users to join in an online conference call without incurring any telephone costs .
+Component-Whole(e1,e2)	12	16	The disgusting scene was retaliation against her brother Philip who rents the room inside this apartment house on Lombard street .
+Message-Topic(e1,e2)	1	4	This thesis defines the clinical characteristics of amyloid disease .
+Entity-Destination(e1,e2)	3	7	Ten million quake survivors moved into makeshift houses .
+Other	11	12	On a friend 's advice , I purchased a sauerkraut and kimchi maker here and it is just fabulous ( and cheap too ) .
+Entity-Destination(e1,e2)	4	6	NASA Kepler mission sends names into space .
+Product-Producer(e1,e2)	2	3	As a landscape company in Atlanta , we know which plants thrive in this planting zone and know the optimum landscaping designs for local yards and business .
+Entity-Origin(e1,e2)	15	20	As I was contemplating if I had a favorite in the pink category , a gift arrived from a sweet friend .
+Entity-Origin(e1,e2)	9	14	The male took over the entire care of the young that had left the nest .
+Entity-Destination(e1,e2)	2	6	The famous actress arrived at the airport .
+Other	16	19	An FTP server is an inexpensive and relatively simple to operate tool that works great for filesharing over the internet .
+Member-Collection(e2,e1)	6	9	Beneath this invocation there is a zoo of fearsome beasts , including several man-eaters , as well as sphinxes with lions ' bodies and human heads .
