@@ -17,18 +17,16 @@ class Downloader:
         self.full_resource_path = path.join('vecto-resources', 'resources')
 
     def fetch_metadata(self, replace=False):
-        while True:
+        self.git_repo = Git(self.storage_dir)
+        try:
             try:
-                self.git_repo = Git(self.storage_dir)
                 self.git_repo.clone(self.path_to_repo)
-                break
-            except GitCommandError:
-                if replace:
-                    rmtree(self.storage_dir)
-                    mkdir(self.storage_dir)
-                else:
-                    break
             except FileNotFoundError:
+                mkdir(self.storage_dir)
+                self.git_repo.clone(self.path_to_repo)
+        except GitCommandError:
+            if replace:
+                rmtree(self.storage_dir)
                 mkdir(self.storage_dir)
 
     def unarchive(self, input_dir, archive_type='.zip'):
