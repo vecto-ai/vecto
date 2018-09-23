@@ -14,12 +14,12 @@ class Downloader:
         self.path_to_repo = 'https://github.com/vecto-ai/vecto-resources.git'
         self.storage_dir = storage_dir
         self.resources = None
-        self.git_repo = Git(self.storage_dir)
         self.full_resource_path = path.join('vecto-resources', 'resources')
 
     def fetch_metadata(self, replace=False):
         while True:
             try:
+                self.git_repo = Git(self.storage_dir)
                 self.git_repo.clone(self.path_to_repo)
                 break
             except GitCommandError:
