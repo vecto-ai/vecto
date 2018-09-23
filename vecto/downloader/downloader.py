@@ -10,26 +10,22 @@ from shutil import rmtree
 from json import load
 
 class Downloader:
-    def __init__(self, storage_dir=path.join('data', 'resources')):
+    def __init__(self, storage_dir=path.join('data', 'download')):
         self.path_to_repo = 'https://github.com/vecto-ai/vecto-resources.git'
         self.storage_dir = storage_dir
         self.resources = None
         self.full_resource_path = path.join('vecto-resources', 'resources')
+        self.git_repo = Git(self.storage_dir)
 
     def fetch_metadata(self, replace=False):
         while True:
             try:
-                self.git_repo = Git(self.storage_dir)
                 self.git_repo.clone(self.path_to_repo)
                 break
-            except GitCommandError:
-                if replace:
-                    rmtree(self.storage_dir)
-                    mkdir(self.storage_dir)
-                else:
-                    break
             except GitCommandNotFound:
                 mkdir(self.storage_dir)
+            except GitCommandError:
+                break
 
     def unarchive(self, input_dir, archive_type='.zip'):
         if archive_type == '.zip':
