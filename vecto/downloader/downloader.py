@@ -2,7 +2,7 @@ from zipfile import ZipFile
 from requests import get
 from os import path, walk, sep, mkdir
 from git import Repo, Git
-from git.exc import GitCommandError
+from git.exc import GitCommandError, GitCommandNotFound
 from vecto.utils.metadata import WithMetaData
 from functools import reduce
 from vecto.downloader.resources import Resources
@@ -17,16 +17,18 @@ class Downloader:
         self.full_resource_path = path.join('vecto-resources', 'resources')
 
     def fetch_metadata(self, replace=False):
-        self.git_repo = Git(self.storage_dir)
-        try:
+        while True:
             try:
+                self.git_repo = Git(self.storage_dir)
                 self.git_repo.clone(self.path_to_repo)
-            except FileNotFoundError:
-                mkdir(self.storage_dir)
-                self.git_repo.clone(self.path_to_repo)
-        except GitCommandError:
-            if replace:
-                rmtree(self.storage_dir)
+                break
+            except GitCommandError:
+                if replace:
+                    rmtree(self.storage_dir)
+                    mkdir(self.storage_dir)
+                else:
+                    break
+            except GitCommandNotFound:
                 mkdir(self.storage_dir)
 
     def unarchive(self, input_dir, archive_type='.zip'):
