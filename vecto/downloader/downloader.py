@@ -1,6 +1,6 @@
 from zipfile import ZipFile
 from requests import get
-from os import path, walk, sep, mkdir
+from os import path, walk, sep, mkdir, getcwd
 from git import Repo, Git
 from git.exc import GitCommandError, GitCommandNotFound
 from vecto.utils.metadata import WithMetaData
@@ -10,7 +10,7 @@ from shutil import rmtree
 from json import load
 
 class Downloader:
-    def __init__(self, storage_dir=path.join('data', 'download')):
+    def __init__(self, storage_dir=path.join(getcwd(), 'data', 'download')):
         self.path_to_repo = 'https://github.com/vecto-ai/vecto-resources.git'
         self.storage_dir = storage_dir
         self.resources = None
@@ -22,7 +22,7 @@ class Downloader:
             try:
                 self.git_repo.clone(self.path_to_repo)
                 break
-            except GitCommandNotFound:
+            except FileNotFoundError:
                 mkdir(self.storage_dir)
             except GitCommandError:
                 break
