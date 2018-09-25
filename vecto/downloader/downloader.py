@@ -1,6 +1,6 @@
 from zipfile import ZipFile
 from requests import get
-from os import path, walk, sep, mkdir, getcwd
+from os import path, walk, sep, mkdir, getcwd, makedirs
 from git import Repo, Git
 from git.exc import GitCommandError, GitCommandNotFound
 from vecto.utils.metadata import WithMetaData
@@ -8,6 +8,8 @@ from functools import reduce
 from vecto.downloader.resources import Resources
 from shutil import rmtree
 from json import load
+import errno
+
 
 class Downloader:
     def __init__(self, storage_dir=path.join(getcwd(), 'data', 'download')):
@@ -24,7 +26,7 @@ class Downloader:
                 self.git_repo.clone(self.path_to_repo)
                 break
             except GitCommandNotFound:
-                mkdir(self.storage_dir)
+                makedirs(self.storage_dir)
             except GitCommandError:
                 break
 
