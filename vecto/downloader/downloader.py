@@ -13,6 +13,7 @@ class Downloader:
     def __init__(self, storage_dir=path.join(getcwd(), 'data', 'download')):
         self.path_to_repo = 'https://github.com/vecto-ai/vecto-resources.git'
         self.storage_dir = storage_dir
+        print(self.storage_dir)
         self.resources = None
         self.full_resource_path = path.join('vecto-resources', 'resources')
         self.git_repo = Git(self.storage_dir)
@@ -22,7 +23,7 @@ class Downloader:
             try:
                 self.git_repo.clone(self.path_to_repo)
                 break
-            except FileNotFoundError:
+            except GitCommandNotFound:
                 mkdir(self.storage_dir)
             except GitCommandError:
                 break
