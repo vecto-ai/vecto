@@ -19,7 +19,7 @@ class Tests(unittest.TestCase):
         embs = load_from_dir(path_emb)
         relation_extraction = Relation_extraction()
         result = relation_extraction.get_result(embs, path_similarity_dataset)
-        self.assertIsInstance(result[0], dict)
+        self.assertIsInstance(result, dict)
         print(result)
 
     def test_cli(self):
@@ -42,4 +42,4 @@ class Tests(unittest.TestCase):
         visualize.plot_accuracy("/tmp/vecto/benchmarks/relation_extraction", key_secondary="experiment_setup.dataset")
         plt.savefig("/tmp/vecto/benchmarks/relation_extraction.pdf", bbox_inches="tight")
 
-Tests().test_api()
+Tests().test_cli()
