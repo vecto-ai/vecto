@@ -14,4 +14,4 @@ tables
 traitlets
 tqdm
 keras
-tf-nightly
+tensorflow
