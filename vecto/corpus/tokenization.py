@@ -41,6 +41,7 @@ class BaseTokenizer(WithMetaData):
     """
     Base class for all tokenizer. It's a simple callable (functor) with metadata management infrastructure.
     """
+
     @abc.abstractmethod
     def __call__(self, txt):
         '''
@@ -88,6 +89,8 @@ DEFAULT_TOKENIZER = Tokenizer()
 ANNOTATED_TEXT_TOKENIZER = Tokenizer(token_splitter=_WHITESPACE_TOKEN_SPLITTER,
                                      good_token_re=ANY_TOKEN_IS_GOOD_RE,
                                      min_token_len=0)
+
+DEFAULT_JAP_TOKENIZER = Tokenizer(min_token_len=0)
 
 
 class SentenceTokenizer(BaseTokenizer):
