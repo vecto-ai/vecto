@@ -1,3 +1,3 @@
-"""Version of vsmlib package."""
+"""Version of vecto package."""
 
-VERSION = "0.1.4"
+VERSION = "0.1.7"

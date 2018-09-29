@@ -18,30 +18,30 @@ def normalize_text(text):
     return text.strip().lower()
 
 
-def make_vocab(dataset, max_vocab_size=20000, min_freq=2):
-    counts = collections.defaultdict(int)
-    for tokens, _ in dataset:
-        for token in tokens:
-            counts[token] += 1
+# def make_vocab(dataset, max_vocab_size=20000, min_freq=2):
+#     counts = collections.defaultdict(int)
+#     for tokens, _ in dataset:
+#         for token in tokens:
+#             counts[token] += 1
+#
+#     vocab = {'<eos>': 0, '<unk>': 1}
+#     for w, c in sorted(counts.items(), key=lambda x: (-x[1], x[0])):
+#         if len(vocab) >= max_vocab_size or c < min_freq:
+#             break
+#         vocab[w] = len(vocab)
+#     return vocab
 
-    vocab = {'<eos>': 0, '<unk>': 1}
-    for w, c in sorted(counts.items(), key=lambda x: (-x[1], x[0])):
-        if len(vocab) >= max_vocab_size or c < min_freq:
-            break
-        vocab[w] = len(vocab)
-    return vocab
 
-
-def read_vocab_list(path, max_vocab_size=20000):
-    vocab = {'<eos>': 0, '<unk>': 1}
-    with io.open(path, encoding='utf-8', errors='ignore') as f:
-        for l in f:
-            w = l.strip()
-            if w not in vocab and w:
-                vocab[w] = len(vocab)
-            if len(vocab) >= max_vocab_size:
-                break
-    return vocab
+# def read_vocab_list(path, max_vocab_size=20000):
+#     vocab = {'<eos>': 0, '<unk>': 1}
+#     with io.open(path, encoding='utf-8', errors='ignore') as f:
+#         for l in f:
+#             w = l.strip()
+#             if w not in vocab and w:
+#                 vocab[w] = len(vocab)
+#             if len(vocab) >= max_vocab_size:
+#                 break
+#     return vocab
 
 
 def make_array(tokens, vocab, add_eos=True):

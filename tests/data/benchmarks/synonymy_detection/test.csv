@@ -1,0 +1,7 @@
+,target,word,is_solution
+0,tiger,cat,yes
+1,tiger,run,no
+2,tiger,banana,no
+3,run,walk,yes
+4,run,cat,no
+5,run,the,no

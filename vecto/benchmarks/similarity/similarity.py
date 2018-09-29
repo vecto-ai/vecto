@@ -1,16 +1,17 @@
+import csv
 import datetime
-from scipy.stats.stats import spearmanr
-import os
 import math
-from ..base import Benchmark
+import os
 from json import load
+from scipy.stats.stats import spearmanr
 from collections import defaultdict
-from os import path
+from ..base import Benchmark
 
 METADATA = 'metadata'
 BENCHMARK = 'benchmark'
 METADATA_EXT = '.json'
 PLAINTEXT_EXT = '.txt'
+CSV_EXT = '.csv'
 OTHER_EXT = 'None'
 
 
@@ -21,11 +22,25 @@ class Similarity(Benchmark):
 
     def read_test_set(self, path):
         test = []
-        with open(path) as f:
-            for line in f:
-                # line = line.lower();
-                x, y, sim = line.strip().split()
-                test.append(((x, y), float(sim)))
+        if path.endswith(".csv"):
+            with open(path, 'r') as csvfile:
+                reader = csv.reader(csvfile)
+                head = True
+                for row in reader:
+                    if len(row) < 3:
+                        continue
+                    if not head:
+                        x = row[0]
+                        y = row[1]
+                        sim = row[2]
+                        test.append(((x, y), float(sim)))
+                    head = False
+        else:
+            with open(path) as f:
+                for line in f:
+                    # line = line.lower();
+                    x, y, sim = line.strip().split()
+                    test.append(((x, y), float(sim)))
         return test
 
     def evaluate(self, embs, data):
@@ -57,12 +72,15 @@ class Similarity(Benchmark):
         return spearmanr(actual, expected)[0], cnt_found_pairs_total, details
 
     def read_single_dataset(self, path_to_dir, file_name):
-        dataset_name, file_extension = path.splitext(file_name)
+        dataset_name, file_extension = os.path.splitext(file_name)
         if file_extension == METADATA_EXT:
             with open(os.path.join(path_to_dir, file_name)) as f:
                 data = load(f, strict=False)
             return METADATA, dataset_name, data
         elif file_extension == PLAINTEXT_EXT:
+            data = self.read_test_set(os.path.join(path_to_dir, file_name))
+            return BENCHMARK, dataset_name, data
+        elif file_extension == CSV_EXT:
             data = self.read_test_set(os.path.join(path_to_dir, file_name))
             return BENCHMARK, dataset_name, data
         else:
@@ -95,7 +113,8 @@ class Similarity(Benchmark):
     def make_result(self, result, details, metadata_dict):
         out = {}
         out["experiment_setup"] = metadata_dict
-        out['result'] = result
+        out["experiment_setup"]["default_measurement"] = "spearman"
+        out['result'] = {"spearman": result}
         out['details'] = details
         return out
 
@@ -112,8 +131,11 @@ class Similarity(Benchmark):
             results.append(self.make_result(result, details, metadata_dict))
         return results
 
-    def get_result(self, embs, path_dataset):
+    def get_result(self, embeddings, path_dataset):
         if self.normalize:
-            embs.normalize()
-        results = self.run(embs, path_dataset)
+            embeddings.normalize()
+
+        results = self.run(embeddings, path_dataset)
         return results
+
+

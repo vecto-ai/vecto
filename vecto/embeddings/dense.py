@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 import brewer2mpl
 import os
+from matplotlib import pyplot as plt
 from vecto.utils.blas import normed
 from vecto.vocabulary import Vocabulary
 from vecto.utils.data import save_json, load_json, detect_archive_format_and_open
@@ -15,40 +16,40 @@ class WordEmbeddingsDense(WordEmbeddings):
 
     """
 
-    def cmp_vectors(self, r1, r2):
-        c = normed(r1) @ normed(r2)
-        if math.isnan(c):
+    def cmp_vectors(self, vec1, vec2):
+        cos = normed(vec1) @ normed(vec2)
+        if math.isnan(cos):
             return 0
-        return (c + 1) / 2
+        return (cos + 1) / 2
 
     def cmp_rows(self, id1, id2):
-        r1 = self.matrix[id1]
-        r2 = self.matrix[id2]
-        return self.cmp_vectors(r1, r2)
+        vec1 = self.matrix[id1]
+        vec2 = self.matrix[id2]
+        return self.cmp_vectors(vec1, vec2)
 
-    def cmp_words(self, w1, w2):
-        id1 = self.vocabulary.get_id(w1)
-        id2 = self.vocabulary.get_id(w2)
+    def cmp_words(self, word1, word2):
+        id1 = self.vocabulary.get_id(word1)
+        id2 = self.vocabulary.get_id(word2)
         if (id1 < 0) or (id2 < 0):
             return 0
         return self.cmp_rows(id1, id2)
 
     def save_matr_to_hdf5(self, path):
-        f = tables.open_file(os.path.join(path, 'vectors.h5p'), 'w')
+        file_out = tables.open_file(os.path.join(path, 'vectors.h5p'), 'w')
         atom = tables.Atom.from_dtype(self.matrix.dtype)
-        ds = f.create_carray(f.root, 'vectors', atom, self.matrix.shape)
+        ds = file_out.create_carray(file_out.root, 'vectors', atom, self.matrix.shape)
         ds[:] = self.matrix
         ds.flush()
-        f.close()
+        file_out.close()
 
     def load_hdf5(self, path):
         """loads embeddings from hdf5 format"""
-        f = tables.open_file(os.path.join(path, 'vectors.h5p'), 'r')
-        self.matrix = f.root.vectors.read()
+        file_in = tables.open_file(os.path.join(path, 'vectors.h5p'), 'r')
+        self.matrix = file_in.root.vectors.read()
         self.vocabulary = Vocabulary()
         self.vocabulary.load(path)
         # self.name += os.path.basename(os.path.normpath(path))
-        f.close()
+        file_in.close()
 
     def load_npy(self, path):
         """loads embeddings from numpy format"""
@@ -59,8 +60,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         self.name += os.path.basename(os.path.normpath(path))
 
     def save_to_dir(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
         self.vocabulary.save_to_dir(path)
         # self.matrix.tofile(os.path.join(path,"vectors.bin"))
         # np.save(os.path.join(path, "vectors.npy"), self.matrix)
@@ -68,8 +68,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         save_json(self.metadata, os.path.join(path, "metadata.json"))
 
     def save_to_dir_plain_txt(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
         with open(os.path.join(path, 'vectors.txt'), 'w') as output:
             for i, w in enumerate(self.vocabulary.lst_words):
                 if len(w.strip()) == 0:
@@ -81,7 +80,6 @@ class WordEmbeddingsDense(WordEmbeddings):
                 output.write("\n")
 
     def load_with_alpha(self, path, power=0.6):
-        # self.load_provenance(path)
         f = tables.open_file(os.path.join(path, 'vectors.h5p'), 'r')
         #        left = np.nan_to_num(f.root.vectors.read())
         left = f.root.vectors.read()
@@ -118,13 +116,13 @@ class WordEmbeddingsDense(WordEmbeddings):
         rows = []
         header = False
         vec_size = -1
-        with detect_archive_format_and_open(path) as f:
-            for line in f:
+        with detect_archive_format_and_open(path) as file_in:
+            for line_number, line in enumerate(file_in):
                 tokens = line.split()
                 if i == 0 and len(tokens) == 2:
                     header = True
                     cnt_words = int(tokens[0])
-                    size_embedding = int(tokens[1])
+                    vec_size = int(tokens[1])
                     continue
                 # word = tokens[0].decode('ascii',errors="ignore")
                 # word = tokens[0].decode('UTF-8', errors="ignore")
@@ -135,7 +133,10 @@ class WordEmbeddingsDense(WordEmbeddings):
                 if vec_size == -1:
                     vec_size = len(str_vec)
                 if vec_size != len(str_vec):
-                    print(line)
+                    warning_message = "input error in line {}, expected tokens: {}, read tokens: {}, line: {}  ".format(
+                        line_number, vec_size,
+                        len(str_vec), line)
+                    warnings.warn(warning_message)
                     continue
                 row = np.zeros(len(str_vec), dtype=np.float32)
                 for j in range(len(str_vec)):
@@ -146,12 +147,22 @@ class WordEmbeddingsDense(WordEmbeddings):
         #     assert cnt_words == len(rows)
         self.matrix = np.vstack(rows)
         if header:
-            assert size_embedding == self.matrix.shape[1]
+            assert vec_size == self.matrix.shape[1]
         self.vocabulary.lst_frequencies = np.zeros(len(self.vocabulary.lst_words), dtype=np.int32)
         self.name = os.path.basename(os.path.dirname(os.path.normpath(path)))
 
+    def _populate_from_source_and_wordlist(self, source, wordlist):
+        self.metadata["class"] = "embeddings"
+        self.metadata["source"] = source.metadata
+        self.vocabulary = source.vocabulary.filter_by_wordlist(wordlist)
+        self.metadata["vocabulary"] = self.vocabulary.metadata
+        lst_new_vectors = []
+        for w in self.vocabulary.lst_words:
+            lst_new_vectors.append(source.get_vector(w))
+        self.matrix = np.array(lst_new_vectors, dtype=np.float32)
+
     def filter_by_vocab(self, words):
-        """reduced embeddings to the provided list of words (which can be empty)
+        """reduced embeddings to the provided list of words
 
         Args:
             words: set or list of words to keep
@@ -162,26 +173,9 @@ class WordEmbeddingsDense(WordEmbeddings):
         """
         if len(words) == 0:
             return self
-        else:
-            new_embds = ModelDense()
-            new_embds.vocabulary = Vocabulary()
-            lst_new_vectors = []
-            i = 0
-            for w in self.vocabulary.lst_words:
-                if w in words:
-                    lst_new_vectors.append(self.get_row(w))
-                    new_embds.vocabulary.lst_words.append(w)
-                    new_embds.vocabulary.lst_frequencies.append(self.vocabulary.get_frequency(w))
-                    new_embds.vocabulary.dic_words_ids[w] = i
-                    i += 1
-            new_embds.matrix = np.array(lst_new_vectors, dtype=np.float32)
-            new_embds.vocabulary.metadata = {}
-            new_embds.vocabulary.metadata["cnt_words"] = i
-            new_embds.vocabulary.metadata["transform"] = "reduced by wordlist"
-            new_embds.vocabulary.metadata["original"] = self.vocabulary.metadata
-            new_embds.metadata = self.metadata
-            new_embds.metadata["vocabulary"] = new_embds.vocabulary.metadata
-            return new_embds
+        new_embds = WordEmbeddingsDense()
+        new_embds._populate_from_source_and_wordlist(self, words)
+        return new_embds
 
     def get_x_label(self, i):
         return i
@@ -190,8 +184,8 @@ class WordEmbeddingsDense(WordEmbeddings):
         colors = brewer2mpl.get_map('Set2', 'qualitative', 8).mpl_colors
         cnt = 0
         for i in wl:
-            row = self.get_row(i)
-            row = row / np.linalg.norm(row)
+            row = self.get_vector(i)
+            row = normed(row)
             if colored:
                 plt.bar(range(0, len(row)), row, color=colors[cnt], linewidth=0, alpha=0.6, label=i)
             else:
