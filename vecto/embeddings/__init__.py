@@ -3,7 +3,8 @@
 .. autosummary::
     :toctree: _autosummary
 
-    analogy
+    base
+    dense
 
 """
 
