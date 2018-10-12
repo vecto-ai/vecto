@@ -42,4 +42,4 @@ class Tests(unittest.TestCase):
         visualize.plot_accuracy("/tmp/vecto/benchmarks/relation_extraction", key_secondary="experiment_setup.dataset")
         plt.savefig("/tmp/vecto/benchmarks/relation_extraction.pdf", bbox_inches="tight")
 
-Tests().test_cli()
+# Tests().test_cli()
