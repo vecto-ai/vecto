@@ -13,3 +13,5 @@ system-query
 tables
 traitlets
 tqdm
+keras
+tensorflow
