@@ -1,13 +1,13 @@
 """Tests for analogy benchmark."""
 
-import contextlib
-import unittest
-import io
-from os import path
-from vecto.benchmarks.relation_extraction import *
-from vecto.benchmarks import visualize
-from vecto.embeddings import load_from_dir
-from tests.test_setup import run_module
+# import contextlib
+# import unittest
+# import io
+# from os import path
+# from vecto.benchmarks.relation_extraction import *
+# from vecto.benchmarks import visualize
+# from vecto.embeddings import load_from_dir
+# from tests.test_setup import run_module
 
 path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'relation_extraction')
 path_emb = path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header')
