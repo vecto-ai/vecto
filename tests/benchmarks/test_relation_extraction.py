@@ -1,4 +1,4 @@
-"""Tests for analogy benchmark."""
+"""Tests for relation extraction."""
 
 # import contextlib
 # import unittest
@@ -9,8 +9,8 @@
 # from vecto.embeddings import load_from_dir
 # from tests.test_setup import run_module
 
-path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'relation_extraction')
-path_emb = path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header')
+# path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'relation_extraction')
+# path_emb = path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header')
 
 
 class Tests(unittest.TestCase):
