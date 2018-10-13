@@ -7,12 +7,12 @@ import sys
 import pickle as pkl
 from .preprocess import load_data
 from ..base import Benchmark
-
-from keras.models import Model
-from keras.layers import Input, Dense, Dropout, concatenate
-from keras.layers import Embedding
-from keras.layers import Convolution1D, GlobalMaxPooling1D
 import os
+
+# from keras.models import Model
+# from keras.layers import Input, Dense, Dropout, concatenate
+# from keras.layers import Embedding
+# from keras.layers import Convolution1D, GlobalMaxPooling1D
 #
 #
 # # Function to calculate the precision
