@@ -9,7 +9,7 @@ from .preprocess import load_data
 from ..base import Benchmark
 import os
 
-# from keras.models import Model
+from keras.models import Model
 # from keras.layers import Input, Dense, Dropout, concatenate
 # from keras.layers import Embedding
 # from keras.layers import Convolution1D, GlobalMaxPooling1D
