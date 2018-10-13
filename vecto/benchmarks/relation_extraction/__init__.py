@@ -1,0 +1,1 @@
+from .relation_extraction import Relation_extraction
