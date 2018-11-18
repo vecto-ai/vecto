@@ -24,5 +24,5 @@ class Tests(unittest.TestCase):
         downloader.fetch_metadata(replace=True)
         downloader.update_directory_structure()
         dir_structure = downloader.get_resources()
-        downloader.download_resource(dir_structure.resources.evaluation.intrinsic.analogy.en.BATS)
+        # downloader.download_resource(dir_structure.resources.evaluation.intrinsic.analogy.en.BATS)
 
