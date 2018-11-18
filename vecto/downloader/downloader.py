@@ -53,13 +53,13 @@ class Downloader:
 
     def download_resource(self, resource_name, verbose=True):
         resource_metadata = WithMetaData()
-        resource_metadata.load_metadata(path.join(self.storage_dir, 'vecto-resources', '/'.join(resource_name), 'metadata.json'))
-        path_dir = path.join(self.storage_dir, 'vecto-resources', '/'.join(resource_name))
+        resource_metadata.load_metadata(path.join(self.storage_dir, 'vecto-resources', *resource_name, 'metadata.json'))
+        path_dir = path.join(self.storage_dir, 'vecto-resources', *resource_name)
         with open(path.join(path_dir, 'metadata.json')) as f:
             q = load(f)
         output_file = q['url'].split('/')[~0]
         self.fetch_file(q['url'], path_dir, output_file)
-        self.last_downloaded = '/'.join(resource_name) + '/' + output_file
+        self.last_downloaded = path.join(*resource_name, output_file)
         self.log('download', verbose)
 
     def fetch_file(self, url, path_dir, output_file, chunk_size=512):
