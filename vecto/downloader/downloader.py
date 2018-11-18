@@ -18,6 +18,7 @@ class Downloader:
         self.resources = None
         self.full_resource_path = path.join('vecto-resources', 'resources')
         self.git_repo = Git(self.storage_dir)
+        self.last_downloaded = None
 
     def log(self, stage, verbose=True):
         if not verbose:
@@ -26,12 +27,14 @@ class Downloader:
             print('Successfully fetched metadata to {}'.format(self.storage_dir))
         elif stage == 'replace':
             print('Removed previously fetched metdata.')
+        elif stage == 'download':
+            print('Successfully downloaded {}'.format(self.last_downloaded))
 
     def fetch_metadata(self, replace=False, verbose=True):
         while True:
             try:
                 self.git_repo.clone(self.path_to_repo)
-                self.log('fetch')
+                self.log('fetch', verbose)
                 break
             except GitCommandNotFound:
                 makedirs(self.storage_dir)
@@ -39,7 +42,7 @@ class Downloader:
                 if replace:
                     rmtree(self.storage_dir)
                     mkdir(self.storage_dir)
-                    self.log('replace')
+                    self.log('replace', verbose)
                 else:
                     break
 
@@ -48,17 +51,20 @@ class Downloader:
             with ZipFile(input_dir, '') as z:
                 z.extractall(self.storage_dir)
 
-    def download_resource(self, resource_name):
+    def download_resource(self, resource_name, verbose=True):
         resource_metadata = WithMetaData()
         resource_metadata.load_metadata(path.join(self.storage_dir, 'vecto-resources', '/'.join(resource_name), 'metadata.json'))
         with open(path.join(self.storage_dir, 'vecto-resources', '/'.join(resource_name), 'metadata.json')) as f:
             q = load(f)
         self.fetch_file(q['url'])
+        self.last_downloaded = '/'.join(resource_name)
+        self.log('download', verbose)
 
     def fetch_file(self, url, output_file='tmp'):
         with open(path.join(self.storage_dir, output_file), 'wb') as file:
             response = get(url)
             file.write(response.content)
+
 
     def update_directory_structure(self):
         dir_struct = {}
