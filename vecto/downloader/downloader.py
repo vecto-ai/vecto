@@ -54,17 +54,21 @@ class Downloader:
     def download_resource(self, resource_name, verbose=True):
         resource_metadata = WithMetaData()
         resource_metadata.load_metadata(path.join(self.storage_dir, 'vecto-resources', '/'.join(resource_name), 'metadata.json'))
-        with open(path.join(self.storage_dir, 'vecto-resources', '/'.join(resource_name), 'metadata.json')) as f:
+        path_dir = path.join(self.storage_dir, 'vecto-resources', '/'.join(resource_name))
+        with open(path.join(path_dir, 'metadata.json')) as f:
             q = load(f)
-        self.fetch_file(q['url'])
-        self.last_downloaded = '/'.join(resource_name)
+        output_file = q['url'].split('/')[~0]
+        self.fetch_file(q['url'], path_dir, output_file)
+        self.last_downloaded = '/'.join(resource_name) + '/' + output_file
         self.log('download', verbose)
 
-    def fetch_file(self, url, output_file='tmp'):
-        with open(path.join(self.storage_dir, output_file), 'wb') as file:
-            response = get(url)
-            file.write(response.content)
-
+    def fetch_file(self, url, path_dir, output_file, chunk_size=512):
+        response = get(url, stream=True)
+        handle = open(path.join(path_dir, output_file), 'wb')
+        for chunk in response.iter_content(chunk_size=chunk_size):
+            if chunk:
+                handle.write(chunk)
+        handle.close()
 
     def update_directory_structure(self):
         dir_struct = {}
