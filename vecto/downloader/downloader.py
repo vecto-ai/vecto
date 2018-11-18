@@ -6,7 +6,7 @@ from git.exc import GitCommandError, GitCommandNotFound
 from vecto.utils.metadata import WithMetaData
 from functools import reduce
 from vecto.downloader.resources import Resources
-from shutil import rmtree
+from vecto.utils.filesystem import rmtree
 from json import load
 import errno
 
