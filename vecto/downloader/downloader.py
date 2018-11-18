@@ -15,20 +15,33 @@ class Downloader:
     def __init__(self, storage_dir=path.join(getcwd(), 'data', 'download')):
         self.path_to_repo = 'https://github.com/vecto-ai/vecto-resources.git'
         self.storage_dir = storage_dir
-        print(self.storage_dir)
         self.resources = None
         self.full_resource_path = path.join('vecto-resources', 'resources')
         self.git_repo = Git(self.storage_dir)
 
-    def fetch_metadata(self, replace=False):
+    def log(self, stage, verbose=True):
+        if not verbose:
+            return
+        if stage == 'fetch':
+            print('Successfully fetched metadata to {}'.format(self.storage_dir))
+        elif stage == 'replace':
+            print('Removed previously fetched metdata.')
+
+    def fetch_metadata(self, replace=False, verbose=True):
         while True:
             try:
                 self.git_repo.clone(self.path_to_repo)
+                self.log('fetch')
                 break
             except GitCommandNotFound:
                 makedirs(self.storage_dir)
             except GitCommandError:
-                break
+                if replace:
+                    rmtree(self.storage_dir)
+                    mkdir(self.storage_dir)
+                    self.log('replace')
+                else:
+                    break
 
     def unarchive(self, input_dir, archive_type='.zip'):
         if archive_type == '.zip':
