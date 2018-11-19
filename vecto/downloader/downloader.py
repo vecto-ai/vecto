@@ -1,14 +1,13 @@
 from zipfile import ZipFile
 from requests import get
 from os import path, walk, sep, mkdir, getcwd, makedirs
-from git import Repo, Git
+from git import Git
 from git.exc import GitCommandError, GitCommandNotFound
 from vecto.utils.metadata import WithMetaData
 from functools import reduce
 from vecto.downloader.resources import Resources
 from vecto.utils.filesystem import rmtree
 from json import load
-import errno
 
 
 class Downloader:
@@ -62,6 +61,7 @@ class Downloader:
         self.last_downloaded = path.join(*resource_name, output_file)
         self.log('download', verbose)
 
+    @classmethod
     def fetch_file(self, url, path_dir, output_file, chunk_size=512):
         response = get(url, stream=True)
         handle = open(path.join(path_dir, output_file), 'wb')
@@ -82,7 +82,7 @@ class Downloader:
             subdir = dict.fromkeys(files)
             parent = reduce(dict.get, folders[:-1], dir_struct)
             if None in subdir.values():
-                  parent[folders[-1]] = folders
+                parent[folders[-1]] = folders
             else:
                 parent[folders[-1]] = subdir
         self.resources = Resources.wrap(dir_struct)
