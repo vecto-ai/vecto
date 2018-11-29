@@ -46,11 +46,41 @@ Getting top similar neighbors of a word
 
 This method takes an optional ``cnt`` argument specifying how many top similar neighbors to output (the default is 10). Note that the top similar vector is always the target word itself.
 
-If you need to compute nearest neighbors for many words, this function works faster if the VSM is normalized. If it was generated with vecto, the normalization will be recorded in metadata, and can be checked with ``.normalized``. Vecto will automatically check for normalization and use the faster routine if possible. If not, you can first normalize your VSM with ``.normalized()`` method.
+If you need to compute nearest neighbors for many words, this function works
+faster if the VSM is normalized. If it was generated with vecto, the
+normalization will be recorded in metadata, and can be checked with `:meth:
+.normalized()` method. Vecto will automatically check for normalization and use
+the faster routine if possible. If not, you can first normalize your model as
+follows:
 
-If for whatever reasons you need your VSM to not be normalized, you can use ``.cache_normalized_copy()`` method to cache normalized copy of embeddings. Please note that latter will consume additional memory.
+>>> my_embeddings.normalize()
+
+Please note that this will consume additional memory.
+
+If you're going to use the same normalized model several times, you can
+avoid re-doing the normalization with:
+
+>>> my_embeddings.cache_normalized_copy()
 
 `.get_most_similar_vectors()` enables you to do the same as ``.get_most_similar_words()``, but searching the top neighbors by the vector representation rather than its label.
+
+Note:
+
+  The speed of vector neighborhood computation depends on whether your numpy
+  package has access
+  to the right linear algebra library - MKL, OpenBLAS or whatever is available
+  for your system. With the OpenBLAS and 4 Ghz Core i7-6700K processor in Ubuntu we're
+  processing 900 words for 300K 500-dimensional embeddings in under three
+  minutes.
+
+  If you do have the library, but the neighbor extraction is   still slow,
+  check if it is actually used by numpy. This can be done as
+  follows:
+
+  >>> import numpy as np
+  >>> np.show_config()
+
+
 
 Words to vectors and back
 -------------------------
