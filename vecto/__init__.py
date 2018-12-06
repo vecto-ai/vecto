@@ -7,6 +7,7 @@ Submodules
     :toctree: _autosummary
 
     embeddings
+    corpus
     vocabulary
     benchmarks
 """
