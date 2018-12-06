@@ -2,9 +2,8 @@ import numpy as np
 import logging
 from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator, \
     TokenizedSequenceIterator, TokenIterator, SlidingWindowIterator
-from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER
+from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
 from vecto.utils.metadata import WithMetaData
-
 
 logger = logging.getLogger(__name__)
 
@@ -12,20 +11,36 @@ logger = logging.getLogger(__name__)
 class Corpus(WithMetaData):
     """Cepresents a body of text in single or multiple files"""
 
-    def __init__(self, path):
+    def __init__(self, path, language='eng'):
         self.path = path
+        self.language = language
 
-    def get_sliding_window_iterator(self, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):
+    def get_sliding_window_iterator(self, left_ctx_size=2, right_ctx_size=2, tokenizer=None, verbose=0):
+        if tokenizer is None:
+            if self.language == 'jap':
+                tokenizer = DEFAULT_JAP_TOKENIZER
+            else:
+                tokenizer = DEFAULT_TOKENIZER
         return SlidingWindowIterator(
             self.get_sentence_iterator(tokenizer=tokenizer),
             left_ctx_size=left_ctx_size,
             right_ctx_size=right_ctx_size)
 
-    def get_token_iterator(self, tokenizer=DEFAULT_TOKENIZER, verbose=False):
+    def get_token_iterator(self, tokenizer=None, verbose=False):
+        if tokenizer is None:
+            if self.language == 'jap':
+                tokenizer = DEFAULT_JAP_TOKENIZER
+            else:
+                tokenizer = DEFAULT_TOKENIZER
         return TokenIterator(self.get_sentence_iterator(tokenizer, verbose))
 
-    def get_sentence_iterator(self, tokenizer=DEFAULT_SENT_TOKENIZER, verbose=False):
-        return TokenizedSequenceIterator(self.get_line_iterator(), tokenizer=tokenizer, verbose=verbose)
+    def get_sentence_iterator(self, tokenizer=None, verbose=False):
+        if tokenizer is None:
+            if self.language == 'jap':
+                tokenizer = DEFAULT_JAP_TOKENIZER
+            else:
+                tokenizer = DEFAULT_SENT_TOKENIZER
+        return TokenizedSequenceIterator(self.get_line_iterator(verbose=verbose), tokenizer=tokenizer, verbose=verbose)
 
 
 class FileCorpus(Corpus):
@@ -41,10 +56,11 @@ class DirCorpus(Corpus):
     def get_line_iterator(self, verbose=False):
         return FileLineIterator(DirIterator(self.path, verbose=verbose))
 
+
 # old code below ----------------------------------
 
 
-#def FileSlidingWindowCorpus(path, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):
+# def FileSlidingWindowCorpus(path, left_ctx_size=2, right_ctx_size=2, tokenizer=DEFAULT_TOKENIZER, verbose=0):
 #    """
 #    Reads text from `path` line-by-line, splits each line into tokens and/or sentences (depending on tokenizer),
 #    and yields training samples for prediction-based distributional semantic models (like Word2Vec etc).
@@ -101,6 +117,6 @@ def load_file_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
     result = []
     ti = FileCorpus(path).get_token_iterator(tokenizer=tokenizer)
     for token in ti:
-        w = token    # specify what to do with missing words
+        w = token  # specify what to do with missing words
         result.append(vocabulary.get_id(w))
     return np.array(result, dtype=np.int32)
