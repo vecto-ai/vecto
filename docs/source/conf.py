@@ -53,6 +53,21 @@ extensions = [
     'sphinx.ext.viewcode',
 ]
 
+autosummary_generate = True  # Make _autosummary files and include them
+autoclass_content = "both"
+autodoc_default_flags = [
+    # Make sure that any autodoc declarations show the right members
+    "members",
+    "inherited-members",
+    "private-members",
+    "show-inheritance",
+]
+napoleon_numpy_docstring = False  # Force consistency, leave only Google
+napoleon_use_rtype = False  # More legible
+
+
+numpydoc_show_class_members = False
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

@@ -3,8 +3,6 @@
 .. autosummary::
     :toctree: _autosummary
 
-    analogy
-
 """
 
 from .vocabulary import Vocabulary

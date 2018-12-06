@@ -33,7 +33,7 @@ class Vocabulary(WithMetaData):
             return -1
 
     def get_word_by_id(self, i):
-        return(self.lst_words[i])
+        return (self.lst_words[i])
 
     def get_frequency(self, i):
         if len(self.lst_frequencies) == 0:
@@ -42,7 +42,7 @@ class Vocabulary(WithMetaData):
             i = self.get_id(i)
         if i < 0:
             return 0
-        return(self.lst_frequencies[i])
+        return (self.lst_frequencies[i])
 
     def _populate_from_source_and_wordlist(self, source, wordlist):
         self.metadata["source"] = source.metadata
@@ -64,7 +64,7 @@ class Vocabulary(WithMetaData):
 
     def save_to_dir(self, path):
         os.makedirs(path, exist_ok=True)
-        f = open(os.path.join(path, "vocab.tsv"), "w")
+        f = open(os.path.join(path, "vocab.tsv"), "w", encoding="utf8")
         f.write("#word\tfrequency\n")
         for i in range(len(self.lst_words)):
             f.write("{}\t{}\n".format(self.lst_words[i], self.lst_frequencies[i]))
@@ -72,22 +72,22 @@ class Vocabulary(WithMetaData):
         self.save_metadata(path)
 
     def load_list_from_sorted_file(self, filename):
-       self.lst_words = []
-       f = open(filename, encoding='utf-8', errors='replace')
-       lines = f.readlines()
-       for line in lines:
-           token = line.strip()
-           self.lst_words.append(token)
-       f.close()
+        self.lst_words = []
+        f = open(filename, encoding='utf-8', errors='replace')
+        lines = f.readlines()
+        for line in lines:
+            token = line.strip()
+            self.lst_words.append(token)
+        f.close()
 
     def create_dic_from_list(self):
-       self.dic_words_ids = {}
-       for i in range(len(self.lst_words)):
-           self.dic_words_ids[self.lst_words[i]] = i
+        self.dic_words_ids = {}
+        for i in range(len(self.lst_words)):
+            self.dic_words_ids[self.lst_words[i]] = i
 
     def load_from_list(self, path):
-       self.load_list_from_sorted_file(path)
-       self.create_dic_from_list()
+        self.load_list_from_sorted_file(path)
+        self.create_dic_from_list()
 
     def load_tsv(self, path):
         pos = 0
@@ -150,15 +150,15 @@ class Vocabulary(WithMetaData):
 #            self.lst_words[np.int64(tokens[-1])] = tokens[0]
 #        f.close()
 
-    # legacy vsmlib format,
-    # def load_legacy(self, path, verbose=False):
-    #     self.dir_root = path
-    #     self.dic_words_ids = self.load_dic_from_file("ids")
-    #     self.load_list_from_file("ids", len(self.dic_words_ids))
-    #     if os.path.isfile(os.path.join(path, "freq_per_id")):
-    #         f = open(os.path.join(self.dir_root, "freq_per_id"))
-    #         self.lst_frequencies = np.fromfile(f, dtype=np.uint64)
-    #         f.close()
+# legacy vsmlib format,
+# def load_legacy(self, path, verbose=False):
+#     self.dir_root = path
+#     self.dic_words_ids = self.load_dic_from_file("ids")
+#     self.load_list_from_file("ids", len(self.dic_words_ids))
+#     if os.path.isfile(os.path.join(path, "freq_per_id")):
+#         f = open(os.path.join(self.dir_root, "freq_per_id"))
+#         self.lst_frequencies = np.fromfile(f, dtype=np.uint64)
+#         f.close()
 
 
 def _create_from_iterator(iterator, min_frequency=0):
@@ -190,22 +190,22 @@ def _create_from_iterator(iterator, min_frequency=0):
     return v
 
 
-def create_from_dir(path, min_frequency=0):
+def create_from_dir(path, min_frequency=0, language='eng'):
     """Collects vocabulary from a corpus by a given directory path.
     """
     if not os.path.isdir(path):
         raise RuntimeError("source directory does not exist")
-    iter = DirCorpus(path).get_token_iterator()
+    iter = DirCorpus(path, language).get_token_iterator()
     v = _create_from_iterator(iter, min_frequency)
     return v
 
 
-def create_from_file(path, min_frequency=0):
+def create_from_file(path, min_frequency=0, language='eng'):
     """Collects vocabulary from a corpus by a given file path.
     """
     if not os.path.isfile(path):
         raise RuntimeError("source file does not exist")
-    iter = FileCorpus(path).get_token_iterator()
+    iter = FileCorpus(path, language).get_token_iterator()
     v = _create_from_iterator(iter, min_frequency)
     return v
 
@@ -221,14 +221,14 @@ def parse_annotated_token(token):
     return word, pos, posit, dep_tag
 
 
-def get_words_from_annotated_token(token, representation): # the format should look like word/ne[position/deps]
+def get_words_from_annotated_token(token, representation):  # the format should look like word/ne[position/deps]
 
     word, pos, posit, dep_tag = parse_annotated_token(token)
 
     if representation == 'word':
         return [word]
     if representation == 'pos':
-        return [word+'/'+pos]
+        return [word + '/' + pos]
     if representation == 'deps':
         w1 = word + '/+' + dep_tag
         w2 = word + '/-' + dep_tag
@@ -243,13 +243,13 @@ def get_ngram_tokensList_from_word(word, min_gram, max_gram):
     for gram in range(min_gram, max_gram + 1):
         ngram_tokens = []
         for i in range(0, len(word) - gram + 1):
-            nt = word[i:i+gram]
+            nt = word[i:i + gram]
             ngram_tokens.append(nt)
         ngram_tokensList.append(ngram_tokens)
     return ngram_tokensList
 
 
-def create_from_annotated_dir(path, min_frequency=0, representation='word'): # todo faster creation of vocab
+def create_from_annotated_dir(path, min_frequency=0, representation='word'):  # todo faster creation of vocab
     """Collects vocabulary from a annotated corpus by a given path.
 
     """
