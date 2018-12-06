@@ -55,12 +55,17 @@ follows:
 
 >>> my_embeddings.normalize()
 
-Please note that this will consume additional memory.
+Please note that this changes the original embeddings, and to reverse this
+operation you will have to re-load them.
 
 If you're going to use the same normalized model several times, you can
 avoid re-doing the normalization with:
 
 >>> my_embeddings.cache_normalized_copy()
+
+In this case the original embeddings remain unchanged, but the neighbor
+retrieval will be performed with the cached normalized version. Please note
+that this will use additional memory.
 
 `.get_most_similar_vectors()` enables you to do the same as ``.get_most_similar_words()``, but searching the top neighbors by the vector representation rather than its label.
 
