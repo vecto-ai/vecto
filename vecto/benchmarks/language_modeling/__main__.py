@@ -24,11 +24,12 @@ def main():
                         help='use small test dataset')
     parser.add_argument("--method", default='lstm', choices=['lr', '2FFNN', 'lstm'],
                         help='name of method')
+    parser.add_argument('--normalize', dest='normalize', action='store_true')
     parser.add_argument("--path_out", default=False, help="destination folder to save results")
     args = parser.parse_args()
     embeddings = load_from_dir(args.embeddings)
     # print("embeddings", embeddings)
-    language_modeling = Language_modeling(window_size=args.window_size, method=args.method, test=args.test)
+    language_modeling = Language_modeling(normalize=args.normalize, window_size=args.window_size, method=args.method, test=args.test)
     results = language_modeling.get_result(embeddings)
     if args.path_out:
         if os.path.isdir(args.path_out) or args.path_out.endswith("/"):

@@ -1,0 +1,32 @@
+Component-Whole(e2,e1)	12	15	The system as described above has its greatest application in an arrayed configuration of antenna elements .
+Other	1	9	The child was carefully wrapped and bound into the cradle by means of a cord .
+Instrument-Agency(e2,e1)	1	7	The author of a keygen uses a disassembler to look at the raw assembly code .
+Other	2	6	A misty ridge uprises from the surge .
+Member-Collection(e1,e2)	1	2	The student association is the voice of the undergraduate student population of the State University of New York at Buffalo .
+Other	4	10	This is the sprawling complex that is Peru 's largest producer of silver .
+Cause-Effect(e2,e1)	7	19	The current view is that the chronic inflammation in the distal part of the stomach caused by Helicobacter pylori infection results in an increased acid production from the non-infected upper corpus region of the stomach .
+Entity-Destination(e1,e2)	0	6	People have been moving back into downtown .
+Content-Container(e1,e2)	1	6	The lawsonite was contained in a platinum crucible and the counter-weight was a plastic crucible with metal pieces .
+Entity-Destination(e1,e2)	12	20	The solute was placed inside a beaker and 5 mL of the solvent was pipetted into a 25 mL glass flask for each trial .
+Member-Collection(e1,e2)	2	6	The fifty essays collected in this volume testify to most of the prominent themes from Professor Quispel 's scholarly career .
+Other	1	5	Their composer has sunk into oblivion .
+Message-Topic(e1,e2)	6	9	The Pulitzer Committee issues an official citation explaining the reasons for the award .
+Cause-Effect(e2,e1)	1	8	The burst has been caused by water hammer pressure .
+Instrument-Agency(e2,e1)	2	6	Even commercial networks have moved into high-definition broadcast .
+Message-Topic(e1,e2)	4	10	It was a friendly call to remind them about the bill and make sure they have a copy of the invoice .
+Instrument-Agency(e2,e1)	1	8	Texas-born virtuoso finds harmony , sophistication in Appalachian instrument .
+Product-Producer(e2,e1)	1	14	The factory 's products have included flower pots , Finnish rooster-whistles , pans , trays , tea pots , ash trays and air moisturisers .
+Component-Whole(e2,e1)	7	8	The girl showed a photo of apple tree blossom on a fruit tree in the Central Valley .
+Member-Collection(e2,e1)	20	23	They tried an assault of their own an hour later , with two columns of sixteen tanks backed by a battalion of Panzer grenadiers .
+Entity-Origin(e1,e2)	1	18	Their knowledge of the power and rank symbols of the Continental empires was gained from the numerous Germanic recruits in the Roman army , and from the Roman practice of enfeoffing various Germanic warrior groups with land in the imperial provinces .
+Member-Collection(e2,e1)	4	9	She soon had a stable of her own rescued hounds .
+Cause-Effect(e1,e2)	1	14	The singer , who performed three of the nominated songs , also caused a commotion on the red carpet .
+Other	5	11	His intellectually engaging books and essays remain pertinent to illuminating contemporary history .
+Member-Collection(e2,e1)	7	10	Poor hygiene controls , reports of a brace of gamey grouse and what looked like a skinned fox all amounted to a pie that was unfit for human consumption .
+Other	2	7	This sweet dress is made with a blend of cotton and silk , and the crochet flower necklace is the perfect accessory .
+Cause-Effect(e1,e2)	0	8	Suicide is one of the leading causes of death among pre-adolescents and teens , and victims of bullying are at an increased risk for committing suicide .
+Message-Topic(e1,e2)	1	7	This article gives details on 2004 in music in the United Kingdom , including the official charts from that year .
+Message-Topic(e1,e2)	12	16	We have therefore taken the initiative to convene the first international open meeting dedicated solely to rural history .
+Component-Whole(e1,e2)	1	4	The timer of the device automatically eliminates wasted `` standby power '' consumption by automatically turn off electronics plugged into the `` auto off '' outlets .
+Message-Topic(e2,e1)	5	8	Bob Parks made a similar offer in a phone call made earlier this week .
+Cause-Effect(e2,e1)	5	7	He had chest pains and headaches from mold in the bedrooms .

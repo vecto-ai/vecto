@@ -23,11 +23,12 @@ def main():
     parser.add_argument("--window_size", default=5, type=int)
     parser.add_argument("--method", default='lr', choices=['lr', '2FFNN'],
                         help='name of method')
+    parser.add_argument('--normalize', dest='normalize', action='store_true')
     parser.add_argument("--path_out", default=False, help="destination folder to save results")
     args = parser.parse_args()
     embeddings = load_from_dir(args.embeddings)
     # print("embeddings", embeddings)
-    sequence_labeling = Sequence_labeling(method=args.method, window_size=args.window_size)
+    sequence_labeling = Sequence_labeling(normalize=args.normalize, method=args.method, window_size=args.window_size)
     results = sequence_labeling.get_result(embeddings, args.dataset)
     if args.path_out:
         if os.path.isdir(args.path_out) or args.path_out.endswith("/"):
