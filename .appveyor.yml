@@ -4,7 +4,7 @@ environment:
 
   matrix:
 
-    - PYTHON: "C:\\Python35-x64"
+    - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "64"
 
@@ -43,7 +43,7 @@ after_test:
   # - "python setup.py bdist_wheel"
   # - "%CMD_IN_ENV% python setup.py bdist_wininst"
   # - "%CMD_IN_ENV% python setup.py bdist_msi"
-  - ps: "ls dist"
+  - ps: "ls"
 
 notifications:
   - provider: Webhook
