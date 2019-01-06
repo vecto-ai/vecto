@@ -1,4 +1,13 @@
-"""Loading and training for embeddings"""
+"""Loading and training for embeddings
+
+.. autosummary::
+    :toctree: _autosummary
+
+    base
+    dense
+
+"""
+
 import os
 import logging
 import numpy as np
