@@ -15,3 +15,4 @@ traitlets
 tqdm
 keras
 tensorflow
+requests
