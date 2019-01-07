@@ -4,9 +4,10 @@ environment:
 
   matrix:
 
-    - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6.x"
+    - PYTHON: "C:\\Miniconda36-x64"
+      PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "64"
+      HDF5_VERSION: "1.10"
 
 install:
   - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
@@ -26,10 +27,10 @@ install:
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
 
   - "python -m pip install --upgrade pip"
-  - "python -m pip install --upgrade setuptools"
-  - "python -m pip install --upgrade cython"
+  # - "python -m pip install --upgrade setuptools"
+  # - "python -m pip install --upgrade cython"
+  - conda install --yes pytables -c conda-forge
   - "python -m pip install -r test_requirements.txt"
-  - "python -m pip install --upgrade h5py"
 
 build_script:
   - "python setup.py build"
