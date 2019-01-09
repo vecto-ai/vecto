@@ -31,6 +31,8 @@ The most commonly used vecto commands are:
     def benchmark(self):
         parser = argparse.ArgumentParser(
             description='Run benchamrks')
+        from vecto.benchmarks import _run
+        _run()
         # prefixing the argument with -- means it's optional
         #parser.add_argument('--amend', action='store_true')
         # now that we're inside a subcommand, ignore the first
