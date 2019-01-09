@@ -1,5 +1,6 @@
 import sys
 import argparse
+import vecto
 
 
 class CLI(object):
@@ -13,6 +14,8 @@ The most commonly used vecto commands are:
    benchmark        Run benchmarks
    create_vocab     Create vocabulary from a folder
 ''')
+
+        parser.add_argument('--version', action='version', version=f'Vecto version {vecto.__version__}')
         parser.add_argument('command', help='Subcommand to run')
         # parse_args defaults to [1:] for args, but you need to
         # exclude the rest of the args too, or validation will fail
