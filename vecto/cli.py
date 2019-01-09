@@ -8,7 +8,8 @@ class CLI(object):
     def __init__(self):
         parser = argparse.ArgumentParser(
             description='vecto commad line interface',
-            usage='''vecto <command> [<args>]
+            add_help=True,
+            usage='''vecto <command> [<args>],
 
 The most commonly used vecto commands are:
    benchmark        Run benchmarks
