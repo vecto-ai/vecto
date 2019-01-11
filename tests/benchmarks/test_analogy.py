@@ -58,7 +58,7 @@ class Tests(unittest.TestCase):
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto", "benchmark" "analogy",
+            run_module("vecto", "benchmark", "analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
                        "--path_out",
@@ -67,7 +67,7 @@ class Tests(unittest.TestCase):
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.analogy",
+            run_module("vecto", "benchmark", "analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
                        "--path_out", "/tmp/vecto/benchmarks/",
@@ -76,14 +76,14 @@ class Tests(unittest.TestCase):
         sio = io.StringIO()
         with self.assertRaises(RuntimeError):
             with contextlib.redirect_stdout(sio):
-                run_module("vecto.benchmarks.analogy",
+                run_module("vecto", "benchmark", "analogy",
                            "./tests/data/embeddings/text/plain_with_file_header/",
                            "./tests/data/benchmarks/analogy/",
                            "--method", "NONEXISTING")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.analogy",
+            run_module("vecto", "benchmark", "analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
                        "--method", "3CosAvg")
