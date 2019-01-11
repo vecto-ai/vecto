@@ -20,17 +20,20 @@ def _run(args=None):
     parser = argparse.ArgumentParser(
         description='run benchmarks',
         add_help=True,
-        usage="vecto benchmark [all|<name>]")
+        usage="vecto benchmark [name]")
 
     parser.add_argument('name', help='Subcommand to run')
     args, unknownargs = parser.parse_known_args(args)
     if args.name == "help":
         list_benhcmarks()
 
-    if args.name == "all":
-        print("running all benchmarks")
+    # if args.name == "all":
+        # print("running all benchmarks")
 
-    
+    if args.name == "analogy":
+        print("running analogy")
+        from .analogy import run
+        run(unknownargs)
     # check if all is specified - then run all
     # if benchmark name matches - run corresponding module
     # list all available benchmarks
