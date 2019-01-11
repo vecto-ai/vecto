@@ -18,9 +18,6 @@ The most commonly used vecto commands are:
 
         parser.add_argument('--version', action='version', version=f'Vecto version {vecto.__version__}')
         parser.add_argument('command', help='Subcommand to run')
-        # parse_args defaults to [1:] for args, but you need to
-        # exclude the rest of the args too, or validation will fail
-        # args = parser.parse_args(sys.argv[1:2])
         args, self.unknownargs = parser.parse_known_args()
         if not hasattr(self, args.command):
             print('Unrecognized command')
@@ -32,15 +29,8 @@ The most commonly used vecto commands are:
     def benchmark(self):
         parser = argparse.ArgumentParser(
             description='Run benchamrks')
-        # get unparsed args
         from vecto.benchmarks import _run
         _run(self.unknownargs)
-        # prefixing the argument with -- means it's optional
-        #parser.add_argument('--amend', action='store_true')
-        # now that we're inside a subcommand, ignore the first
-        # TWO argvs, ie the command (git) and the subcommand (commit)
-        # from vecto.benchmarks.evaluate_all import main as main_eval
-        # main_eval(sys.argv[2:])
 
     def create_vocab(self):
         print("CLI for vocabulary routines not implemented yet")
