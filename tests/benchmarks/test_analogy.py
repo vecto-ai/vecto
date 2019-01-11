@@ -50,17 +50,19 @@ class Tests(unittest.TestCase):
     def test_cli(self):
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.analogy",
+            run_module("vecto", "benchmark", "analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
-                       "--path_out", "/tmp/vecto/benchmarks/", "--method", "3CosAdd")
+                       "--path_out", "/tmp/vecto/benchmarks/",
+                       "--method", "3CosAdd")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.analogy",
+            run_module("vecto", "benchmark" "analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
-                       "--path_out", "/tmp/vecto/benchmarks/specific_filename.json",
+                       "--path_out",
+                       "/tmp/vecto/benchmarks/specific_filename.json",
                        "--method", "LRCos")
 
         sio = io.StringIO()
