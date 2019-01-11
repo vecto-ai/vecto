@@ -2,6 +2,7 @@ import argparse
 from .categorization import *
 from vecto.embeddings import load_from_dir
 from vecto.utils.data import save_json, print_json
+from vecto.utils import get_time_str
 
 
 def select_method(key):
@@ -28,9 +29,11 @@ def run(options, extra_args):
     if args.path_out:
         if path.isdir(args.path_out) or args.path_out.endswith('/'):
             dataset = path.basename(path.normpath(args.dataset))
+            timestamp = get_time_str()
             name_file_out = path.join(args.path_out,
                                       dataset,
                                       args.method,
+                                      timestamp,
                                       'results.json')
             save_json(results, name_file_out)
         else:
