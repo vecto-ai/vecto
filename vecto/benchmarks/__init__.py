@@ -7,5 +7,7 @@
 
 """
 
-def _run():
-    print("subparsing the args")
+
+def _run(args=None):
+    print("subparsing remaining args")
+    print(args)
