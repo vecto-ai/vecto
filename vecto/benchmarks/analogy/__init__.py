@@ -7,7 +7,7 @@ from vecto.utils.data import save_json, print_json
 from vecto.benchmarks.analogy import ThreeCosAvg, ThreeCosMul, LinearOffset, LRCos
 # from vecto.config import load_config
 from vecto.embeddings import load_from_dir
-
+from vecto.utils import get_time_str
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -50,7 +50,7 @@ def run(args):
     if args.path_out:
         if os.path.isdir(args.path_out) or args.path_out.endswith("/"):
             dataset = os.path.basename(os.path.normpath(args.dataset))
-            timestamp = results[0]["experiment_setup"]["timestamp"]
+            timestamp = get_time_str()
             name_file_out = os.path.join(args.path_out,
                                          "analogical_reasoning",
                                          dataset,
