@@ -26,14 +26,22 @@ def _run(args=None):
     args, unknownargs = parser.parse_known_args(args)
     if args.name == "help":
         list_benhcmarks()
-
+        return
     # if args.name == "all":
         # print("running all benchmarks")
+
+    options = {}
 
     if args.name == "analogy":
         print("running analogy")
         from .analogy import run
         run(unknownargs)
+    elif args.name == "categorization":
+        print("running categorization")
+        from .categorization import run
+        run(options, unknownargs)
+    else:
+        list_benhcmarks()
     # check if all is specified - then run all
     # if benchmark name matches - run corresponding module
     # list all available benchmarks
