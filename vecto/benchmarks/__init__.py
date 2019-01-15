@@ -40,6 +40,10 @@ def _run(args=None):
         print("running categorization")
         from .categorization import run
         run(options, unknownargs)
+    elif args.name == "similarity":
+        print("running similarity")
+        from .similarity import run
+        run(options, unknownargs)
     else:
         list_benhcmarks()
     # check if all is specified - then run all
