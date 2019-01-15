@@ -202,7 +202,7 @@ class Sequence_labeling(Benchmark):
         out['details']['pred_test'] = pred_test
         return out
 
-    def run(self, embs, path_dataset):
+    def _run(self, embs, path_dataset):
 
         # specify the task (can be ner, pos or chunk)
         task = os.path.basename(path_dataset)
@@ -264,4 +264,4 @@ class Sequence_labeling(Benchmark):
     def get_result(self, embeddings, path_dataset):
         if self.normalize:
             embeddings.normalize()
-        return [self.run(embeddings, path_dataset)]
+        return [self._run(embeddings, path_dataset)]
