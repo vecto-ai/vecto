@@ -24,7 +24,6 @@ def df_from_file(path):
         logger.warning(f"default_measurement not specified in {path}")
     dframe["result"] = dframe["result." + default_measurement]
     # df["reciprocal_rank"] = 1 / (df["rank"] + 1)
-    print(dframe)
     return dframe
 
 

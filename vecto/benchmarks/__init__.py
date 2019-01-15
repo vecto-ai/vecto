@@ -44,8 +44,14 @@ def _run(args=None):
         print("running similarity")
         from .similarity import run
         run(options, unknownargs)
+    elif args.name == "sequence_labelling":
+        print("running sequence labelling")
+        from .sequence_labeling import run
+        run(options, unknownargs)
     else:
+        print("unknown benchmark name")
         list_benhcmarks()
+        exit(-1)
     # check if all is specified - then run all
     # if benchmark name matches - run corresponding module
     # list all available benchmarks
