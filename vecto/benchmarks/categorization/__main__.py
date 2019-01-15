@@ -1,5 +1,5 @@
 import logging
-from . vecto.benachmarks.categorization import run
+from vecto.benchmarks.categorization import run
 # logging.basicConfig(level=logging.DEBUG)
 
 
