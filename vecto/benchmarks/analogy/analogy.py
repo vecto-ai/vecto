@@ -12,11 +12,11 @@ from sklearn.linear_model import LogisticRegression
 from itertools import product
 from vecto.data import Dataset
 from ..base import Benchmark
-
+from .io import get_pairs
 logger = logging.getLogger(__name__)
 
 
-def get_pairs(fname):  # todo: optional lower-casing, move to some io module
+def get_pairs(fname):
     pairs = []
     with open(fname) as file_in:
         id_line = 0
