@@ -92,5 +92,5 @@ class Tests(unittest.TestCase):
 
         # TODO: suppress concatenating timestamp or aggregate multiple runs
         from matplotlib import pyplot as plt
-        visualize.plot_accuracy("/tmp/vecto/benchmarks/analogical_reasoning")
+        visualize.plot_accuracy("/tmp/vecto/benchmarks/word_analogy")
         plt.savefig("/tmp/vecto/benchmarks/analogy.pdf", bbox_inches="tight")

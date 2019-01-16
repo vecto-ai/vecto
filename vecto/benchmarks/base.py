@@ -25,7 +25,9 @@ class Benchmark():
             if os.path.isdir(args.path_out) or args.path_out.endswith("/"):
                 dataset = os.path.basename(os.path.normpath(args.dataset))
                 timestamp = get_time_str()
+                task = results[0]["experiment_setup"]["task"]
                 name_file_out = os.path.join(args.path_out,
+                                             task,
                                              dataset,
                                              timestamp,
                                              "results.json")
