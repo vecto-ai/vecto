@@ -63,8 +63,7 @@ class Analogy(Benchmark):
         self.name_kernel = name_kernel
 
         self.stats = {}
-        self.cnt_total_correct = 0
-        self.cnt_total_total = 0
+
 
         # this are some hard-coded bits which will be implemented later
         self.result_miss = {

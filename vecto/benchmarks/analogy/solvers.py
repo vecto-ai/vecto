@@ -16,6 +16,8 @@ class Solver:
         self.name_kernel = name_kernel
         self.inverse_regularization_strength = inverse_regularization_strength
         self.exclude = exclude
+        self.cnt_total_correct = 0
+        self.cnt_total_total = 0
 
     @property
     def method(self):
