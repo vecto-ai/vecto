@@ -4,7 +4,7 @@ import contextlib
 import unittest
 import io
 from os import path
-from vecto.benchmarks.analogy import *
+from vecto.benchmarks.analogy import Analogy
 from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
 from ..test_setup import run_module
