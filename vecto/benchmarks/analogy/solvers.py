@@ -260,13 +260,13 @@ class SimilarToB(PairWise):
             if self.is_pair_missing([p_test]):
                 continue
             # TODO: try to reuse more from pairwise
-            result = self.do_on_two_pairs(p_test)
+            result = self.do_on_two_pair(p_test)
             result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
             result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
             results.append(result)
         return results
 
-    def do_on_two_pairs(self, pair_test):
+    def do_on_two_pair(self, pair_test):
         if self.is_pair_missing([pair_test]):
             result = self.result_miss
         else:
