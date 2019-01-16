@@ -1,36 +1,13 @@
 import argparse
-import json
 import logging
 import os
-from .analogy import ThreeCosAvg, ThreeCosMul, ThreeCosMul2, LinearOffset, LRCos, PairDistance
+from .analogy import Analogy
 from vecto.utils.data import save_json, print_json
-from vecto.benchmarks.analogy import ThreeCosAvg, ThreeCosMul, LinearOffset, LRCos
 # from vecto.config import load_config
 from vecto.embeddings import load_from_dir
 from vecto.utils import get_time_str
 
 logging.basicConfig(level=logging.DEBUG)
-
-
-def select_method(key):
-    options = {}
-    if key == "3CosAvg":
-        method = ThreeCosAvg(options)
-    #elif key == "SimilarToAny":
-    #    method = SimilarToAny(options)
-    #elif key == "SimilarToB":
-    #    method = SimilarToB(options)
-    elif key == "3CosMul":
-        method = ThreeCosMul(options)
-    elif key == "3CosAdd":
-        method = LinearOffset(options)
-    #elif key == "PairDistance":
-    #    method = PairDistance(options)
-    elif key == "LRCos" or key == "SVMCos":
-        method = LRCos(options)
-    else:
-        raise RuntimeError("method name not recognized")
-    return method
 
 
 def run(args):
@@ -45,7 +22,7 @@ def run(args):
     args = parser.parse_args(args)
     embeddings = load_from_dir(args.embeddings)
     # print("embeddings", embeddings)
-    benchmark = select_method(args.method)
+    benchmark = Analogy(method=args.method)
     results = benchmark.get_result(embeddings, args.dataset)
     if args.path_out:
         if os.path.isdir(args.path_out) or args.path_out.endswith("/"):
