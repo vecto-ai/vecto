@@ -1,13 +1,11 @@
 import datetime
 import os
-import scipy
 import uuid
 import numpy as np
 import logging
 import progressbar
 # from tqdm import tqdm
 import sklearn
-from itertools import product
 from vecto.data import Dataset
 from ..base import Benchmark
 from .io import get_pairs
@@ -19,16 +17,18 @@ logger = logging.getLogger(__name__)
 def select_method(key):
     if key == "3CosAvg":
         method = ThreeCosAvg
-    #elif key == "SimilarToAny":
-    #    method = SimilarToAny(options)
-    #elif key == "SimilarToB":
-    #    method = SimilarToB(options)
+    elif key == "SimilarToAny":
+        method = SimilarToAny
+    elif key == "SimilarToB":
+        method = SimilarToB
     elif key == "3CosMul":
         method = ThreeCosMul
+    elif key == "3CosMul2":
+        method = ThreeCosMul2
     elif key == "3CosAdd":
         method = LinearOffset
-    #elif key == "PairDistance":
-    #    method = PairDistance(options)
+    elif key == "PairDistance":
+        method = PairDistance
     elif key == "LRCos" or key == "SVMCos":
         method = LRCos
     else:
@@ -88,11 +88,6 @@ class Analogy(Benchmark):
     #     Y = np.hstack([np.ones(len(a_prime)), np.zeros(len(x) - len(a_prime))])
     #     return X, Y
 
-    def get_crowndedness(self, vector):
-        scores = self.get_most_similar_fast(vector)
-        scores.sort()
-        return (scores[-11:-1][::-1]).tolist()
-
     # def create_list_test_right(self, pairs):
     #     global set_aprimes_test
     #     a, a_prime = zip(*pairs)
@@ -107,18 +102,6 @@ class Analogy(Benchmark):
     #         distances[i] = scores[ids_max[i + 1]]
     #     return distances.mean()
 
-    def get_rank(self, source, center):
-        if isinstance(center, str):
-            center = self.embs.get_vector(center)
-        if isinstance(source, str):
-            source = [source]
-        scores = self.get_most_similar_fast(center)
-        ids_max = np.argsort(scores)[::-1]
-        for i in range(ids_max.shape[0]):
-            if self.embs.vocabulary.get_word_by_id(ids_max[i]) in source:
-                break
-        rank = i
-        return rank
 
     def run_category(self, pairs):
         self.cnt_total_correct = 0
@@ -250,33 +233,4 @@ class Analogy(Benchmark):
         return results
 
 
-# class SimilarToAny(PairWise):
-#     def compute_scores(self, vectors):
-#         scores = self.get_most_similar_fast(vectors)
-#         best = scores.max(axis=0)
-#         return best
-#
-#
-# class SimilarToB(Analogy):
-#     def do_test_on_pairs(self, pairs_train, pairs_test):
-#         results = []
-#         for p_test in pairs_test:
-#             if self.is_pair_missing([p_test]):
-#                 continue
-#             result = self.do_on_two_pairs(p_test)
-#             result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
-#             result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
-#             results.append(result)
-#         return results
-#
-#     def do_on_two_pairs(self, pair_test):
-#         if self.is_pair_missing([pair_test]):
-#             result = self.result_miss
-#         else:
-#             vec_b = self.embs.get_vector(pair_test[0])
-#             vec_b_prime = self.embs.get_vector(pair_test[1][0])
-#             scores = self.get_most_similar_fast(vec_b)
-#             result = self.process_prediction(pair_test, scores, None, None)
-#             result["similarity to correct cosine"] = self.embs.cmp_vectors(vec_b, vec_b_prime)
-#         return result
 

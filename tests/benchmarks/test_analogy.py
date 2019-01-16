@@ -17,33 +17,35 @@ class Tests(unittest.TestCase):
 
     def test_api(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
-        analogy = LinearOffset()
+        analogy = Analogy(method="3CosAdd")
         result = analogy.get_result(embs, path_analogy_dataset)
         self.assertIsInstance(result[0], dict)
 
-        analogy = PairDistance()
+        analogy = Analogy(method="PairDistance")
         result = analogy.get_result(embs, path_analogy_dataset)
         self.assertIsInstance(result[0], dict)
 
-        analogy = ThreeCosMul()
+        analogy = Analogy(method="3CosMul")
         result = analogy.get_result(embs, path_analogy_dataset)
         self.assertIsInstance(result[0], dict)
 
-        analogy = ThreeCosMul2()
+        analogy = Analogy(method="3CosMul2")
         result = analogy.get_result(embs, path_analogy_dataset)
         self.assertIsInstance(result[0], dict)
 
-        analogy = ThreeCosAvg()
+        analogy = Analogy(method="3CosAvg")
         result = analogy.get_result(embs, path_analogy_dataset)
         self.assertIsInstance(result[0], dict)
 
-        # analogy = SimilarToAny()
-        # result = analogy.get_result(embs, path_analogy_dataset)
-        # print(result)
-        # analogy = SimilarToB()
-        # result = analogy.get_result(embs, path_analogy_dataset)
-        # print(result)
-        analogy = LRCos()
+        analogy = Analogy(method="SimilarToAny")
+        result = analogy.get_result(embs, path_analogy_dataset)
+        print(result)
+
+        analogy = Analogy(method="SimilarToB")
+        result = analogy.get_result(embs, path_analogy_dataset)
+        print(result)
+
+        analogy = Analogy(method="LRCos")
         result = analogy.get_result(embs, path_analogy_dataset)
         print(result)
 

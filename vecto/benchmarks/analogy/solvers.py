@@ -1,6 +1,8 @@
 import random
+import scipy
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+from itertools import product
 
 
 class Solver:
@@ -24,10 +26,16 @@ class Solver:
         return type(self).__name__
 
     def normed(self, v):
-        if self.normalize:
-            return v
-        else:
-            return v / np.linalg.norm(v)
+        # if self.normalize:
+        #     return v
+        # else:
+        return v / np.linalg.norm(v)
+
+    # TODO: move this to embeddings module
+    def get_crowndedness(self, vector):
+        scores = self.get_most_similar_fast(vector)
+        scores.sort()
+        return (scores[-11:-1][::-1]).tolist()
 
     def get_most_similar_fast(self, v):
         scores = self.normed(v) @ self.embs._normalized_matrix.T
@@ -70,6 +78,19 @@ class Solver:
             # if not is_at_least_one_word_present(pair[1]):
             # return True
         return False
+
+    def get_rank(self, source, center):
+        if isinstance(center, str):
+            center = self.embs.get_vector(center)
+        if isinstance(source, str):
+            source = [source]
+        scores = self.get_most_similar_fast(center)
+        ids_max = np.argsort(scores)[::-1]
+        for i in range(ids_max.shape[0]):
+            if self.embs.vocabulary.get_word_by_id(ids_max[i]) in source:
+                break
+        rank = i
+        return rank
 
     @staticmethod
     def get_verbose_question(pair_test, pairs_train):
@@ -188,7 +209,7 @@ class PairWise(Solver):
         result["crowdedness of b_prime"] = self.get_crowndedness(vec_b_prime)
 
 
-class LinearOffset(Solver):
+class LinearOffset(PairWise):
     def compute_scores(self, vec_a, vec_a_prime, vec_b):
         vec_b_prime_predicted = vec_a_prime - vec_a + vec_b
         vec_b_prime_predicted = self.normed(vec_b_prime_predicted)
@@ -196,13 +217,13 @@ class LinearOffset(Solver):
         return scores, vec_b_prime_predicted
 
 
-class PairDistance(Solver):
+class PairDistance(PairWise):
     def compute_scores(self, vec_a, vec_a_prime, vec_b):
         scores = self.get_most_collinear_fast(vec_a, vec_a_prime, vec_b)
         return scores, None
 
 
-class ThreeCosMul(Solver):
+class ThreeCosMul(PairWise):
     def compute_scores(self, vec_a, vec_a_prime, vec_b):
         epsilon = 0.001
         sim_a = self.get_most_similar_fast(vec_a)
@@ -212,7 +233,7 @@ class ThreeCosMul(Solver):
         return scores, None
 
 
-class ThreeCosMul2(Solver):
+class ThreeCosMul2(PairWise):
     def compute_scores(self, vec_a, vec_a_prime, vec_b):
         epsilon = 0.001
         # sim_a = get_most_similar_fast(vec_a)
@@ -222,6 +243,39 @@ class ThreeCosMul2(Solver):
         predicted = (((vec_a_prime + 0.5) / 2) * ((vec_b + 0.5) / 2)) / (((vec_a + 0.5) / 2) + epsilon)
         scores = self.get_most_similar_fast(predicted)
         return scores, predicted
+
+
+class SimilarToAny(PairWise):
+    def compute_scores(self, *vectors):
+        vectors = np.array(vectors)
+        scores = self.get_most_similar_fast(vectors)
+        best = scores.max(axis=0)
+        return best, None
+
+
+class SimilarToB(PairWise):
+    def do_test_on_pairs(self, pairs_train, pairs_test):
+        results = []
+        for p_test in pairs_test:
+            if self.is_pair_missing([p_test]):
+                continue
+            # TODO: try to reuse more from pairwise
+            result = self.do_on_two_pairs(p_test)
+            result["b in neighbourhood of b_prime"] = self.get_rank(p_test[0], p_test[1][0])
+            result["b_prime in neighbourhood of b"] = self.get_rank(p_test[1], p_test[0])
+            results.append(result)
+        return results
+
+    def do_on_two_pairs(self, pair_test):
+        if self.is_pair_missing([pair_test]):
+            result = self.result_miss
+        else:
+            vec_b = self.embs.get_vector(pair_test[0])
+            vec_b_prime = self.embs.get_vector(pair_test[1][0])
+            scores = self.get_most_similar_fast(vec_b)
+            result = self.process_prediction(pair_test, scores, None, None)
+            result["similarity to correct cosine"] = self.embs.cmp_vectors(vec_b, vec_b_prime)
+        return result
 
 
 class ThreeCosAvg(Solver):
