@@ -59,6 +59,6 @@ def plot_accuracy(path, key_primary="experiment_setup.method",
 if __name__ == "__main__":
     plot_accuracy("/mnt/work/scratch",
                   key_primary="experiment_setup.task",
-                  key_secondary="experiment_setup.embeddings.foldername")
+                  key_secondary="experiment_setup.embeddings.name")
     from matplotlib import pyplot as plt
     plt.savefig("results.pdf", bbox_inches="tight")
