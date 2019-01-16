@@ -109,7 +109,7 @@ class Sequence_labeling(Benchmark):
         x = []
         OOV_count = 0
         token_count = 0
-        print(m.matrix.shape[0])
+        # print(m.matrix.shape[0])
         random_vector = m.matrix.sum(axis=0) / m.matrix.shape[0]
         # random_vector = m.matrix[0]
         for wordList in input:
@@ -155,7 +155,7 @@ class Sequence_labeling(Benchmark):
         print(idx2label)
         # fit LR classifier
         if method == 'lr':
-            lrc = LogisticRegression(solver="lbfgs")
+            lrc = LogisticRegression(solver="liblinear")
         if method == '2FFNN':
             lrc = MLPClassifier()
 
