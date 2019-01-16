@@ -3,6 +3,7 @@ import os
 from vecto.utils.metadata import WithMetaData
 from vecto.embeddings import load_from_dir
 from vecto.utils.data import save_json, print_json
+from vecto.utils import get_time_str
 
 
 class Benchmark():
@@ -23,7 +24,11 @@ class Benchmark():
         if args.path_out:
             if os.path.isdir(args.path_out) or args.path_out.endswith("/"):
                 dataset = os.path.basename(os.path.normpath(args.dataset))
-                name_file_out = os.path.join(args.path_out, dataset, "results.json")
+                timestamp = get_time_str()
+                name_file_out = os.path.join(args.path_out, 
+                                             dataset,
+                                             timestamp,
+                                             "results.json")
                 save_json(results, name_file_out)
             else:
                 save_json(results, args.path_out)
