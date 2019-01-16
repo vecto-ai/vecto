@@ -155,7 +155,7 @@ class Sequence_labeling(Benchmark):
         print(idx2label)
         # fit LR classifier
         if method == 'lr':
-            lrc = LogisticRegression()
+            lrc = LogisticRegression(solver="lbfgs")
         if method == '2FFNN':
             lrc = MLPClassifier()
 
