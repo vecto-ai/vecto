@@ -13,6 +13,7 @@ import logging
 import numpy as np
 import vecto.embeddings.dense
 from vecto.embeddings.dense import WordEmbeddingsDense
+from .legacy_w2v import ModelW2V
 from vecto.vocabulary import Vocabulary
 
 logger = logging.getLogger(__name__)
@@ -39,12 +40,7 @@ def load_from_dir(path):
 #        result.load(path)
 #        result.load_metadata(path)
 #        return result
-#     if os.path.isfile(os.path.join(path, "vectors.bin")):
-#         logger.info("this is w2v original binary format")
-#         result = ModelW2V()
-#         result.load_from_dir(path)
-#         result.load_metadata(path)
-#         return result
+
 #    if os.path.isfile(os.path.join(path, "sgns.words.npy")):
 #        result = ModelLevy()
 #        logger.info("this is Levi")
@@ -79,12 +75,12 @@ def load_from_dir(path):
             result.vocabulary.load(path)
             result.load_metadata(path)
             return result
-        # if any(file.endswith('bin') for file in os.listdir(path)):
-        #     result = ModelW2V()
-        #     logger.info("Detected VSM in the w2v original binary format")
-        #     result.load_from_dir(path)
-        #     result.load_metadata(path)
-        #     return result
+        if any(file.endswith('bin') for file in os.listdir(path)):
+             result = ModelW2V()
+             logger.info("Detected VSM in the w2v original binary format")
+             result.load_from_dir(path)
+             result.load_metadata(path)
+             return result
 #        if f.startswith("words") and f.endswith(".npy") \
 #               and os.path.isfile(os.path.join(path, f.replace(".npy", ".vocab"))):
 #            result = Model_Fun()
