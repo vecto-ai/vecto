@@ -94,6 +94,7 @@ class Text_classification(Benchmark):
         self.char_based = char_based
         self.shrink = shrink
 
+    # TODO: let all benchmarks set output path in init
     def get_result(self, embeddings, path_dataset, path_output='/tmp/text_classification/'):
         self.out = path_output
         self.unit = embeddings.matrix.shape[1]

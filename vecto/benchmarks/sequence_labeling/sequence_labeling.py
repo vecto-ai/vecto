@@ -237,10 +237,10 @@ class Sequence_labeling(Benchmark):
             out = self.run_lr(embs, my_train_x, my_train_y, my_test_x, my_test_y, self.method,
                               idx2label, dataset, task)
         if self.method == 'crf':
-            # todo
+            # TODO: implement
             pass
         if self.method == 'lstm':
-            # todo
+            # TODO: implement
             pass
 
         experiment_setup = dict()
