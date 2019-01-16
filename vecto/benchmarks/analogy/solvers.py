@@ -325,7 +325,7 @@ class LRCos(Solver):
             # model_regression = LogisticRegression(class_weight = 'balanced')
             # model_regression = Pipeline([('poly', PolynomialFeatures(degree=3)), ('logistic', LogisticRegression(class_weight = 'balanced',C=C))])
             model_regression = LogisticRegression(
-                solver="lbfgs",
+                solver="liblinear",
                 class_weight='balanced',
                 C=self.inverse_regularization_strength)
         if self.name_classifier == "SVM":
