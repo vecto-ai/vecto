@@ -1,4 +1,3 @@
-import sys
 import argparse
 import vecto
 
@@ -16,7 +15,8 @@ The most commonly used vecto commands are:
    create_vocab     Create vocabulary from a folder
 ''')
 
-        parser.add_argument('--version', action='version', version=f'Vecto version {vecto.__version__}')
+        parser.add_argument('--version', action='version',
+                            version=f'Vecto version {vecto.__version__}')
         parser.add_argument('command', help='Subcommand to run')
         args, self.unknownargs = parser.parse_known_args()
         if not hasattr(self, args.command):
@@ -27,8 +27,6 @@ The most commonly used vecto commands are:
         getattr(self, args.command)()
 
     def benchmark(self):
-        parser = argparse.ArgumentParser(
-            description='Run benchamrks')
         from vecto.benchmarks import _run
         _run(self.unknownargs)
 
