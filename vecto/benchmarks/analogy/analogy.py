@@ -104,8 +104,7 @@ class Analogy(Benchmark):
 
 
     def run_category(self, pairs):
-        self.cnt_total_correct = 0
-        self.cnt_total_total = 0
+
         details = []
         kfold = sklearn.model_selection.KFold(n_splits=len(pairs) // self.size_cv_test)
         cnt_splits = kfold.get_n_splits(pairs)
@@ -144,12 +143,13 @@ class Analogy(Benchmark):
         out = dict()
         out["details"] = details
         results = {}
-        if self.cnt_total_total == 0:
+        # TODO: move this logic to solver
+        results["cnt_questions_correct"] = self.solver.cnt_total_correct
+        results["cnt_questions_total"] = self.solver.cnt_total_total
+        if self.solver.cnt_total_total == 0:
             results["accuracy"] = -1
         else:
-            results["accuracy"] = self.cnt_total_correct / self.cnt_total_total
-            results["cnt_questions_correct"] = self.cnt_total_correct
-            results["cnt_questions_total"] = self.cnt_total_total
+            results["accuracy"] = self.solver.cnt_total_correct / self.solver.cnt_total_total
         out["result"] = results
         # str_results = json.dumps(jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
         return out
