@@ -25,16 +25,6 @@ def run(options, extra_args):
     parser.add_argument("--path_out", default=False, help="destination folder to save results")
     args = parser.parse_args(extra_args)
     embeddings = load_from_dir(args.embeddings)
-    # print("embeddings", embeddings)
     text_classification = Text_classification(batchsize=args.batchsize, epoch=args.epoch, gpu=args.gpu,
                                               layer=args.layer, dropout=args.dropout, model=args.model)
-    results = text_classification.get_result(embeddings, args.dataset)
-    if args.path_out:
-        if os.path.isdir(args.path_out) or args.path_out.endswith("/"):
-            dataset = os.path.basename(os.path.normpath(args.dataset))
-            name_file_out = os.path.join(args.path_out, dataset, "results.json")
-            save_json(results, name_file_out)
-        else:
-            save_json(results, args.path_out)
-    else:
-        print_json(results)
+    text_classification.run_with_args(args)

@@ -186,6 +186,8 @@ class Text_classification(Benchmark):
             json.dump(vocab, f)
         model_path = os.path.join(self.out, 'best_model.npz')
         experiment_setup = self.__dict__
+        # TODO: move all this to the parent class
+        experiment_setup['task'] = "text classification"
         experiment_setup['vocab_path'] = vocab_path
         experiment_setup['model_path'] = model_path
         experiment_setup['n_class'] = n_class
