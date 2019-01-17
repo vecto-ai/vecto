@@ -73,6 +73,6 @@ class Tests(unittest.TestCase):
                            "--path_out", "/tmp/vecto/benchmarks/")
 
         from matplotlib import pyplot as plt
-        visualize.plot_accuracy("/tmp/vecto/benchmarks/text_classification", key_secondary="experiment_setup.dataset")
+        visualize.plot_accuracy("/tmp/vecto/benchmarks/text classification", key_secondary="experiment_setup.dataset")
         plt.savefig("/tmp/vecto/benchmarks/text_classification.pdf", bbox_inches="tight")
 
