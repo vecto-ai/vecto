@@ -49,7 +49,7 @@ def _run(args=None):
         from .sequence_labeling import run
         run(options, unknownargs)
     else:
-        print("unknown benchmark name")
+        print("unknown benchmark name", args.name)
         list_benhcmarks()
         exit(-1)
     # check if all is specified - then run all
