@@ -2,6 +2,9 @@
 
 import unittest
 import os
+import io
+import contextlib
+from tests.test_setup import run_module
 
 import vecto
 from vecto.benchmarks import text_classification
@@ -36,3 +39,12 @@ class Tests(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             vecto.benchmarks.base.Benchmark()
             # base.get_result(1, 2)
+
+    def test_cli(self):
+        with self.assertRaises(SystemExit):
+            sio = io.StringIO()
+            with contextlib.redirect_stdout(sio):
+                run_module("vecto",
+                           "benchmark",
+                           "WRONG_NAME",
+                           "path_embs")
