@@ -48,6 +48,10 @@ def _run(args=None):
         print("running sequence labelling")
         from .sequence_labeling import run
         run(options, unknownargs)
+    elif args.name == "text_classification":
+        print("running sequence labelling")
+        from .text_classification import run
+        run(options, unknownargs)
     else:
         print("unknown benchmark name", args.name)
         list_benhcmarks()
