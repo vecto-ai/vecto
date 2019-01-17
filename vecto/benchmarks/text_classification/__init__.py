@@ -1,12 +1,11 @@
 import argparse
+import os
 from vecto.utils.data import save_json, print_json
-from .text_classification import *
+from .text_classification import Text_classification
 from vecto.embeddings import load_from_dir
 
 
 def run(options, extra_args):
-    # config = load_config()
-    # print(config)
     parser = argparse.ArgumentParser()
     parser.add_argument("embeddings")
     parser.add_argument("dataset")
