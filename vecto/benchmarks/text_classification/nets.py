@@ -240,13 +240,11 @@ class BOWEncoder(chainer.Chain):
                 self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
                                        initialW=embed_init)
             else:
-                self.embed = self.get_embed_from_wv
+                self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
+                                       initialW=wv)
             self.wv = wv
         self.out_units = n_units
         self.dropout = dropout
-
-    def get_embed_from_wv(self, w):
-        return self.wv[w]
 
     def __call__(self, xs):
         x_block = chainer.dataset.convert.concat_examples(xs, padding=-1)
