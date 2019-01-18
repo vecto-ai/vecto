@@ -145,11 +145,13 @@ def get_dataset_from_path(path_dataset, vocab=None, shrink=1,
 #     return file_paths
 #
 #
+
+# TODO: deal with shrink parameter
 def read_other_dataset(path, shrink=1, char_based=False):
     dataset = []
-    with io.open(path, encoding='utf-8', errors='ignore') as f:
+    with open(path, encoding='utf-8', errors='ignore') as f:
         for i, l in enumerate(f):
-            if i % shrink != 0 or not len(l.strip()) >= 3:
+            if len(l.strip()) < 3:
                 continue
             label, text = l.strip().split(None, 1)
             label = int(label) % 2 # todo only support binary classification
