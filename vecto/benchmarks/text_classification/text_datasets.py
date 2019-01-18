@@ -92,10 +92,10 @@ URL_OTHER_BASE = 'https://raw.githubusercontent.com/harvardnlp/sent-conv-torch/m
 
 def get_dataset_from_path(path_dataset, vocab=None, shrink=1,
                           char_based=False):
-    train = read_other_dataset(os.path.join(path_dataset, 'train'),
+    train = read_lines_separated(os.path.join(path_dataset, 'train'),
                                shrink=shrink,
                                char_based=char_based)
-    test = read_other_dataset(os.path.join(path_dataset, 'test'),
+    test = read_lines_separated(os.path.join(path_dataset, 'test'),
                               shrink=shrink,
                               char_based=char_based)
 
@@ -147,7 +147,7 @@ def get_dataset_from_path(path_dataset, vocab=None, shrink=1,
 #
 
 # TODO: deal with shrink parameter
-def read_other_dataset(path, shrink=1, char_based=False):
+def read_lines_separated(path, shrink=1, char_based=False):
     dataset = []
     with open(path, encoding='utf-8', errors='ignore') as f:
         for i, l in enumerate(f):
