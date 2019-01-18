@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-import argparse
+# import argparse
 import datetime
 import json
 import os
+import importlib.util
 
 import chainer
 from chainer import training
@@ -105,30 +106,44 @@ class Text_classification(Benchmark):
         if not os.path.isdir(path_output):
             os.makedirs(path_output)
 
-        # Load a dataset
+        # TODO: move this to protonn ds management
         self.path_dataset = path_dataset
-        if self.path_dataset == 'dbpedia':
-            train, test, vocab = text_datasets.get_dbpedia(
-                char_based=self.char_based,
-                vocab=embeddings.vocabulary.dic_words_ids,
-                shrink=self.shrink)
-        elif self.path_dataset.startswith('imdb.'):
-            train, test, vocab = text_datasets.get_imdb(
-                fine_grained=self.path_dataset.endswith('.fine'),
-                char_based=self.char_based,
-                vocab=embeddings.vocabulary.dic_words_ids,
-                shrink=self.shrink)
-        elif self.path_dataset in ['TREC', 'stsa.binary', 'stsa.fine',
-                                   'custrev', 'mpqa', 'rt-polarity', 'subj']:
-            train, test, vocab = text_datasets.get_other_text_dataset(
-                self.path_dataset,
-                char_based=self.char_based,
-                vocab=embeddings.vocabulary.dic_words_ids,
-                shrink=self.shrink)
-        else:  # finallly, if file is not downloadable, load from local path
+        # if self.path_dataset == 'dbpedia':
+        #     train, test, vocab = text_datasets.get_dbpedia(
+        #         char_based=self.char_based,
+        #         vocab=embeddings.vocabulary.dic_words_ids,
+        #         shrink=self.shrink)
+        # elif self.path_dataset.startswith('imdb.'):
+        #     train, test, vocab = text_datasets.get_imdb(
+        #         fine_grained=self.path_dataset.endswith('.fine'),
+        #         char_based=self.char_based,
+        #         vocab=embeddings.vocabulary.dic_words_ids,
+        #         shrink=self.shrink)
+        # elif self.path_dataset in ['TREC', 'stsa.binary', 'stsa.fine',
+        #                            'custrev', 'mpqa', 'rt-polarity', 'subj']:
+        #     train, test, vocab = text_datasets.get_other_text_dataset(
+        #         self.path_dataset,
+        #         char_based=self.char_based,
+        #         vocab=embeddings.vocabulary.dic_words_ids,
+        #         shrink=self.shrink)
+        # else:  # finallly, if file is not downloadable, load from local path
+        print(path_dataset)
+        path_adapter = os.path.join(path_dataset, "adapter.py")
+        if os.path.isfile(path_adapter):
+            spec = importlib.util.spec_from_file_location("ds_adapter", path_adapter)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            adapter = module.Adapter()
+            train, test, _ = adapter.read()
+            vocab = embeddings.vocabulary.dic_words_ids
+            train = nlp_utils.transform_to_array(train, vocab)
+            test = nlp_utils.transform_to_array(test, vocab)
+
+            # exit(0)
+        else:
             train, test, vocab = text_datasets.get_dataset_from_path(path_dataset,
-                                                                     vocab=embeddings.vocabulary.dic_words_ids,
-                                                                     char_based=self.char_based, shrink=self.shrink)
+                            vocab=embeddings.vocabulary.dic_words_ids,
+                            char_based=self.char_based, shrink=self.shrink)
 
         print('# cnt train samples: {}'.format(len(train)))
         print('# cnt test  samples: {}'.format(len(test)))
