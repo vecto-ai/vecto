@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-import argparse
+# import argparse
 import datetime
 import json
 import os
+import importlib.util
 
 import chainer
 from chainer import training
@@ -41,7 +42,7 @@ def load_model(model_path, wv):
     model = nets.TextClassifier(encoder, n_class)
     chainer.serializers.load_npz(setup['model_path'], model)
 
-    gpu = -1  # todo gpu
+    gpu = -1  # TODO: GPU
     if gpu >= 0:
         # Make a specified GPU current
         chainer.backends.cuda.get_device_from_id(args.gpu).use()
@@ -82,7 +83,9 @@ def get_vectors(model, sentences):
 
 class Text_classification(Benchmark):
 
-    def __init__(self, batchsize=64, epoch=5, gpu=-1, layer=1, dropout=0, model=['cnn', 'rnn', 'bow'][1],
+    def __init__(self, batchsize=64, epoch=5,
+                 gpu=-1, layer=1,
+                 dropout=0, model=['cnn', 'rnn', 'bow'][1],
                  char_based=False, shrink=100):
         self.current_datetime = '{}'.format(datetime.datetime.today())
         self.batchsize = batchsize
@@ -94,37 +97,61 @@ class Text_classification(Benchmark):
         self.char_based = char_based
         self.shrink = shrink
 
-    def get_result(self, embeddings, path_dataset, path_output='/tmp/text_classification/'):
+    # TODO: let all benchmarks set output path in init
+    def get_result(self, embeddings, path_dataset,
+                   path_output='/tmp/text_classification/'):
         self.out = path_output
         self.unit = embeddings.matrix.shape[1]
 
         if not os.path.isdir(path_output):
             os.makedirs(path_output)
 
-        # Load a dataset
+        # TODO: move this to protonn ds management
         self.path_dataset = path_dataset
-        if self.path_dataset == 'dbpedia':
-            train, test, vocab = text_datasets.get_dbpedia(
-                char_based=self.char_based, vocab=embeddings.vocabulary.dic_words_ids, shrink=self.shrink)
-        elif self.path_dataset.startswith('imdb.'):
-            train, test, vocab = text_datasets.get_imdb(
-                fine_grained=self.path_dataset.endswith('.fine'),
-                char_based=self.char_based, vocab=embeddings.vocabulary.dic_words_ids, shrink=self.shrink)
-        elif self.path_dataset in ['TREC', 'stsa.binary', 'stsa.fine',
-                                   'custrev', 'mpqa', 'rt-polarity', 'subj']:
-            train, test, vocab = text_datasets.get_other_text_dataset(
-                self.path_dataset, char_based=self.char_based, vocab=embeddings.vocabulary.dic_words_ids,
-                shrink=self.shrink)
-        else:  # finallly, if file is not downloadable, load from local path
-            train, test, vocab = text_datasets.get_dataset_from_path(path_dataset,
-                                                                     vocab=embeddings.vocabulary.dic_words_ids,
-                                                                     char_based=self.char_based, shrink=self.shrink)
+        # if self.path_dataset == 'dbpedia':
+        #     train, test, vocab = text_datasets.get_dbpedia(
+        #         char_based=self.char_based,
+        #         vocab=embeddings.vocabulary.dic_words_ids,
+        #         shrink=self.shrink)
+        # elif self.path_dataset.startswith('imdb.'):
+        #     train, test, vocab = text_datasets.get_imdb(
+        #         fine_grained=self.path_dataset.endswith('.fine'),
+        #         char_based=self.char_based,
+        #         vocab=embeddings.vocabulary.dic_words_ids,
+        #         shrink=self.shrink)
+        # elif self.path_dataset in ['TREC', 'stsa.binary', 'stsa.fine',
+        #                            'custrev', 'mpqa', 'rt-polarity', 'subj']:
+        #     train, test, vocab = text_datasets.get_other_text_dataset(
+        #         self.path_dataset,
+        #         char_based=self.char_based,
+        #         vocab=embeddings.vocabulary.dic_words_ids,
+        #         shrink=self.shrink)
+        # else:  # finallly, if file is not downloadable, load from local path
+        print(path_dataset)
+        path_adapter = os.path.join(path_dataset, "adapter.py")
+        if os.path.isfile(path_adapter):
+            spec = importlib.util.spec_from_file_location("ds_adapter", path_adapter)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            adapter = module.Adapter()
+            train, test, _ = adapter.read()
+            vocab = embeddings.vocabulary.dic_words_ids
+            train = nlp_utils.transform_to_array(train, vocab)
+            test = nlp_utils.transform_to_array(test, vocab)
 
-        print('# train data: {}'.format(len(train)))
-        print('# test  data: {}'.format(len(test)))
-        print('# vocab: {}'.format(len(vocab)))
+            # exit(0)
+        else:
+            train, test, vocab = text_datasets.get_dataset_from_path(path_dataset,
+                            vocab=embeddings.vocabulary.dic_words_ids,
+                            char_based=self.char_based, shrink=self.shrink)
+
+        print('# cnt train samples: {}'.format(len(train)))
+        print('# cnt test  samples: {}'.format(len(test)))
+        print('# size vocab: {}'.format(len(vocab)))
         n_class = len(set([int(d[1]) for d in train]))
-        print('# class: {}'.format(n_class))
+        print('# cnt classes: {}'.format(n_class))
+        # print(train[0])
+        # exit(0)
 
         train_iter = chainer.iterators.SerialIterator(train, self.batchsize)
         test_iter = chainer.iterators.SerialIterator(test, self.batchsize,
@@ -138,7 +165,8 @@ class Text_classification(Benchmark):
         elif self.model == 'bow':
             Encoder = nets.BOWMLPEncoder
         encoder = Encoder(n_layers=self.layer, n_vocab=len(vocab),
-                          n_units=self.unit, dropout=self.dropout, wv=embeddings.matrix)
+                          n_units=self.unit, dropout=self.dropout,
+                          wv=embeddings.matrix)
         model = nets.TextClassifier(encoder, n_class)
         if self.gpu >= 0:
             # Make a specified GPU current
@@ -185,6 +213,8 @@ class Text_classification(Benchmark):
             json.dump(vocab, f)
         model_path = os.path.join(self.out, 'best_model.npz')
         experiment_setup = self.__dict__
+        # TODO: move all this to the parent class
+        experiment_setup['task'] = "text classification"
         experiment_setup['vocab_path'] = vocab_path
         experiment_setup['model_path'] = model_path
         experiment_setup['n_class'] = n_class

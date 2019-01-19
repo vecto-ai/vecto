@@ -25,10 +25,13 @@ class Tests(unittest.TestCase):
     def test_cli(self):
         sio = StringIO()
         with redirect_stdout(sio):
-            run_module('vecto.benchmarks.categorization',
+            run_module('vecto',
+                       'benchmark',
+                       'categorization',
                        './tests/data/embeddings/text/plain_with_file_header/',
                        './tests/data/benchmarks/categorization/',
-                       '--path_out', '/tmp/vecto/benchmarks', '--method', 'KMeansCategorization')
+                       '--path_out', '/tmp/vecto/benchmarks',
+                       '--method', 'KMeansCategorization')
 
     def test_categorization_scores(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
