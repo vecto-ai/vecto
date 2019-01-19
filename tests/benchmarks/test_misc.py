@@ -48,3 +48,9 @@ class Tests(unittest.TestCase):
                            "benchmark",
                            "WRONG_NAME",
                            "path_embs")
+
+        sio = io.StringIO()
+        with contextlib.redirect_stdout(sio):
+            run_module("vecto",
+                       "benchmark",
+                       "help")
