@@ -109,7 +109,7 @@ class Sequence_labeling(Benchmark):
         x = []
         OOV_count = 0
         token_count = 0
-        print(m.matrix.shape[0])
+        # print(m.matrix.shape[0])
         random_vector = m.matrix.sum(axis=0) / m.matrix.shape[0]
         # random_vector = m.matrix[0]
         for wordList in input:
@@ -155,7 +155,7 @@ class Sequence_labeling(Benchmark):
         print(idx2label)
         # fit LR classifier
         if method == 'lr':
-            lrc = LogisticRegression()
+            lrc = LogisticRegression(solver="liblinear")
         if method == '2FFNN':
             lrc = MLPClassifier()
 
@@ -202,7 +202,7 @@ class Sequence_labeling(Benchmark):
         out['details']['pred_test'] = pred_test
         return out
 
-    def run(self, embs, path_dataset):
+    def _run(self, embs, path_dataset):
 
         # specify the task (can be ner, pos or chunk)
         task = os.path.basename(path_dataset)
@@ -237,10 +237,10 @@ class Sequence_labeling(Benchmark):
             out = self.run_lr(embs, my_train_x, my_train_y, my_test_x, my_test_y, self.method,
                               idx2label, dataset, task)
         if self.method == 'crf':
-            # todo
+            # TODO: implement
             pass
         if self.method == 'lstm':
-            # todo
+            # TODO: implement
             pass
 
         experiment_setup = dict()
@@ -264,4 +264,4 @@ class Sequence_labeling(Benchmark):
     def get_result(self, embeddings, path_dataset):
         if self.normalize:
             embeddings.normalize()
-        return [self.run(embeddings, path_dataset)]
+        return [self._run(embeddings, path_dataset)]

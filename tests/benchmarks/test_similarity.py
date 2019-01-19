@@ -9,6 +9,7 @@ from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
 from tests.test_setup import run_module
 
+
 path_similarity_dataset = path.join('.', 'tests', 'data', 'benchmarks', 'similarity')
 path_emb = path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header')
 
@@ -35,14 +36,18 @@ class Tests(unittest.TestCase):
     def test_cli(self):
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.similarity",
+            run_module("vecto",
+                       "benchmark",
+                       "similarity",
                        path_emb,
                        path_similarity_dataset,
                        "--path_out", "/tmp/vecto/benchmarks/")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.similarity",
+            run_module("vecto",
+                       "benchmark",
+                       "similarity",
                        path_emb,
                        path_similarity_dataset,
                        "--path_out", "/tmp/vecto/benchmarks/tmp")
@@ -50,7 +55,9 @@ class Tests(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             sio = io.StringIO()
             with contextlib.redirect_stdout(sio):
-                run_module("vecto.benchmarks.similarity",
+                run_module("vecto",
+                           "benchmark",
+                           "similarity",
                            path_emb + "NONEXISTING",
                            path_similarity_dataset,
                            "--path_out", "/tmp/vecto/benchmarks/")
