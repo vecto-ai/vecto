@@ -16,7 +16,7 @@ def select_method(key):
     return method
 
 
-def run(options, extra_args):
+def run(extra_args):
     parser = argparse.ArgumentParser()
     parser.add_argument('embeddings')
     parser.add_argument('dataset')

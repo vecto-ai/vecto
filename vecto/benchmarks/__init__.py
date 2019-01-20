@@ -11,12 +11,21 @@ import argparse
 import importlib
 
 
-def list_benhcmarks():
+def list_benhcmarks(benchmarks):
     print("available benchmarks:")
-    # TODO: list benchmarks
+    for i in benchmarks:
+        print(i)
 
 
 def _run(args=None):
+    # TODO: load them from modules themselves
+    available_benchmarks = []
+    available_benchmarks.append("analogy")
+    available_benchmarks.append("categorization")
+    available_benchmarks.append("similarity")
+    available_benchmarks.append("sequence_labeling")
+    available_benchmarks.append("text_classification")
+
     parser = argparse.ArgumentParser(
         description='run benchmarks',
         add_help=True,
@@ -25,36 +34,21 @@ def _run(args=None):
     parser.add_argument('name', help='Subcommand to run')
     args, unknownargs = parser.parse_known_args(args)
     if args.name == "help":
-        list_benhcmarks()
+        list_benhcmarks(available_benchmarks)
         return
     # if args.name == "all":
         # print("running all benchmarks")
 
-    options = {}
+    # options = {}
 
-    if args.name == "analogy":
-        print("running analogy")
-        from .analogy import run
+    if args.name in available_benchmarks:
+        print("running ", args.name)
+        mod = importlib.import_module("vecto.benchmarks." + args.name)
+        run = getattr(mod, 'run')
         run(unknownargs)
-    elif args.name == "categorization":
-        print("running categorization")
-        from .categorization import run
-        run(options, unknownargs)
-    elif args.name == "similarity":
-        print("running similarity")
-        from .similarity import run
-        run(options, unknownargs)
-    elif args.name == "sequence_labelling":
-        print("running sequence labelling")
-        from .sequence_labeling import run
-        run(options, unknownargs)
-    elif args.name == "text_classification":
-        print("running sequence labelling")
-        from .text_classification import run
-        run(options, unknownargs)
     else:
         print("unknown benchmark name", args.name)
-        list_benhcmarks()
+        list_benhcmarks(available_benchmarks)
         exit(-1)
     # check if all is specified - then run all
     # if benchmark name matches - run corresponding module

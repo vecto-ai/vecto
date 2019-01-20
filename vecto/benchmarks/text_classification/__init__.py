@@ -5,7 +5,7 @@ from .text_classification import Text_classification
 from vecto.embeddings import load_from_dir
 
 
-def run(options, extra_args):
+def run(extra_args):
     parser = argparse.ArgumentParser()
     parser.add_argument("embeddings")
     parser.add_argument("dataset")
