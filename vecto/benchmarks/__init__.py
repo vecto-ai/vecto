@@ -4,6 +4,7 @@
     :toctree: _autosummary
 
     analogy
+    language_modeling
 
 """
 
@@ -37,10 +38,10 @@ def _run(args=None):
     if args.name == "help":
         list_benhcmarks(available_benchmarks)
         return
+
+    # TODO: implement running set of benchmarks defined in config
     # if args.name == "all":
         # print("running all benchmarks")
-
-    # options = {}
 
     if args.name in available_benchmarks:
         print("running ", args.name)
@@ -51,6 +52,3 @@ def _run(args=None):
         print("unknown benchmark name", args.name)
         list_benhcmarks(available_benchmarks)
         exit(-1)
-    # check if all is specified - then run all
-    # if benchmark name matches - run corresponding module
-    # list all available benchmarks
