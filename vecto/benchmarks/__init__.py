@@ -22,6 +22,7 @@ def _run(args=None):
     available_benchmarks = []
     available_benchmarks.append("analogy")
     available_benchmarks.append("categorization")
+    available_benchmarks.append("language_modeling")
     available_benchmarks.append("similarity")
     available_benchmarks.append("sequence_labeling")
     available_benchmarks.append("text_classification")
