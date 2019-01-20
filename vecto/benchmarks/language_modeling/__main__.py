@@ -3,15 +3,11 @@ import json
 import logging
 import os
 
-from vecto.utils.data import save_json
+from vecto.utils.data import save_json, print_json
 from vecto.benchmarks.language_modeling import Language_modeling
 from vecto.embeddings import load_from_dir
 
 logging.basicConfig(level=logging.DEBUG)
-
-
-def print_json(data):
-    print(json.dumps(data, ensure_ascii=False, indent=4, sort_keys=False))
 
 
 def main():
