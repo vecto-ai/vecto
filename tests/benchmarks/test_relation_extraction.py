@@ -34,25 +34,16 @@ class Tests(unittest.TestCase):
                        path_dataset,
                        "--path_out", "/tmp/vecto/benchmarks/")
 
-        # sio = io.StringIO()
-        # with contextlib.redirect_stdout(sio):
-        #     run_module("vecto",
-        #                "benchmark",
-        #                "sequence_labeling",
-        #                path_emb,
-        #                path_sequence_labeling_dataset_ner,
-        #                "--path_out", "/tmp/vecto/benchmarks/")
-
-        # with self.assertRaises(FileNotFoundError):
-        #     sio = io.StringIO()
-        #     with contextlib.redirect_stdout(sio):
-        #         run_module("vecto",
-        #                    "benchmark",
-        #                    "sequence_labeling",
-        #                    path_emb + "NONEXISTING",
-        #                    path_sequence_labeling_dataset_ner,
-        #                    "--path_out",
-        #                    "/tmp/vecto/benchmarks/")
+        with self.assertRaises(FileNotFoundError):
+            sio = io.StringIO()
+            with contextlib.redirect_stdout(sio):
+                run_module("vecto",
+                           "benchmark",
+                           "relation_extraction",
+                           path_emb + "NONEXISTING",
+                           path_dataset,
+                           "--path_out",
+                           "/tmp/vecto/benchmarks/")
 
         # from matplotlib import pyplot as plt
         # # here the visualization only for the ner sub task.
