@@ -1,7 +1,7 @@
 import datetime
 import os
 import uuid
-import numpy as np
+# import numpy as np
 import logging
 import progressbar
 # from tqdm import tqdm
@@ -231,6 +231,3 @@ class Analogy(Benchmark):
             embeddings.normalize()
         results = self.run(embeddings, path_dataset)  #group_subcategory
         return results
-
-
-
