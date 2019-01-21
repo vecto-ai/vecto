@@ -107,7 +107,7 @@ class Categorization(Benchmark):
         # add experiment_setup and result entry for result
         result["experiment_setup"] = {}
         result["result"] = result['global_stats']['scores']
-        result["experiment_setup"]['default_measurement'] = {'Purity'}
+        result["experiment_setup"]['default_measurement'] = 'Purity'
 
         return result
 
@@ -131,7 +131,7 @@ class Categorization(Benchmark):
             result = self.evaluate(embs, dataset_data)
             result['experiment_setup']['dataset'] = os.path.basename(os.path.normpath(path_dataset))
             result['experiment_setup']['embeddings'] = embs.metadata
-            result['experiment_setup']['method'] = self.method()
+            result['experiment_setup']['method'] = self.method
             results.append(result)
         return results
 
