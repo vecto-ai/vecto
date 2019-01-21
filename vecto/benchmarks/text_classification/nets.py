@@ -130,7 +130,6 @@ class RNNEncoder(chainer.Chain):
                 self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
                                        initialW=wv)
             self.encoder = L.NStepLSTM(n_layers, n_units, n_units, dropout)
-            self.wv = wv
         self.n_layers = n_layers
         self.out_units = n_units
         self.dropout = dropout
@@ -169,7 +168,6 @@ class CNNEncoder(chainer.Chain):
             else:
                 self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
                                        initialW=wv)
-            self.wv = wv
             self.cnn_w3 = L.Convolution2D(
                 n_units, out_units, ksize=(3, 1), stride=1, pad=(2, 0),
                 nobias=True)

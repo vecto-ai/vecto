@@ -28,7 +28,7 @@ def word_tokenize_txt(txt,
                       token_splitter=_DEFAULT_WORD_SPLITTER,
                       token_normalizer=default_token_normalizer,
                       good_token_re=DEFAULT_GOOD_TOKEN_RE,
-                      min_token_len=3,
+                      min_token_len=1,
                       stopwords=nltk.corpus.stopwords.words('english')):
     norm_tokens = map(token_normalizer, token_splitter(txt))
     return [token for token in norm_tokens
