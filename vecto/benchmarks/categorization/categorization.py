@@ -102,6 +102,11 @@ class Categorization(Benchmark):
         result = {}
         result['word_stats'] = word_stats
         result['global_stats'] = global_stats
+
+        # add experiment_setup and result entry for result
+        result["experiment_setup"] = {}
+        result["result"] = result['global_stats']['scores']
+        result["experiment_setup"]['default_measurement'] = {'Purity'}
         return result
 
     def read_datasets_from_dir(self, path_to_dir):
