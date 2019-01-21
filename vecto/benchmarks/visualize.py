@@ -20,7 +20,7 @@ def df_from_file(path):
     default_measurement = "accuracy"
     try:
         default_measurement = dframe["experiment_setup.default_measurement"].unique()[0]
-    except:
+    except KeyError:
         logger.warning(f"default_measurement not specified in {path}")
     dframe["result"] = dframe["result." + default_measurement]
     # df["reciprocal_rank"] = 1 / (df["rank"] + 1)
@@ -32,7 +32,11 @@ def df_from_dir(path):
     for (dirpath, _, filenames) in os.walk(path):
         for filename in filenames:
             if filename.endswith(".json"):
-                dfs.append(df_from_file(os.path.join(dirpath, filename)))
+                full_path = os.path.join(dirpath, filename)
+                try:
+                    dfs.append(df_from_file(full_path))
+                except KeyError as e:
+                    logger.warning(f"error reading {full_path}")
     dframe = pandas.concat(dfs, sort=True)
     return dframe
 
