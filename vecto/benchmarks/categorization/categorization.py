@@ -198,7 +198,6 @@ class KMeansCategorization(Categorization):
         global_stats['true_labels'] = list(int(label) for label in true_labels)
         return global_stats
 
-
 # class SpectralCategorization(Categorization):
 #     def compute_labels(self, data, vectors, labels):
 #         return SpectralClustering(n_clusters=len(data.keys()),
