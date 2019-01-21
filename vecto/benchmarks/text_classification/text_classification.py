@@ -232,5 +232,8 @@ class Text_classification(Benchmark):
         result['experiment_setup']['method'] = self.model
         result['log'] = load_json(os.path.join(self.out, 'log'))
 
-        result['result'] = {"accuracy": result['log'][-1]['validation/main/accuracy']}
+        # TODO: old version was returning last test value, make a footnote
+        # result['result'] = {"accuracy": result['log'][-1]['validation/main/accuracy']}
+        accuracy = max(_["validation/main/accuracy"] for _ in result['log'])
+        result['result'] = {"accuracy": accuracy}
         return [result]
