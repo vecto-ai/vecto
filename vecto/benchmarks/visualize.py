@@ -22,7 +22,7 @@ def clean_dic(data):
     return data_clean
 
 
-def df_from_file(path):
+def df_from_file_bak(path):
     logger.debug(f"processing {path}")
     data = load_json(path)
     data_clean = [clean_dic(x) for x in data]
@@ -40,6 +40,24 @@ def df_from_file(path):
     # except KeyError:
     #     logger.warning(f"default_measurement not specified in {path}")
     # dframe["result"] = dframe["result." + default_measurement]
+    # df["reciprocal_rank"] = 1 / (df["rank"] + 1)
+    return dframe
+
+def df_from_file(path):
+    data = load_json(path)
+    meta = [["experiment_setup", "task"],
+            ["experiment_setup", "subcategory"],
+            ["experiment_setup", "method"],
+            ["experiment_setup", "embeddings"]]
+    dframe = json_normalize(data, meta=meta)
+    if "details" in dframe:
+        dframe.drop("details", axis="columns", inplace=True)
+    default_measurement = "accuracy"
+    try:
+        default_measurement = dframe["experiment_setup.default_measurement"].unique()[0]
+    except:
+        logger.warning(f"default_measurement not specified in {path}")
+    dframe["result"] = dframe["result." + default_measurement]
     # df["reciprocal_rank"] = 1 / (df["rank"] + 1)
     return dframe
 
