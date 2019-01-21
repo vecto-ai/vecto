@@ -126,6 +126,9 @@ class RNNEncoder(chainer.Chain):
                 self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
                                        initialW=embed_init)
             else:
+                # TODO: this implementation was allowing for dynamic embeddings
+                # think about how to support both continuous embeddings
+                # and function pointers
                 # self.embed = self.get_embed_from_wv
                 self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
                                        initialW=wv)
