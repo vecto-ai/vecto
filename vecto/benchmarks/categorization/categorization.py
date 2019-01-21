@@ -7,6 +7,7 @@ from os import path, listdir
 import csv
 import numpy as np
 from scipy.spatial import distance
+import os
 
 OTHER_EXT = 'None'
 BENCHMARK = 'benchmark'
@@ -107,6 +108,7 @@ class Categorization(Benchmark):
         result["experiment_setup"] = {}
         result["result"] = result['global_stats']['scores']
         result["experiment_setup"]['default_measurement'] = {'Purity'}
+
         return result
 
     def read_datasets_from_dir(self, path_to_dir):
@@ -127,6 +129,9 @@ class Categorization(Benchmark):
         datasets = self.read_datasets_from_dir(path_dataset)
         for dataset_name, dataset_data in datasets.items():
             result = self.evaluate(embs, dataset_data)
+            result['experiment_setup']['dataset'] = os.path.basename(os.path.normpath(path_dataset))
+            result['experiment_setup']['embeddings'] = embs.metadata
+            result['experiment_setup']['method'] = self.method()
             results.append(result)
         return results
 
