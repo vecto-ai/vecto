@@ -230,6 +230,7 @@ class Text_classification(Benchmark):
         result['experiment_setup']['default_measurement'] = 'accuracy'
         result['experiment_setup']['dataset'] = os.path.basename(os.path.normpath(path_dataset))
         result['experiment_setup']['method'] = self.model
+        result['experiment_setup']['embeddings'] = embeddings.metadata
         result['log'] = load_json(os.path.join(self.out, 'log'))
 
         # TODO: old version was returning last test value, make a footnote
