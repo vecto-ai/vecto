@@ -156,7 +156,7 @@ class Categorization(Benchmark):
                 word_entry = '{}. {}'.format(word_counter, word)
                 word_counter += 1
                 word_stats[word_entry] = self.process_stats(word_vector, centroid, category, predicted_category)
-        metric_scores = super(KMeansCategorization, self).compute_metics(predicted_labels, true_labels)
+        metric_scores = self.compute_metics(predicted_labels, true_labels)
         global_stats = self.process_global_stats(inertia, params, metric_scores, categories, predicted_labels,
                                                  true_labels)
         return dict(word_stats), global_stats
