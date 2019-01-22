@@ -1,4 +1,4 @@
-"""Text classification benchmark. 
+"""Text classification benchmark.
 
     One of the pre-defined models is trained to convergence
     to predict labels for text fragments in a provided dataset.

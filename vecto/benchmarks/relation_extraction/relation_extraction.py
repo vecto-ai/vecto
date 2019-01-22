@@ -21,11 +21,11 @@ def getPrecision(pred_test, yTest, targetLabel):
     targetLabelCount = 0
     correctTargetLabelCount = 0
 
-    for idx in range(len(pred_test)):
-        if pred_test[idx] == targetLabel:
+    for idx, prediction in enumerate(pred_test):
+        if prediction == targetLabel:
             targetLabelCount += 1
 
-            if pred_test[idx] == yTest[idx]:
+            if prediction == yTest[idx]:
                 correctTargetLabelCount += 1
 
     if correctTargetLabelCount == 0:

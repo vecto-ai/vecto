@@ -12,6 +12,7 @@ from vecto.utils.data import load_json
 from vecto.benchmarks.text_classification import nets
 from vecto.benchmarks.text_classification import text_datasets
 from vecto.benchmarks.text_classification import nlp_utils
+from vecto.corpus.tokenization import word_tokenize_txt
 from ..base import Benchmark
 
 
@@ -45,7 +46,11 @@ def predict(model, sentence):
     model, vocab, setup = model
     sentence = sentence.strip()
     text = nlp_utils.normalize_text(sentence)
-    words = nlp_utils.split_text(text, char_based=setup['char_based'])
+    # words = nlp_utils.split_text(text, char_based=setup['char_based'])
+    if setup['char_based']:
+        words = list(text)
+    else:
+        words = word_tokenize_txt(text)
     xs = nlp_utils.transform_to_array([words], vocab, with_label=False)
     xs = nlp_utils.convert_seq(xs, device=-1, with_label=False)  # todo use GPU
     with chainer.using_config('train', False), chainer.no_backprop_mode():
@@ -61,7 +66,10 @@ def get_vectors(model, sentences):
     for sentence in sentences:
         sentence = sentence.strip()
         text = nlp_utils.normalize_text(sentence)
-        words = nlp_utils.split_text(text, char_based=setup['char_based'])
+        if setup['char_based']:
+            words = list(text)
+        else:
+            words = word_tokenize_txt(text)
         xs = nlp_utils.transform_to_array([words], vocab, with_label=False)
         xs = nlp_utils.convert_seq(xs, device=-1, with_label=False)  # todo use GPU
         with chainer.using_config('train', False), chainer.no_backprop_mode():

@@ -70,7 +70,7 @@ def df_from_dir(path):
                 full_path = os.path.join(dirpath, filename)
                 try:
                     dfs.append(df_from_file(full_path))
-                except KeyError as e:
+                except KeyError:
                     logger.warning(f"error reading {full_path}")
     dframe = pandas.concat(dfs, sort=True)
     # print(dframe["experiment_setup.task"])

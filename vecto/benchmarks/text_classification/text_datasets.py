@@ -11,7 +11,8 @@ import numpy
 import chainer
 
 from vecto.benchmarks.text_classification.nlp_utils import normalize_text
-from vecto.benchmarks.text_classification.nlp_utils import split_text
+from vecto.corpus.tokenization import word_tokenize_txt
+# from vecto.benchmarks.text_classification.nlp_utils import split_text
 
 # TODO: use vecto.corpus
 from vecto.benchmarks.text_classification.nlp_utils import transform_to_array
@@ -30,7 +31,11 @@ def read_lines_separated(path, shrink=1, char_based=False):
                 continue
             label, text = l.strip().split(None, 1)
             label = int(label) % 2  # TODO: don't do this, implement shift
-            tokens = split_text(normalize_text(text), char_based)
+            text = normalize_text(text)
+            if char_based:
+                tokens = list(text)
+            else:
+                tokens = word_tokenize_txt(text)
             dataset.append((tokens, label))
     return dataset
 
