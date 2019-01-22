@@ -45,7 +45,6 @@ class Tests(unittest.TestCase):
                            "--path_out",
                            "/tmp/vecto/benchmarks/")
 
-        # from matplotlib import pyplot as plt
-        # # here the visualization only for the ner sub task.
-        # visualize.plot_accuracy("/tmp/vecto/benchmarks/sequence_labeling/ner", key_secondary="experiment_setup.dataset")
-        # plt.savefig("/tmp/vecto/benchmarks/sequence_labeling.pdf", bbox_inches="tight")
+        from matplotlib import pyplot as plt
+        visualize.plot_accuracy("/tmp/vecto/benchmarks/relation_extraction", key_secondary="experiment_setup.dataset")
+        plt.savefig("/tmp/vecto/benchmarks/relation_extraction.pdf", bbox_inches="tight")

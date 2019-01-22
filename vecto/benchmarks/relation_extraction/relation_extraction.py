@@ -127,7 +127,7 @@ class Relation_extraction(Benchmark):
         experiment_setup["category"] = "default"
         experiment_setup["dataset"] = os.path.basename(path_dataset)
         experiment_setup["method"] = 'cnn'
-        experiment_setup['task'] = 'language_modeling'
+        experiment_setup['task'] = 'relation_extraction'
         result = {}
         result['experiment_setup'] = experiment_setup
         result['experiment_setup']['default_measurement'] = 'macroF1'
