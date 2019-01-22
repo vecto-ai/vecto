@@ -45,11 +45,11 @@ logging.basicConfig(level="DEBUG")
 
 def df_from_file(path):
     data = load_json(path)
-    meta = [["experiment_setup", "task"],
-            ["experiment_setup", "subcategory"],
-            ["experiment_setup", "method"],
-            ["experiment_setup", "embeddings"]]
-    dframe = json_normalize(data, meta=meta)
+    # meta = [["experiment_setup", "task"],
+    #         ["experiment_setup", "subcategory"],
+    #         ["experiment_setup", "method"],
+    #         ["experiment_setup", "embeddings"]]
+    dframe = json_normalize(data)
     if "details" in dframe:
         dframe.drop("details", axis="columns", inplace=True)
     default_measurement = "accuracy"

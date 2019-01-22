@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# import argparse
 import datetime
 import json
 import os
@@ -10,23 +8,15 @@ from chainer import training
 from chainer.training import extensions
 import numpy
 
-from vecto.benchmarks.text_classification import nets
-from vecto.benchmarks.text_classification.nlp_utils import convert_seq
-from vecto.benchmarks.text_classification import text_datasets
-import datetime
-from scipy.stats.stats import spearmanr
-import os
-import math
-from ..base import Benchmark
-from io import StringIO
 from vecto.utils.data import load_json
 from vecto.benchmarks.text_classification import nets
+from vecto.benchmarks.text_classification import text_datasets
 from vecto.benchmarks.text_classification import nlp_utils
+from ..base import Benchmark
 
 
 def load_model(model_path, wv):
     setup = json.load(open(model_path))
-
     vocab = json.load(open(setup['vocab_path']))
     n_class = setup['n_class']
 
@@ -42,10 +32,10 @@ def load_model(model_path, wv):
     model = nets.TextClassifier(encoder, n_class)
     chainer.serializers.load_npz(setup['model_path'], model)
 
-    gpu = -1  # TODO: GPU
+    gpu = -1
     if gpu >= 0:
-        # Make a specified GPU current
-        chainer.backends.cuda.get_device_from_id(args.gpu).use()
+        # TODO: specify which GPU to use in options or config
+        chainer.backends.cuda.get_device_from_id(0).use()
         model.to_gpu()  # Copy the model to the GPU
 
     return model, vocab, setup
@@ -181,13 +171,13 @@ class Text_classification(Benchmark):
         # Set up a trainer
         updater = training.StandardUpdater(
             train_iter, optimizer,
-            converter=convert_seq, device=self.gpu)
+            converter=nlp_utils.convert_seq, device=self.gpu)
         trainer = training.Trainer(updater, (self.epoch, 'epoch'), out=self.out)
 
         # Evaluate the model with the test dataset for each epoch
         trainer.extend(extensions.Evaluator(
             test_iter, model,
-            converter=convert_seq, device=self.gpu))
+            converter=nlp_utils.convert_seq, device=self.gpu))
 
         # Take a best snapshot
         record_trigger = training.triggers.MaxValueTrigger(
