@@ -4,7 +4,14 @@
     :toctree: _autosummary
 
     analogy
+    categorization
     language_modeling
+    outliers
+    relation_extraction
+    sequence_labeling
+    similarity
+    synonymy_detection
+    text_classification
 
 """
 
