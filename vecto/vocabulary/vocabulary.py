@@ -208,7 +208,8 @@ def create_from_file(path, min_frequency=0, language='eng'):
     """
     if not os.path.isfile(path):
         raise RuntimeError("source file does not exist")
-    iter = FileCorpus(path, language).get_token_iterator()
+    tokenizer = Tokenizer(stopwords=[])
+    iter = FileCorpus(path, language).get_token_iterator(tokenizer=tokenizer)
     v = _create_from_iterator(iter, min_frequency)
     return v
 
