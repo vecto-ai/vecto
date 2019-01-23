@@ -12,6 +12,7 @@ import chainer
 
 from vecto.benchmarks.text_classification.nlp_utils import normalize_text
 from vecto.corpus.tokenization import word_tokenize_txt
+from vecto.data.io import read_first_col_is_label_format
 # from vecto.benchmarks.text_classification.nlp_utils import split_text
 
 # TODO: use vecto.corpus
@@ -20,24 +21,6 @@ from vecto.benchmarks.text_classification.nlp_utils import transform_to_array
 URL_DBPEDIA = 'https://github.com/le-scientifique/torchDatasets/raw/master/dbpedia_csv.tar.gz'  # NOQA
 URL_IMDB = 'https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz'
 URL_OTHER_BASE = 'https://raw.githubusercontent.com/harvardnlp/sent-conv-torch/master/data/'  # NOQA
-
-
-# TODO: deal with shrink parameter
-def read_lines_separated(path, shrink=1, char_based=False):
-    dataset = []
-    with open(path, encoding='utf-8', errors='ignore') as f:
-        for i, l in enumerate(f):
-            if len(l.strip()) < 3:
-                continue
-            label, text = l.strip().split(None, 1)
-            label = int(label) % 2  # TODO: don't do this, implement shift
-            text = normalize_text(text)
-            if char_based:
-                tokens = list(text)
-            else:
-                tokens = word_tokenize_txt(text)
-            dataset.append((tokens, label))
-    return dataset
 
 
 # def read_separated_and_split(name, vocab=None, shrink=1,
@@ -139,11 +122,9 @@ def read_lines_separated(path, shrink=1, char_based=False):
 
 def get_dataset_from_path(path_dataset, vocab=None, shrink=1,
                           char_based=False):
-    train = read_lines_separated(os.path.join(path_dataset, 'train'),
-                               shrink=shrink,
+    train = read_first_col_is_label_format(os.path.join(path_dataset, 'train'),
                                char_based=char_based)
-    test = read_lines_separated(os.path.join(path_dataset, 'test'),
-                              shrink=shrink,
+    test = read_first_col_is_label_format(os.path.join(path_dataset, 'test'),
                               char_based=char_based)
 
 
