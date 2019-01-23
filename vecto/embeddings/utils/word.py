@@ -92,16 +92,17 @@ class ContinuousBoW(chainer.Chain):
         super(ContinuousBoW, self).__init__()
 
         with self.init_scope():
-            self.embed = L.EmbedID(n_vocab, n_units, initialW=I.Uniform(1. / n_units))
+            self.embed = L.EmbedID(n_vocab + 2, n_units, initialW=I.Uniform(1. / n_units)) # plus 2 for OOV and end symbol.
             self.loss_func = loss_func
 
     def getEmbeddings(self):
         return self.embed.W.data
 
     def getEmbeddings_context(self):
-        return self.loss_func.W.data
+        return self.loss_func.W.data[2:]
 
     def __call__(self, x, context):
+        context = context + 2 # plus 2 for OOV and end symbol.
         e = self.embed(context)
         h = F.sum(e, axis=1) * (1. / context.shape[1])
         loss = self.loss_func(h, x)
@@ -115,16 +116,17 @@ class SkipGram(chainer.Chain):
         super(SkipGram, self).__init__()
 
         with self.init_scope():
-            self.embed = L.EmbedID(n_vocab, n_units, initialW=I.Uniform(1. / n_units))
+            self.embed = L.EmbedID(n_vocab + 2, n_units, initialW=I.Uniform(1. / n_units)) # plus 2 for OOV and end symbol.
             self.loss_func = loss_func
 
     def getEmbeddings(self):
         return self.embed.W.data
 
     def getEmbeddings_context(self):
-        return self.loss_func.W.data
+        return self.loss_func.W.data[2:]
 
     def __call__(self, x, context):
+        context = context + 2 # plus 2 for OOV and end symbol.
         e = self.embed(context)
         shape = e.shape
         x = F.broadcast_to(x[:, None], (shape[0], shape[1]))
