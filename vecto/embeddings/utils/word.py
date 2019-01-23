@@ -99,7 +99,7 @@ class ContinuousBoW(chainer.Chain):
         return self.embed.W.data
 
     def getEmbeddings_context(self):
-        return self.loss_func.W.data
+        return self.loss_func.W.data[2:]
 
     def __call__(self, x, context):
         context = context + 2 # plus 2 for OOV and end symbol.
