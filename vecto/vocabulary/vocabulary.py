@@ -6,6 +6,7 @@ from vecto._version import VERSION
 from vecto.utils.formathelper import countof_fmt
 from vecto.utils.metadata import WithMetaData
 from vecto.corpus import DirCorpus, FileCorpus, ANNOTATED_TEXT_TOKENIZER
+from vecto.corpus.tokenization import Tokenizer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -195,7 +196,9 @@ def create_from_dir(path, min_frequency=0, language='eng'):
     """
     if not os.path.isdir(path):
         raise RuntimeError("source directory does not exist")
-    iter = DirCorpus(path, language).get_token_iterator()
+    # TODO: add option for stopwords
+    tokenizer = Tokenizer(stopwords=[])
+    iter = DirCorpus(path, language).get_token_iterator(tokenizer)
     v = _create_from_iterator(iter, min_frequency)
     return v
 
@@ -205,7 +208,8 @@ def create_from_file(path, min_frequency=0, language='eng'):
     """
     if not os.path.isfile(path):
         raise RuntimeError("source file does not exist")
-    iter = FileCorpus(path, language).get_token_iterator()
+    tokenizer = Tokenizer(stopwords=[])
+    iter = FileCorpus(path, language).get_token_iterator(tokenizer=tokenizer)
     v = _create_from_iterator(iter, min_frequency)
     return v
 
