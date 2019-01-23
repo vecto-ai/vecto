@@ -1,3 +1,11 @@
+"""Benchmark on word analogy
+
+.. autosummary::
+    :toctree: _autosummary
+
+    analogy
+"""
+
 import argparse
 import logging
 from .analogy import Analogy

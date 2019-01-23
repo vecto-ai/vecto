@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# import argparse
 import datetime
 import json
 import os
@@ -10,23 +8,16 @@ from chainer import training
 from chainer.training import extensions
 import numpy
 
-from vecto.benchmarks.text_classification import nets
-from vecto.benchmarks.text_classification.nlp_utils import convert_seq
-from vecto.benchmarks.text_classification import text_datasets
-import datetime
-from scipy.stats.stats import spearmanr
-import os
-import math
-from ..base import Benchmark
-from io import StringIO
 from vecto.utils.data import load_json
 from vecto.benchmarks.text_classification import nets
+from vecto.benchmarks.text_classification import text_datasets
 from vecto.benchmarks.text_classification import nlp_utils
+from vecto.corpus.tokenization import word_tokenize_txt
+from ..base import Benchmark
 
 
 def load_model(model_path, wv):
     setup = json.load(open(model_path))
-
     vocab = json.load(open(setup['vocab_path']))
     n_class = setup['n_class']
 
@@ -42,10 +33,10 @@ def load_model(model_path, wv):
     model = nets.TextClassifier(encoder, n_class)
     chainer.serializers.load_npz(setup['model_path'], model)
 
-    gpu = -1  # TODO: GPU
+    gpu = -1
     if gpu >= 0:
-        # Make a specified GPU current
-        chainer.backends.cuda.get_device_from_id(args.gpu).use()
+        # TODO: specify which GPU to use in options or config
+        chainer.backends.cuda.get_device_from_id(0).use()
         model.to_gpu()  # Copy the model to the GPU
 
     return model, vocab, setup
@@ -55,7 +46,11 @@ def predict(model, sentence):
     model, vocab, setup = model
     sentence = sentence.strip()
     text = nlp_utils.normalize_text(sentence)
-    words = nlp_utils.split_text(text, char_based=setup['char_based'])
+    # words = nlp_utils.split_text(text, char_based=setup['char_based'])
+    if setup['char_based']:
+        words = list(text)
+    else:
+        words = word_tokenize_txt(text)
     xs = nlp_utils.transform_to_array([words], vocab, with_label=False)
     xs = nlp_utils.convert_seq(xs, device=-1, with_label=False)  # todo use GPU
     with chainer.using_config('train', False), chainer.no_backprop_mode():
@@ -71,7 +66,10 @@ def get_vectors(model, sentences):
     for sentence in sentences:
         sentence = sentence.strip()
         text = nlp_utils.normalize_text(sentence)
-        words = nlp_utils.split_text(text, char_based=setup['char_based'])
+        if setup['char_based']:
+            words = list(text)
+        else:
+            words = word_tokenize_txt(text)
         xs = nlp_utils.transform_to_array([words], vocab, with_label=False)
         xs = nlp_utils.convert_seq(xs, device=-1, with_label=False)  # todo use GPU
         with chainer.using_config('train', False), chainer.no_backprop_mode():
@@ -181,13 +179,13 @@ class Text_classification(Benchmark):
         # Set up a trainer
         updater = training.StandardUpdater(
             train_iter, optimizer,
-            converter=convert_seq, device=self.gpu)
+            converter=nlp_utils.convert_seq, device=self.gpu)
         trainer = training.Trainer(updater, (self.epoch, 'epoch'), out=self.out)
 
         # Evaluate the model with the test dataset for each epoch
         trainer.extend(extensions.Evaluator(
             test_iter, model,
-            converter=convert_seq, device=self.gpu))
+            converter=nlp_utils.convert_seq, device=self.gpu))
 
         # Take a best snapshot
         record_trigger = training.triggers.MaxValueTrigger(
@@ -230,7 +228,11 @@ class Text_classification(Benchmark):
         result['experiment_setup']['default_measurement'] = 'accuracy'
         result['experiment_setup']['dataset'] = os.path.basename(os.path.normpath(path_dataset))
         result['experiment_setup']['method'] = self.model
+        result['experiment_setup']['embeddings'] = embeddings.metadata
         result['log'] = load_json(os.path.join(self.out, 'log'))
 
-        result['result'] = {"accuracy": result['log'][-1]['validation/main/accuracy']}
+        # TODO: old version was returning last test value, make a footnote
+        # result['result'] = {"accuracy": result['log'][-1]['validation/main/accuracy']}
+        accuracy = max(_["validation/main/accuracy"] for _ in result['log'])
+        result['result'] = {"accuracy": accuracy}
         return [result]

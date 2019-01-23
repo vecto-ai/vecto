@@ -2,7 +2,7 @@ import argparse
 from .sequence_labeling import Sequence_labeling
 
 
-def run(options, extra_args):
+def run(extra_args):
 
     parser = argparse.ArgumentParser()
     parser.add_argument("embeddings")

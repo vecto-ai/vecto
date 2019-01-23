@@ -1,17 +1,10 @@
-import collections
-import io
+# import collections
+# import io
 
 import numpy
 
 import chainer
 from chainer.backends import cuda
-
-
-def split_text(text, char_based=False):
-    if char_based:
-        return list(text)
-    else:
-        return text.split()
 
 
 def normalize_text(text):

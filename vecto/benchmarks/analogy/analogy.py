@@ -1,7 +1,6 @@
 import datetime
 import os
 import uuid
-import numpy as np
 import logging
 import progressbar
 # from tqdm import tqdm
@@ -9,7 +8,10 @@ import sklearn
 from vecto.data import Dataset
 from ..base import Benchmark
 from .io import get_pairs
-from .solvers import *
+from .solvers import LinearOffset, LRCos, PairDistance
+from .solvers import ThreeCosAvg, ThreeCosMul, ThreeCosMul2
+from .solvers import SimilarToAny, SimilarToB
+
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +66,6 @@ class Analogy(Benchmark):
 
         self.stats = {}
 
-
         # this are some hard-coded bits which will be implemented later
         self.result_miss = {
             "rank": -1,
@@ -102,9 +103,7 @@ class Analogy(Benchmark):
     #         distances[i] = scores[ids_max[i + 1]]
     #     return distances.mean()
 
-
     def run_category(self, pairs):
-
         details = []
         kfold = sklearn.model_selection.KFold(n_splits=len(pairs) // self.size_cv_test)
         cnt_splits = kfold.get_n_splits(pairs)
@@ -231,6 +230,3 @@ class Analogy(Benchmark):
             embeddings.normalize()
         results = self.run(embeddings, path_dataset)  #group_subcategory
         return results
-
-
-

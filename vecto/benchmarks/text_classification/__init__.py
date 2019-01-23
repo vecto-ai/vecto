@@ -1,3 +1,15 @@
+"""Text classification benchmark.
+
+    One of the pre-defined models is trained to convergence
+    to predict labels for text fragments in a provided dataset.
+    Sentiment analysis is an example of text classification task.
+
+.. autosummary::
+    :toctree: _autosummary
+
+    text_classification
+"""
+
 import argparse
 import os
 from vecto.utils.data import save_json, print_json
@@ -5,7 +17,7 @@ from .text_classification import Text_classification
 from vecto.embeddings import load_from_dir
 
 
-def run(options, extra_args):
+def run(extra_args):
     parser = argparse.ArgumentParser()
     parser.add_argument("embeddings")
     parser.add_argument("dataset")

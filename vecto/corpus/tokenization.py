@@ -28,7 +28,7 @@ def word_tokenize_txt(txt,
                       token_splitter=_DEFAULT_WORD_SPLITTER,
                       token_normalizer=default_token_normalizer,
                       good_token_re=DEFAULT_GOOD_TOKEN_RE,
-                      min_token_len=3,
+                      min_token_len=1,
                       stopwords=nltk.corpus.stopwords.words('english')):
     norm_tokens = map(token_normalizer, token_splitter(txt))
     return [token for token in norm_tokens
@@ -53,7 +53,8 @@ class BaseTokenizer(WithMetaData):
 
 class Tokenizer(BaseTokenizer):
     """
-    Tokenizes text, normalizes each token with `token_normalizer`, filters tokens by length and regex `good_token_re`.
+    Tokenizes text, normalizes each token with `token_normalizer`,
+    filters tokens by length and regex `good_token_re`.
     Returns a list with the only element: list of tokens.
     This nesting is necessary to unify output with SentenceTokenizer,
     which returns list of sentences (each is a list of tokens).
@@ -65,10 +66,11 @@ class Tokenizer(BaseTokenizer):
                  good_token_re=DEFAULT_GOOD_TOKEN_RE,
                  min_token_len=3,
                  stopwords=nltk.corpus.stopwords.words('english')):
-        super(Tokenizer, self).__init__(normalizer=get_full_typename(token_normalizer),
-                                        good_token_re=good_token_re.pattern,
-                                        min_token_len=min_token_len,
-                                        stopwords='too long to be saved to metadata, i suppose')  # TODO: decide how to save stopwords to metadata
+        # TODO: decide how to save stopwords to metadata
+        super().__init__(normalizer=get_full_typename(token_normalizer),
+                         good_token_re=good_token_re.pattern,
+                         min_token_len=min_token_len,
+                         stopwords='too long to be saved to metadata')
         self.token_splitter = token_splitter
         self.token_normalizer = token_normalizer
         self.good_token_re = good_token_re

@@ -4,7 +4,7 @@ This code is ported from the following implementation written in Torch.
 https://github.com/tomsercu/lstm
 """
 from __future__ import division
-import argparse
+# import argparse
 
 import numpy as np
 
@@ -244,7 +244,7 @@ class Language_modeling(Benchmark):
         self.out = tmpBasePath
         self.resume = ''
 
-    def get_result(self, embeddings):
+    def get_result(self, embeddings, dataset="ptb"):
 
         self.unit = embeddings.matrix.shape[1]
 
