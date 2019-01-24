@@ -6,8 +6,10 @@ class CLI(object):
 
     def __init__(self):
         parser = argparse.ArgumentParser(
+            prog="vecto",
             description='vecto commad line interface',
             add_help=True,
+            epilog="\n",
             usage='''vecto <command> [<args>],
 
 The most commonly used vecto commands are:
