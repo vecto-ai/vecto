@@ -466,7 +466,7 @@ class SkipGram(chainer.Chain):
             self.n_ngram = vocab_ngram_tokens.metadata["max_gram"] - vocab_ngram_tokens.metadata["min_gram"] + 1
 
             if 'none' in subword:
-                self.word_embed = L.EmbedID(len(vocab.lst_words), dimensions, initialW=I.Uniform(1. / dimensions))
+                self.word_embed = L.EmbedID(len(vocab.lst_words) + 2, dimensions, initialW=I.Uniform(1. / dimensions)) # plus 2 for OOV and end symbol.
             else:
                 self.word_embed = None
 
@@ -486,7 +486,7 @@ class SkipGram(chainer.Chain):
     def getEmbeddings(self):
         if self.word_embed is None:
             return self.getEmbeddings_f()
-        return self.word_embed.W.data
+        return self.word_embed.W.data[2:] # plus 2 to remove OOV and end symbol.
 
     def getEmbeddings_f(self, words=None, batchsize=1000, gpu=-1):
         if self.f is None:
@@ -555,6 +555,7 @@ class SkipGram(chainer.Chain):
             loss_total += loss
 
         if self.word_embed is not None:
+            context = context + 2 # plus 2 for OOV and end symbol.
             e = self.word_embed(context)
             e = F.reshape(e, (e.shape[0] * e.shape[1], e.shape[2]))
             # print(e.shape)
