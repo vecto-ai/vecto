@@ -96,7 +96,7 @@ class ContinuousBoW(chainer.Chain):
             self.loss_func = loss_func
 
     def getEmbeddings(self):
-        return self.embed.W.data
+        return self.embed.W.data[:-2]
 
     def getEmbeddings_context(self):
         return self.loss_func.W.data[2:]

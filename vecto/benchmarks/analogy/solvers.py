@@ -102,6 +102,8 @@ class Solver:
 
     def process_prediction(self, p_test_one, scores, score_reg, score_sim, p_train=[]):
         ids_max = np.argsort(scores)[::-1]
+        print("shape scores", scores.shape)
+        print("shape ids_max", ids_max.shape)
         result = dict()
         cnt_answers_to_report = 6
         set_exclude = set()
@@ -133,6 +135,7 @@ class Solver:
                 break
         rank = 0
         for i in range(ids_max.shape[0]):
+            #print(f"IDS MAX= {ids_max[i]}")
             ans = self.embs.vocabulary.get_word_by_id(ids_max[i])
             if self.exclude and (ans in set_exclude):
                 continue
