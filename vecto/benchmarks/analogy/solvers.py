@@ -102,8 +102,8 @@ class Solver:
 
     def process_prediction(self, p_test_one, scores, score_reg, score_sim, p_train=[]):
         ids_max = np.argsort(scores)[::-1]
-        print("shape scores", scores.shape)
-        print("shape ids_max", ids_max.shape)
+        # print("shape scores", scores.shape)
+        # print("shape ids_max", ids_max.shape)
         result = dict()
         cnt_answers_to_report = 6
         set_exclude = set()

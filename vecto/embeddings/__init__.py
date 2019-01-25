@@ -58,6 +58,8 @@ def load_from_dir(path):
         logger.info("detected as vecto format ")
         result.load_hdf5(path)
         result.load_metadata(path)
+        # TODO: remove this hack after we re-train w2v without OOV rows
+        result.matrix = result.matrix[:result.vocabulary.cnt_words]
         return result
 
     result = vecto.embeddings.dense.WordEmbeddingsDense()
