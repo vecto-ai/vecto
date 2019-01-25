@@ -59,7 +59,8 @@ def load_from_dir(path):
         result.load_hdf5(path)
         result.load_metadata(path)
         # TODO: remove this hack after we re-train w2v without OOV rows
-        result.matrix = result.matrix[:result.vocabulary.cnt_words]
+        extra = result.matrix.shape[0] - result.vocabulary.cnt_words
+        result.matrix = result.matrix[extra:]
         return result
 
     result = vecto.embeddings.dense.WordEmbeddingsDense()
