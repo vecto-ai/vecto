@@ -483,9 +483,9 @@ class SkipGram(chainer.Chain):
 
             self.loss_func = loss_func
 
-    def getEmbeddings(self):
+    def getEmbeddings(self, gpu):
         if self.word_embed is None:
-            return self.getEmbeddings_f()
+            return self.getEmbeddings_f(gpu=gpu)
         return self.word_embed.W.data[2:] # plus 2 to remove OOV and end symbol.
 
     def getEmbeddings_f(self, words=None, batchsize=1000, gpu=-1):
