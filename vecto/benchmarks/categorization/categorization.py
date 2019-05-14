@@ -7,6 +7,7 @@ from os import path, listdir
 import csv
 import numpy as np
 from scipy.spatial import distance
+import os
 
 OTHER_EXT = 'None'
 BENCHMARK = 'benchmark'
@@ -102,6 +103,12 @@ class Categorization(Benchmark):
         result = {}
         result['word_stats'] = word_stats
         result['global_stats'] = global_stats
+
+        # add experiment_setup and result entry for result
+        result["experiment_setup"] = {}
+        result["result"] = result['global_stats']['scores']
+        result["experiment_setup"]['default_measurement'] = 'Purity'
+
         return result
 
     def read_datasets_from_dir(self, path_to_dir):
@@ -122,6 +129,9 @@ class Categorization(Benchmark):
         datasets = self.read_datasets_from_dir(path_dataset)
         for dataset_name, dataset_data in datasets.items():
             result = self.evaluate(embs, dataset_data)
+            result['experiment_setup']['dataset'] = os.path.basename(os.path.normpath(path_dataset))
+            result['experiment_setup']['embeddings'] = embs.metadata
+            result['experiment_setup']['method'] = self.method
             results.append(result)
         return results
 
@@ -131,6 +141,25 @@ class Categorization(Benchmark):
 
         results = self.run(embeddings, path_dataset)
         return results
+
+    def collect_stats(self, data, vectors, labels):
+        word_stats = defaultdict(lambda: {})
+        predicted_labels, true_labels, centroids, inertia, params = self.run_categorization(len(data.keys()), vectors,
+                                                                                            labels)
+        categories = data.keys()
+        word_counter = 0
+        for category, words in data.items():
+            for word_id, word in enumerate(words):
+                word_vector = vectors[word_counter]
+                centroid = centroids[predicted_labels[word_counter]]
+                predicted_category = list(categories)[predicted_labels[word_counter]]
+                word_entry = '{}. {}'.format(word_counter, word)
+                word_counter += 1
+                word_stats[word_entry] = self.process_stats(word_vector, centroid, category, predicted_category)
+        metric_scores = self.compute_metics(predicted_labels, true_labels)
+        global_stats = self.process_global_stats(inertia, params, metric_scores, categories, predicted_labels,
+                                                 true_labels)
+        return dict(word_stats), global_stats
 
 
 class KMeansCategorization(Categorization):
@@ -174,27 +203,8 @@ class KMeansCategorization(Categorization):
         global_stats['true_labels'] = list(int(label) for label in true_labels)
         return global_stats
 
-    def collect_stats(self, data, vectors, labels):
-        word_stats = defaultdict(lambda: {})
-        predicted_labels, true_labels, centroids, inertia, params = self.run_categorization(len(data.keys()), vectors,
-                                                                                            labels)
-        categories = data.keys()
-        word_counter = 0
-        for category, words in data.items():
-            for word_id, word in enumerate(words):
-                word_vector = vectors[word_counter]
-                centroid = centroids[predicted_labels[word_counter]]
-                predicted_category = list(categories)[predicted_labels[word_counter]]
-                word_entry = '{}. {}'.format(word_counter, word)
-                word_counter += 1
-                word_stats[word_entry] = self.process_stats(word_vector, centroid, category, predicted_category)
-        metric_scores = super(KMeansCategorization, self).compute_metics(predicted_labels, true_labels)
-        global_stats = self.process_global_stats(inertia, params, metric_scores, categories, predicted_labels,
-                                                 true_labels)
-        return dict(word_stats), global_stats
-
-
-class SpectralCategorization(Categorization):
-    def compute_labels(self, data, vectors, labels):
-        return SpectralClustering(n_clusters=len(data.keys()), random_state=self.random_state).fit_predict(vectors,
-                                                                                                           labels)
+# class SpectralCategorization(Categorization):
+#     def compute_labels(self, data, vectors, labels):
+#         return SpectralClustering(n_clusters=len(data.keys()),
+#                                   random_state=self.random_state).fit_predict(vectors,
+#                                                                                                            labels)

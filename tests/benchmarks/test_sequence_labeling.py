@@ -31,7 +31,7 @@ class Tests(unittest.TestCase):
         with contextlib.redirect_stdout(sio):
             run_module("vecto",
                        "benchmark",
-                       "sequence_labelling",
+                       "sequence_labeling",
                        path_emb,
                        path_sequence_labeling_dataset_ner,
                        "--path_out", "/tmp/vecto/benchmarks/")
@@ -40,7 +40,7 @@ class Tests(unittest.TestCase):
         with contextlib.redirect_stdout(sio):
             run_module("vecto",
                        "benchmark",
-                       "sequence_labelling",
+                       "sequence_labeling",
                        path_emb,
                        path_sequence_labeling_dataset_ner,
                        "--path_out", "/tmp/vecto/benchmarks/")
@@ -50,7 +50,7 @@ class Tests(unittest.TestCase):
             with contextlib.redirect_stdout(sio):
                 run_module("vecto",
                            "benchmark",
-                           "sequence_labelling",
+                           "sequence_labeling",
                            path_emb + "NONEXISTING",
                            path_sequence_labeling_dataset_ner,
                            "--path_out",

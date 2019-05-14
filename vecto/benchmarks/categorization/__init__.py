@@ -7,8 +7,8 @@ from vecto.utils import get_time_str
 
 def select_method(key):
     options = {}
-    if key == 'SpectralCategorization':
-        method = SpectralCategorization(options)
+    # if key == 'SpectralCategorization':
+    #     method = SpectralCategorization(options)
     if key == 'KMeansCategorization':
         method = KMeansCategorization(options)
     else:
@@ -16,7 +16,7 @@ def select_method(key):
     return method
 
 
-def run(options, extra_args):
+def run(extra_args):
     parser = argparse.ArgumentParser()
     parser.add_argument('embeddings')
     parser.add_argument('dataset')
