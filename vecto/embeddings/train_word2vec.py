@@ -117,7 +117,7 @@ def create_model(args, net, vocab):
     model.metadata["vocabulary"] = vocab.metadata
     model.metadata.update(vars(args))
     model.metadata["vsmlib_version"] = vecto.__version__
-    model.matrix = cuda.to_cpu(net.getEmbeddings())
+    model.matrix = cuda.to_cpu(net.getEmbeddings(gpu=args.gpu))
     if args.out_type == 'ns':
         model.matrix_context = cuda.to_cpu(net.getEmbeddings_context())
     else:

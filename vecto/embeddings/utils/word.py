@@ -95,11 +95,11 @@ class ContinuousBoW(chainer.Chain):
             self.embed = L.EmbedID(n_vocab + 2, n_units, initialW=I.Uniform(1. / n_units)) # plus 2 for OOV and end symbol.
             self.loss_func = loss_func
 
-    def getEmbeddings(self):
-        return self.embed.W.data
+    def getEmbeddings(self, gpu):
+        return self.embed.W.data[2:] # plus 2 to remove OOV and end symbol.
 
     def getEmbeddings_context(self):
-        return self.loss_func.W.data[2:]
+        return self.loss_func.W.data
 
     def __call__(self, x, context):
         context = context + 2 # plus 2 for OOV and end symbol.
@@ -119,11 +119,11 @@ class SkipGram(chainer.Chain):
             self.embed = L.EmbedID(n_vocab + 2, n_units, initialW=I.Uniform(1. / n_units)) # plus 2 for OOV and end symbol.
             self.loss_func = loss_func
 
-    def getEmbeddings(self):
-        return self.embed.W.data
+    def getEmbeddings(self, gpu):
+        return self.embed.W.data[2:] # plus 2 to remove OOV and end symbol.
 
     def getEmbeddings_context(self):
-        return self.loss_func.W.data[2:]
+        return self.loss_func.W.data
 
     def __call__(self, x, context):
         context = context + 2 # plus 2 for OOV and end symbol.

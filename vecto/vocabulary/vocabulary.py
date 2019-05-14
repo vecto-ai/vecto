@@ -21,6 +21,10 @@ class Vocabulary(WithMetaData):
         self.lst_words = []
         self.lst_frequencies = []
 
+    @property
+    def cnt_words(self):
+        return len(self.lst_words)
+
     def tokens_to_ids(self, tokens):
         ids = np.ones(len(tokens), dtype=np.int32) * -1
         for i, t in enumerate(tokens):
@@ -105,7 +109,6 @@ class Vocabulary(WithMetaData):
             self.dic_words_ids[word] = pos
             pos += 1
         f.close()
-        self.cnt_words = len(self.lst_words)
         self.lst_frequencies = np.array(self.lst_frequencies)
         self.init_metadata(base_path=path)
 
@@ -119,7 +122,6 @@ class Vocabulary(WithMetaData):
             if f.endswith(".vocab"):
                 logger.info("found vocab file")
                 self.load_from_list(os.path.join(path, f))
-
 
 #    def load_dic_from_file(self, filename):
 #        rdic = {}
@@ -179,7 +181,6 @@ def _create_from_iterator(iterator, min_frequency=0):
         v.lst_frequencies.append(frequency)
         v.lst_words.append(word)
         v.dic_words_ids[word] = i
-    v.cnt_words = len(v.lst_words)
     v.metadata["min_frequency"] = min_frequency
     v.metadata["cnt_words"] = v.cnt_words
     t_end = time.time()
@@ -281,7 +282,6 @@ def create_from_annotated_dir(path, min_frequency=0, representation='word'):  # 
         v.lst_frequencies.append(frequency)
         v.lst_words.append(word)
         v.dic_words_ids[word] = i
-    v.cnt_words = len(v.lst_words)
     v.metadata["min_frequency"] = min_frequency
     v.metadata["cnt_words"] = v.cnt_words
     t_end = time.time()
@@ -318,7 +318,6 @@ def create_ngram_tokens_from_dir(path, min_gram, max_gram, min_frequency=0):
         v.lst_frequencies.append(frequency)
         v.lst_words.append(word)
         v.dic_words_ids[word] = i
-    v.cnt_words = len(v.lst_words)
     v.metadata["min_frequency"] = min_frequency
     v.metadata["min_gram"] = min_gram
     v.metadata["max_gram"] = max_gram

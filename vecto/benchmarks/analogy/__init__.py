@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.DEBUG)
 def run(args):
     # config = load_config()
     # print(config)
-    print(args)
+    # print(args)
     parser = argparse.ArgumentParser()
     parser.add_argument("embeddings")
     parser.add_argument("dataset")

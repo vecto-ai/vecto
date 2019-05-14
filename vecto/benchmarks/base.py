@@ -20,6 +20,7 @@ class Benchmark():
     def run_with_args(self, args):
         embeddings = load_from_dir(args.embeddings)
         print("SHAPE:", embeddings.matrix.shape)
+        print("vocab sieze:", embeddings.vocabulary.cnt_words)
         results = self.get_result(embeddings, args.dataset)
         if args.path_out:
             if os.path.isdir(args.path_out) or args.path_out.endswith("/"):
