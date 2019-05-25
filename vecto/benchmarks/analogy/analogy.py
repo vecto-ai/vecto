@@ -165,8 +165,7 @@ class Analogy(Benchmark):
         results = []
         dataset = Dataset(path_dataset)
         for filename in dataset.file_iterator():
-            if filename.split('/')[-1][0] == '.':
-                continue
+            if filename.split('/')[-1][0] == '.': continue
             logger.info("processing " + filename)
             pairs = get_pairs(filename)
             name_category = os.path.basename(os.path.dirname(filename))
