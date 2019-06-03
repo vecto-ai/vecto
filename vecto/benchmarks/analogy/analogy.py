@@ -155,7 +155,7 @@ class Analogy(Benchmark):
 
     def run(self, embs, path_dataset):  # group_subcategory
         self.embs = embs
-        self.solver = select_method(self.method)(self.embs, exclude=self.exclude)
+        # self.solver = select_method(self.method)(self.embs, exclude=self.exclude)
 
 
         if self.normalize:
@@ -165,6 +165,7 @@ class Analogy(Benchmark):
         results = []
         dataset = Dataset(path_dataset)
         for filename in dataset.file_iterator():
+            self.solver = select_method(self.method)(self.embs, exclude=self.exclude) # initialize the solve for every analogy dataset file
             logger.info("processing " + filename)
             pairs = get_pairs(filename)
             name_category = os.path.basename(os.path.dirname(filename))
