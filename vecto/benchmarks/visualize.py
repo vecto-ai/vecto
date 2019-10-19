@@ -56,7 +56,7 @@ def df_from_file(path):
     try:
         default_measurement = dframe["experiment_setup.default_measurement"].unique()[0]
     except KeyError:
-        logger.warning(f"default_measurement not specified in {path}")
+        logger.warning("default_measurement not specified in %s" % (path))
     dframe["result"] = dframe["result." + default_measurement]
     # df["reciprocal_rank"] = 1 / (df["rank"] + 1)
     return dframe
@@ -71,7 +71,7 @@ def df_from_dir(path):
                 try:
                     dfs.append(df_from_file(full_path))
                 except KeyError:
-                    logger.warning(f"error reading {full_path}")
+                    logger.warning("error reading %s" % (full_path))
     dframe = pandas.concat(dfs, sort=True)
     # print(dframe["experiment_setup.task"])
     return dframe
