@@ -7,8 +7,8 @@ from scipy.stats.stats import spearmanr
 from collections import defaultdict
 from ..base import Benchmark
 
-METADATA = 'metadata'
-BENCHMARK = 'benchmark'
+TYPE_METADATA = 'metadata'
+TYPE_BENCHMARK = 'benchmark'
 METADATA_EXT = '.json'
 PLAINTEXT_EXT = '.txt'
 CSV_EXT = '.csv'
@@ -72,26 +72,30 @@ class Similarity(Benchmark):
         return spearmanr(actual, expected)[0], cnt_found_pairs_total, details
 
     def read_single_dataset(self, path_to_dir, file_name):
-        dataset_name, file_extension = os.path.splitext(file_name)
+        # TODO: fix this mess
+        name_category, file_extension = os.path.splitext(file_name)
         if file_extension == METADATA_EXT:
             with open(os.path.join(path_to_dir, file_name)) as f:
                 data = load(f, strict=False)
-            return METADATA, dataset_name, data
+            return TYPE_METADATA, name_category, data
         elif file_extension == PLAINTEXT_EXT:
+            # TODO: use logger
+            print(file_name)
+            print("loading as plain text")
             data = self.read_test_set(os.path.join(path_to_dir, file_name))
-            return BENCHMARK, dataset_name, data
+            return TYPE_BENCHMARK, name_category, data
         elif file_extension == CSV_EXT:
             data = self.read_test_set(os.path.join(path_to_dir, file_name))
-            return BENCHMARK, dataset_name, data
+            return TYPE_BENCHMARK, name_category, data
         else:
             return OTHER_EXT, None, None
 
     def read_datasets_from_dir(self, path_to_dir):
         datasets = defaultdict(lambda: {})
         for file in os.listdir(path_to_dir):
-            type, dataset_name, dataset_data = self.read_single_dataset(path_to_dir, file)
+            type, name_category, dataset_data = self.read_single_dataset(path_to_dir, file)
             if type != OTHER_EXT:
-                datasets[dataset_name][type] = dataset_data
+                datasets[name_category][type] = dataset_data
         return datasets
 
     def make_metadata_dict(self, metadata, found_pairs, benchmark_len, dataset_name, embeddings_metadata):
@@ -102,11 +106,12 @@ class Similarity(Benchmark):
         experiment_setup['category'] = "default"
         experiment_setup['dataset'] = dataset_name
         experiment_setup['method'] = "cosine_distance"
-        experiment_setup['language'] = metadata['language']
-        experiment_setup['description'] = metadata['description']
-        experiment_setup['version'] = metadata['version']
+        # TODO: fix this
+        # experiment_setup['language'] = metadata['language']
+        # experiment_setup['description'] = metadata['description']
+        # experiment_setup['version'] = metadata['version']
         experiment_setup['measurement'] = "spearman"
-        experiment_setup['task'] = metadata['task']
+        # experiment_setup['task'] = metadata['task']
         experiment_setup['timestamp'] = datetime.datetime.now().isoformat()
         return experiment_setup
 
@@ -122,10 +127,12 @@ class Similarity(Benchmark):
         results = []
         datasets = self.read_datasets_from_dir(path_dataset)
         for dataset_name, dataset_data in datasets.items():
-            result, cnt_found_pairs_total, details = self.evaluate(embeddings, dataset_data[BENCHMARK])
-            metadata_dict = self.make_metadata_dict(dataset_data[METADATA],
+            result, cnt_found_pairs_total, details = self.evaluate(embeddings, dataset_data[TYPE_BENCHMARK])
+            if TYPE_METADATA not in dataset_data:
+                dataset_data[TYPE_METADATA]={}
+            metadata_dict = self.make_metadata_dict(dataset_data[TYPE_METADATA],
                                                     found_pairs=cnt_found_pairs_total,
-                                                    benchmark_len=len(dataset_data[BENCHMARK]),
+                                                    benchmark_len=len(dataset_data[TYPE_BENCHMARK]),
                                                     dataset_name=dataset_name,
                                                     embeddings_metadata=embeddings.metadata)
             results.append(self.make_result(result, details, metadata_dict))
@@ -137,5 +144,3 @@ class Similarity(Benchmark):
 
         results = self.run(embeddings, path_dataset)
         return results
-
-
