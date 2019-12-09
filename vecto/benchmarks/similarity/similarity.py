@@ -111,7 +111,7 @@ class Similarity(Benchmark):
         # experiment_setup['description'] = metadata['description']
         # experiment_setup['version'] = metadata['version']
         experiment_setup['measurement'] = "spearman"
-        # experiment_setup['task'] = metadata['task']
+        experiment_setup['task'] = "word similarity"
         experiment_setup['timestamp'] = datetime.datetime.now().isoformat()
         return experiment_setup
 
