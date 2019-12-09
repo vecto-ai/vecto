@@ -2,7 +2,7 @@
 brewer2mpl
 chainer
 gitpython
-numpy
+numpy=1.17.2
 nltk
 pandas
 progressbar2
@@ -13,6 +13,6 @@ system-query
 tables
 traitlets
 tqdm
-keras
-tensorflow
+keras=2.3.1
+tensorflow=2.0.0
 requests
