@@ -44,7 +44,7 @@ class WithMetaData(object):
         """
         see init_metadata
         """
-        self._metadata = {}
+        self.metadata = {}
         self.init_metadata(base_path=base_path, **other_metadata)
 
     def init_metadata(self, base_path=None, **other_metadata):
@@ -70,7 +70,3 @@ class WithMetaData(object):
         :param base_path: path from which metadata.json path will be constructed
         """
         self.metadata.update(try_load_metadata(base_path))
-
-    @property
-    def metadata(self):
-        return self._metadata
