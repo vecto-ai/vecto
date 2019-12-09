@@ -63,5 +63,5 @@ class Tests(unittest.TestCase):
                            "--path_out", "/tmp/vecto/benchmarks/")
 
         from matplotlib import pyplot as plt
-        visualize.plot_accuracy("/tmp/vecto/benchmarks/similarity", key_secondary="experiment_setup.dataset")
+        visualize.plot_accuracy("/tmp/vecto/benchmarks/word similarity", key_secondary="experiment_setup.dataset")
         plt.savefig("/tmp/vecto/benchmarks/similarity.pdf", bbox_inches="tight")
