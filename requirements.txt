@@ -1,7 +1,7 @@
 # requrements for vecto
 brewer2mpl
 gitpython
-numpy==1.17.2
+numpy
 nltk
 pandas
 progressbar2
