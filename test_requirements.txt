@@ -1,3 +1,4 @@
+-rrequirements.txt
 pip >= 19.0
 setuptools >= 30.0
 docutils
@@ -10,4 +11,6 @@ pyyaml
 coveralls
 coverage
 pylint
--rrequirements.txt
+chainer
+keras==2.3.1
+tensorflow==2.0.0
