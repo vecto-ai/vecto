@@ -153,7 +153,7 @@ class Analogy(Benchmark):
         # str_results = json.dumps(jsonify(out), indent=4, separators=(',', ': '), sort_keys=True)
         return out
 
-    def run(self, embs, path_dataset):  # group_subcategory
+    def run(self, embs, dataset):  # group_subcategory
         self.embs = embs
         # self.solver = select_method(self.method)(self.embs, exclude=self.exclude)
 
@@ -163,7 +163,6 @@ class Analogy(Benchmark):
         self.embs.cache_normalized_copy()
 
         results = []
-        dataset = Dataset(path_dataset)
         for filename in dataset.file_iterator():
             self.solver = select_method(self.method)(self.embs, exclude=self.exclude) # initialize the solve for every analogy dataset file
             logger.info("processing " + filename)
