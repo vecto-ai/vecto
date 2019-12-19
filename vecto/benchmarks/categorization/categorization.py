@@ -1,4 +1,5 @@
 from ..base import Benchmark
+from vecto._version import VERSION
 from collections import defaultdict
 from sklearn import preprocessing
 from sklearn.cluster import KMeans, SpectralClustering
@@ -132,6 +133,7 @@ class Categorization(Benchmark):
             result['experiment_setup']['dataset'] = os.path.basename(os.path.normpath(path_dataset))
             result['experiment_setup']['embeddings'] = embs.metadata
             result['experiment_setup']['method'] = self.method
+            result['experiment_setup']['vecto_version'] = VERSION
             results.append(result)
         return results
 

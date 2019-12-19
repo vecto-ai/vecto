@@ -17,6 +17,7 @@ def select_method(key):
 
 
 def run(extra_args):
+    # TODO: move this to the parent class
     parser = argparse.ArgumentParser()
     parser.add_argument('embeddings')
     parser.add_argument('dataset')
@@ -27,16 +28,18 @@ def run(extra_args):
     benchmark = select_method(args.method)
     results = benchmark.get_result(embeddings, args.dataset)
     if args.path_out:
-        if path.isdir(args.path_out) or args.path_out.endswith('/'):
-            dataset = path.basename(path.normpath(args.dataset))
-            timestamp = get_time_str()
-            name_file_out = path.join(args.path_out,
-                                      dataset,
-                                      args.method,
-                                      timestamp,
-                                      'results.json')
-            save_json(results, name_file_out)
-        else:
-            save_json(results, args.path_out)
+        # TODO: this does not seem to work if the dir does not exist
+        # let us always assume dir, clean this up later if no better idea 
+        # if path.isdir(args.path_out) or args.path_out.endswith('/'):
+        dataset = path.basename(path.normpath(args.dataset))
+        timestamp = get_time_str()
+        name_file_out = path.join(args.path_out,
+                                  dataset,
+                                  args.method,
+                                  timestamp,
+                                  'results.json')
+        save_json(results, name_file_out)
+        # else:
+            # save_json(results, args.path_out)
     else:
         print_json(results)

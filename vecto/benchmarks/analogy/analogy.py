@@ -228,5 +228,6 @@ class Analogy(Benchmark):
     def get_result(self, embeddings, path_dataset):  # , group_subcategory=False
         if self.normalize:
             embeddings.normalize()
-        results = self.run(embeddings, path_dataset)  #group_subcategory
+        dataset = Dataset(path_dataset)
+        results = self.run(embeddings, dataset)  #group_subcategory
         return results

@@ -7,6 +7,8 @@ from os import path
 from vecto.benchmarks.analogy import Analogy
 from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
+from vecto.data import Dataset
+
 from ..test_setup import run_module
 
 
@@ -18,35 +20,36 @@ class Tests(unittest.TestCase):
     def test_api(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
         analogy = Analogy(method="3CosAdd")
-        result = analogy.get_result(embs, path_analogy_dataset)
+        dateset = Dataset(path_analogy_dataset)
+        result = analogy.run(embs, dateset)
         self.assertIsInstance(result[0], dict)
 
         analogy = Analogy(method="PairDistance")
-        result = analogy.get_result(embs, path_analogy_dataset)
+        result = analogy.run(embs, dateset)
         self.assertIsInstance(result[0], dict)
 
         analogy = Analogy(method="3CosMul")
-        result = analogy.get_result(embs, path_analogy_dataset)
+        result = analogy.run(embs, dateset)
         self.assertIsInstance(result[0], dict)
 
         analogy = Analogy(method="3CosMul2")
-        result = analogy.get_result(embs, path_analogy_dataset)
+        result = analogy.run(embs, dateset)
         self.assertIsInstance(result[0], dict)
 
         analogy = Analogy(method="3CosAvg")
-        result = analogy.get_result(embs, path_analogy_dataset)
+        result = analogy.run(embs, dateset)
         self.assertIsInstance(result[0], dict)
 
         analogy = Analogy(method="SimilarToAny")
-        result = analogy.get_result(embs, path_analogy_dataset)
+        result = analogy.run(embs, dateset)
         print(result)
 
         analogy = Analogy(method="SimilarToB")
-        result = analogy.get_result(embs, path_analogy_dataset)
+        result = analogy.run(embs, dateset)
         print(result)
 
         analogy = Analogy(method="LRCos")
-        result = analogy.get_result(embs, path_analogy_dataset)
+        result = analogy.run(embs, dateset)
         print(result)
 
     def test_cli(self):
