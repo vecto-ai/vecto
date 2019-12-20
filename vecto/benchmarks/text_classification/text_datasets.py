@@ -11,14 +11,44 @@ import numpy
 import chainer
 
 from vecto.benchmarks.text_classification.nlp_utils import normalize_text
-from vecto.benchmarks.text_classification.nlp_utils import split_text
+from vecto.corpus.tokenization import word_tokenize_txt
+from vecto.data.io import read_first_col_is_label_format
+# from vecto.benchmarks.text_classification.nlp_utils import split_text
+
+# TODO: use vecto.corpus
 from vecto.benchmarks.text_classification.nlp_utils import transform_to_array
 
 URL_DBPEDIA = 'https://github.com/le-scientifique/torchDatasets/raw/master/dbpedia_csv.tar.gz'  # NOQA
 URL_IMDB = 'https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz'
 URL_OTHER_BASE = 'https://raw.githubusercontent.com/harvardnlp/sent-conv-torch/master/data/'  # NOQA
 
-#
+
+# def read_separated_and_split(name, vocab=None, shrink=1,
+#                              char_based=False, seed=777):
+#     # assert (name in ['TREC', 'stsa.binary', 'stsa.fine',
+#     #                  'custrev', 'mpqa', 'rt-polarity', 'subj'])
+#     datasets = read_lines_separated(name)
+#     train = read_other_dataset(
+#         datasets[0], shrink=shrink, char_based=char_based)
+#     if len(datasets) == 2:
+#         test = read_other_dataset(
+#             datasets[1], shrink=shrink, char_based=char_based)
+#     else:
+#         numpy.random.seed(seed)
+#         alldata = numpy.random.permutation(train)
+#         train = alldata[:-len(alldata) // 10]
+#         test = alldata[-len(alldata) // 10:]
+
+#     if vocab is None:
+#         print('constract vocabulary based on frequency')
+#         vocab = make_vocab(train)
+
+#     train = transform_to_array(train, vocab)
+#     test = transform_to_array(test, vocab)
+
+#     return train, test, vocab
+
+
 # def download_dbpedia():
 #     path = chainer.dataset.cached_download(URL_DBPEDIA)
 #     tf = tarfile.open(path, 'r')
@@ -92,11 +122,9 @@ URL_OTHER_BASE = 'https://raw.githubusercontent.com/harvardnlp/sent-conv-torch/m
 
 def get_dataset_from_path(path_dataset, vocab=None, shrink=1,
                           char_based=False):
-    train = read_other_dataset(os.path.join(path_dataset, 'train'),
-                               shrink=shrink,
+    train = read_first_col_is_label_format(os.path.join(path_dataset, 'train'),
                                char_based=char_based)
-    test = read_other_dataset(os.path.join(path_dataset, 'test'),
-                              shrink=shrink,
+    test = read_first_col_is_label_format(os.path.join(path_dataset, 'test'),
                               char_based=char_based)
 
 
@@ -145,41 +173,3 @@ def get_dataset_from_path(path_dataset, vocab=None, shrink=1,
 #     return file_paths
 #
 #
-def read_other_dataset(path, shrink=1, char_based=False):
-    dataset = []
-    with io.open(path, encoding='utf-8', errors='ignore') as f:
-        for i, l in enumerate(f):
-            if i % shrink != 0 or not len(l.strip()) >= 3:
-                continue
-            label, text = l.strip().split(None, 1)
-            label = int(label) % 2 # todo only support binary classification
-            # print(text)
-            tokens = split_text(normalize_text(text), char_based)
-            dataset.append((tokens, label))
-    return dataset
-#
-#
-# def get_other_text_dataset(name, vocab=None, shrink=1,
-#                            char_based=False, seed=777):
-#     assert (name in ['TREC', 'stsa.binary', 'stsa.fine',
-#                      'custrev', 'mpqa', 'rt-polarity', 'subj'])
-#     datasets = download_other_dataset(name)
-#     train = read_other_dataset(
-#         datasets[0], shrink=shrink, char_based=char_based)
-#     if len(datasets) == 2:
-#         test = read_other_dataset(
-#             datasets[1], shrink=shrink, char_based=char_based)
-#     else:
-#         numpy.random.seed(seed)
-#         alldata = numpy.random.permutation(train)
-#         train = alldata[:-len(alldata) // 10]
-#         test = alldata[-len(alldata) // 10:]
-#
-#     if vocab is None:
-#         print('constract vocabulary based on frequency')
-#         vocab = make_vocab(train)
-#
-#     train = transform_to_array(train, vocab)
-#     test = transform_to_array(test, vocab)
-#
-#     return train, test, vocab

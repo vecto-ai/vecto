@@ -4,9 +4,11 @@ import contextlib
 import unittest
 import io
 from os import path
-from vecto.benchmarks.analogy import *
+from vecto.benchmarks.analogy import Analogy
 from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
+from vecto.data import Dataset
+
 from ..test_setup import run_module
 
 
@@ -17,55 +19,60 @@ class Tests(unittest.TestCase):
 
     def test_api(self):
         embs = load_from_dir(path.join('tests', 'data', 'embeddings', 'text', 'plain_with_file_header'))
-        analogy = LinearOffset()
-        result = analogy.get_result(embs, path_analogy_dataset)
+        analogy = Analogy(method="3CosAdd")
+        dateset = Dataset(path_analogy_dataset)
+        result = analogy.run(embs, dateset)
         self.assertIsInstance(result[0], dict)
 
-        analogy = PairDistance()
-        result = analogy.get_result(embs, path_analogy_dataset)
+        analogy = Analogy(method="PairDistance")
+        result = analogy.run(embs, dateset)
         self.assertIsInstance(result[0], dict)
 
-        analogy = ThreeCosMul()
-        result = analogy.get_result(embs, path_analogy_dataset)
+        analogy = Analogy(method="3CosMul")
+        result = analogy.run(embs, dateset)
         self.assertIsInstance(result[0], dict)
 
-        analogy = ThreeCosMul2()
-        result = analogy.get_result(embs, path_analogy_dataset)
+        analogy = Analogy(method="3CosMul2")
+        result = analogy.run(embs, dateset)
         self.assertIsInstance(result[0], dict)
 
-        analogy = ThreeCosAvg()
-        result = analogy.get_result(embs, path_analogy_dataset)
+        analogy = Analogy(method="3CosAvg")
+        result = analogy.run(embs, dateset)
         self.assertIsInstance(result[0], dict)
 
-        # analogy = SimilarToAny()
-        # result = analogy.get_result(embs, path_analogy_dataset)
-        # print(result)
-        # analogy = SimilarToB()
-        # result = analogy.get_result(embs, path_analogy_dataset)
-        # print(result)
-        analogy = LRCos()
-        result = analogy.get_result(embs, path_analogy_dataset)
+        analogy = Analogy(method="SimilarToAny")
+        result = analogy.run(embs, dateset)
+        print(result)
+
+        analogy = Analogy(method="SimilarToB")
+        result = analogy.run(embs, dateset)
+        print(result)
+
+        analogy = Analogy(method="LRCos")
+        result = analogy.run(embs, dateset)
         print(result)
 
     def test_cli(self):
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.analogy",
+            run_module("vecto", "benchmark", "analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
-                       "--path_out", "/tmp/vecto/benchmarks/", "--method", "3CosAdd")
+                       "--path_out", "/tmp/vecto/benchmarks/",
+                       "--method", "3CosAdd")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.analogy",
+            run_module("vecto", "benchmark", "analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
-                       "--path_out", "/tmp/vecto/benchmarks/specific_filename.json",
+                       "--path_out",
+                       "/tmp/vecto/benchmarks/specific_filename.json",
                        "--method", "LRCos")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.analogy",
+            run_module("vecto", "benchmark", "analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
                        "--path_out", "/tmp/vecto/benchmarks/",
@@ -74,18 +81,19 @@ class Tests(unittest.TestCase):
         sio = io.StringIO()
         with self.assertRaises(RuntimeError):
             with contextlib.redirect_stdout(sio):
-                run_module("vecto.benchmarks.analogy",
+                run_module("vecto", "benchmark", "analogy",
                            "./tests/data/embeddings/text/plain_with_file_header/",
                            "./tests/data/benchmarks/analogy/",
                            "--method", "NONEXISTING")
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.analogy",
+            run_module("vecto", "benchmark", "analogy",
                        "./tests/data/embeddings/text/plain_with_file_header/",
                        "./tests/data/benchmarks/analogy/",
                        "--method", "3CosAvg")
 
+        # TODO: suppress concatenating timestamp or aggregate multiple runs
         from matplotlib import pyplot as plt
-        visualize.plot_accuracy("/tmp/vecto/benchmarks/analogy")
+        visualize.plot_accuracy("/tmp/vecto/benchmarks/word_analogy")
         plt.savefig("/tmp/vecto/benchmarks/analogy.pdf", bbox_inches="tight")

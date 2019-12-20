@@ -9,7 +9,11 @@ def detect_archive_format_and_open(path):
         return bz2.open(path, mode='rt')
     if path.endswith(".gz"):
         return gzip.open(path, mode='rt')
-    return open(path)
+    return open(path, encoding='utf8')
+
+
+def print_json(data):
+    print(json.dumps(data, ensure_ascii=False, indent=4, sort_keys=False))
 
 
 def save_json(data, path):

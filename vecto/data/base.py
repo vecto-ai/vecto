@@ -23,5 +23,12 @@ class Dataset(WithMetaData):
                     continue
                 yield(os.path.join(root, filename))
 
-    # download
-    # abd for description
+
+def get_dataset(name):
+    # TODO: get dataset dir from config
+    dir_datasets = "/home/blackbird/.vecto/datasets"
+    path_dataset = os.path.join(dir_datasets, name)
+    dataset = Dataset(path_dataset)
+    return dataset
+    # TODO: check if it seats locally
+    # TODO: download

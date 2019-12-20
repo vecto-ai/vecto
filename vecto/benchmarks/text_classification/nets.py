@@ -126,15 +126,16 @@ class RNNEncoder(chainer.Chain):
                 self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
                                        initialW=embed_init)
             else:
-                self.embed = self.get_embed_from_wv
+                # TODO: this implementation was allowing for dynamic embeddings
+                # think about how to support both continuous embeddings
+                # and function pointers
+                # self.embed = self.get_embed_from_wv
+                self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
+                                       initialW=wv)
             self.encoder = L.NStepLSTM(n_layers, n_units, n_units, dropout)
-            self.wv = wv
         self.n_layers = n_layers
         self.out_units = n_units
         self.dropout = dropout
-
-    def get_embed_from_wv(self, w):
-        return self.wv[w.data]
 
     def __call__(self, xs):
         exs = sequence_embed(self.embed, xs, self.dropout)
@@ -168,8 +169,8 @@ class CNNEncoder(chainer.Chain):
                 self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
                                        initialW=embed_init)
             else:
-                self.embed = self.get_embed_from_wv
-            self.wv = wv
+                self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
+                                       initialW=wv)
             self.cnn_w3 = L.Convolution2D(
                 n_units, out_units, ksize=(3, 1), stride=1, pad=(2, 0),
                 nobias=True)
@@ -183,9 +184,6 @@ class CNNEncoder(chainer.Chain):
 
         self.out_units = out_units * 3
         self.dropout = dropout
-
-    def get_embed_from_wv(self, w):
-        return self.wv[w]
 
     def __call__(self, xs):
         x_block = chainer.dataset.convert.concat_examples(xs, padding=-1)
@@ -243,13 +241,11 @@ class BOWEncoder(chainer.Chain):
                 self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
                                        initialW=embed_init)
             else:
-                self.embed = self.get_embed_from_wv
+                self.embed = L.EmbedID(n_vocab, n_units, ignore_label=-1,
+                                       initialW=wv)
             self.wv = wv
         self.out_units = n_units
         self.dropout = dropout
-
-    def get_embed_from_wv(self, w):
-        return self.wv[w]
 
     def __call__(self, xs):
         x_block = chainer.dataset.convert.concat_examples(xs, padding=-1)

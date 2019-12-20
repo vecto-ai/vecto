@@ -44,7 +44,9 @@ class Tests(unittest.TestCase):
     def test_cli(self):
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.text_classification",
+            run_module("vecto",
+                       "benchmark",
+                       "text_classification",
                        path_emb,
                        path_text_classification_dataset,
                        "--model", "cnn",
@@ -52,7 +54,9 @@ class Tests(unittest.TestCase):
 
         sio = io.StringIO()
         with contextlib.redirect_stdout(sio):
-            run_module("vecto.benchmarks.text_classification",
+            run_module("vecto",
+                       "benchmark",
+                       "text_classification",
                        path_emb,
                        path_text_classification_dataset,
                        "--model", "cnn",
@@ -61,12 +65,14 @@ class Tests(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             sio = io.StringIO()
             with contextlib.redirect_stdout(sio):
-                run_module("vecto.benchmarks.text_classification",
+                run_module("vecto",
+                           "benchmark",
+                           "text_classification",
                            path_emb + "NONEXISTING",
                            path_text_classification_dataset,
                            "--path_out", "/tmp/vecto/benchmarks/")
 
         from matplotlib import pyplot as plt
-        visualize.plot_accuracy("/tmp/vecto/benchmarks/text_classification", key_secondary="experiment_setup.dataset")
+        visualize.plot_accuracy("/tmp/vecto/benchmarks/text classification", key_secondary="experiment_setup.dataset")
         plt.savefig("/tmp/vecto/benchmarks/text_classification.pdf", bbox_inches="tight")
 

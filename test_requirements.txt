@@ -1,5 +1,6 @@
-pip >= 10.0
-setuptools >= 20.5
+-rrequirements.txt
+pip >= 19.0
+setuptools >= 30.0
 docutils
 pygments
 wheel
@@ -10,4 +11,6 @@ pyyaml
 coveralls
 coverage
 pylint
--rrequirements.txt
+chainer
+keras==2.3.1
+tensorflow==2.0.0
