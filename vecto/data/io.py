@@ -1,3 +1,4 @@
+from requests import get
 from vecto.corpus.tokenization import word_tokenize_txt
 
 
@@ -22,3 +23,12 @@ def read_first_col_is_label_format(path, char_based=False):
                 tokens = word_tokenize_txt(text)
             dataset.append((tokens, label))
     return dataset
+
+
+def fetch_file(url, path, chunk_size=512):
+    response = get(url, stream=True)
+    handle = open(path, 'wb')
+    for chunk in response.iter_content(chunk_size=chunk_size):
+        if chunk:
+            handle.write(chunk)
+    handle.close()
