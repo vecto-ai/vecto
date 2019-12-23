@@ -1,6 +1,6 @@
 # requrements for vecto
 brewer2mpl
-gitpython
+# gitpython
 numpy
 nltk
 pandas
