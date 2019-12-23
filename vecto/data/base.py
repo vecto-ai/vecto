@@ -1,8 +1,15 @@
 import fnmatch
 import os
 import tarfile
+import logging
+import tempfile
+
 from vecto.utils.metadata import WithMetaData
 from .io import fetch_file
+
+logger = logging.getLogger(__name__)
+# TODO: get dataset dir from config
+dir_datasets = "/home/blackbird/.vecto/datasets"
 
 class Dataset(WithMetaData):
     """
@@ -26,8 +33,8 @@ class Dataset(WithMetaData):
 
 
 def download_index():
-    # TODO: get paths from config module
-    dir_temp = "/tmp/vecto/tmp"
+    logger.info("downloading index of resources")
+    dir_temp = os.path.join(tempfile.gettempdir(), "vecto", "tmp")
     os.makedirs(dir_temp, exist_ok=True)
     path_tar = os.path.join(dir_temp, "resources.tar")
     url_resources = "https://github.com/vecto-ai/vecto-resources/tarball/master/"
@@ -40,13 +47,25 @@ def download_index():
             if parts[1] != "resources":
                 continue
             member.path = os.path.join(*parts[1:])
-            tar.extract(member, dir_temp)
-        
+            tar.extract(member, dir_datasets)
+
+
+def gen_metadata_snippets(path):
+    for name in os.listdir(path):
+        if name == "metadata.json":
+            yield os.path.join(path, name)
+        else:
+            sub = os.path.join(path, name)
+            if os.path.isdir(sub):
+                yield from gen_metadata_snippets(sub)
+
+def load_dataset_infos():
+    for f_meta in gen_metadata_snippets(dir_datasets):
+        print(f_meta)
 
 
 def get_dataset(name):
-    # TODO: get dataset dir from config
-    dir_datasets = "/home/blackbird/.vecto/datasets"
+    load_dataset_infos()
     path_dataset = os.path.join(dir_datasets, name)
     dataset = Dataset(path_dataset)
     return dataset
