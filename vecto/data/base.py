@@ -3,17 +3,16 @@ import os
 import tarfile
 import logging
 import tempfile
-from vecto.config import load_config
+# from vecto.config import load_config
 from vecto.utils.metadata import WithMetaData
 from vecto.utils.data import load_json
 from .io import fetch_file
 
 logger = logging.getLogger(__name__)
 # TODO: make config module-global
-config = load_config()
+# config = load_config()
 # TODO: get dataset dir from config
-dir_datasets = "/home/blackbird/.vecto/datasets"
-
+dir_datasets = os.path.expanduser("~/.vecto/datasets")
 
 class Dataset(WithMetaData):
     """
