@@ -1,5 +1,6 @@
 import fnmatch
 import os
+import pathlib
 import tarfile
 import logging
 import tempfile
@@ -13,6 +14,7 @@ logger = logging.getLogger(__name__)
 # config = load_config()
 # TODO: get dataset dir from config
 dir_datasets = os.path.expanduser("~/.vecto/datasets")
+resources = {}
 
 class Dataset(WithMetaData):
     """
@@ -54,25 +56,30 @@ def download_index():
 
 
 def gen_metadata_snippets(path):
-    for name in os.listdir(path):
-        if name == "metadata.json":
-            yield os.path.join(path, name)
+#    for name in os.listdir(path):
+    for sub in path.iterdir():
+        if sub.name == "metadata.json":
+            yield sub
         else:
-            sub = os.path.join(path, name)
             if os.path.isdir(sub):
                 yield from gen_metadata_snippets(sub)
 
 def load_dataset_infos():
-    for f_meta in gen_metadata_snippets(dir_datasets):
-        print("path: ", f_meta)
+    for f_meta in gen_metadata_snippets(pathlib.Path(dir_datasets)):
+        print("visiting", f_meta.parent)
         metadata = load_json(f_meta)
         if "name" in metadata:
             print("name: ", metadata["name"])
-        if "url" in metadata:
-            print("url: ", metadata["url"])
+            if "url" in metadata:
+                print("url: ", metadata["url"])
+                print("folder: ", f_meta.parent)
+                metadata["local_path"] = f_meta.parent
+                resources["name"] = metadata
+                # check if files are not there
+                # fownload
         print()
 
-def get_dataset(name):
+def get_dataset_by_name(name):
     load_dataset_infos()
     path_dataset = os.path.join(dir_datasets, name)
     dataset = Dataset(path_dataset)
