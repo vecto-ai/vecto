@@ -5,6 +5,7 @@ import logging
 import tempfile
 
 from vecto.utils.metadata import WithMetaData
+from vecto.utils.data import load_json
 from .io import fetch_file
 
 logger = logging.getLogger(__name__)
@@ -61,9 +62,13 @@ def gen_metadata_snippets(path):
 
 def load_dataset_infos():
     for f_meta in gen_metadata_snippets(dir_datasets):
-        print(f_meta)
-        ds = Dataset
-
+        print("path: ", f_meta)
+        metadata = load_json(f_meta)
+        if "name" in metadata:
+            print("name: ", metadata["name"])
+        if "url" in metadata:
+            print("url: ", metadata["url"])
+        print()
 
 def get_dataset(name):
     load_dataset_infos()
