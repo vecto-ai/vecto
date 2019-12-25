@@ -62,6 +62,7 @@ def gen_metadata_snippets(path):
 def load_dataset_infos():
     for f_meta in gen_metadata_snippets(dir_datasets):
         print(f_meta)
+        ds = Dataset
 
 
 def get_dataset(name):
