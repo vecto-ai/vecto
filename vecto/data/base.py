@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 # config = load_config()
 # TODO: get dataset dir from config
 dir_datasets = os.path.expanduser("~/.vecto/datasets")
+dir_temp = os.path.join(tempfile.gettempdir(), "vecto", "tmp")
+os.makedirs(dir_datasets, exist_ok=True)
+os.makedirs(dir_temp, exist_ok=True)
 resources = {}
 
 class Dataset(WithMetaData):
@@ -39,8 +42,6 @@ class Dataset(WithMetaData):
 
 def download_index():
     logger.info("downloading index of resources")
-    dir_temp = os.path.join(tempfile.gettempdir(), "vecto", "tmp")
-    os.makedirs(dir_temp, exist_ok=True)
     path_tar = os.path.join(dir_temp, "resources.tar")
     url_resources = "https://github.com/vecto-ai/vecto-resources/tarball/master/"
     fetch_file(url_resources, path_tar)
@@ -92,7 +93,15 @@ def get_dataset_by_name(name):
         path_dataset = resources[name]["local_path"]
     else:
         raise RuntimeError("Dataset %s not known" % name)
-    # TODO: check if it seats locally
-    # TODO: download
+    for f in path_dataset.iterdir():
+        if f.name.endswith("metadata.json"):
+            continue
+        break
+    else:
+        logger.info("only metadata is present, need to download")
+        filename = resources[name]["url"].split("/")[-1]
+        print("down", filename)
+        fetch_file(resources[name]["url"], os.path.join(dir_temp,filename))
+        # TODO: download
     dataset = Dataset(path_dataset)
     return dataset
