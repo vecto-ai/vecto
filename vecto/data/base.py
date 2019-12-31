@@ -74,15 +74,25 @@ def load_dataset_infos():
                 print("url: ", metadata["url"])
                 print("folder: ", f_meta.parent)
                 metadata["local_path"] = f_meta.parent
-                resources["name"] = metadata
+                resources[metadata["name"]] = metadata
                 # check if files are not there
                 # fownload
         print()
 
 def get_dataset_by_name(name):
     load_dataset_infos()
-    path_dataset = os.path.join(dir_datasets, name)
-    dataset = Dataset(path_dataset)
-    return dataset
+    if not resources:
+        logger.info("index not found, forcing download")
+        download_index()
+        load_dataset_infos()
+
+    print(resources)
+
+    if name in resources:
+        path_dataset = resources[name]["local_path"]
+    else:
+        raise RuntimeError("Dataset %s not known" % name)
     # TODO: check if it seats locally
     # TODO: download
+    dataset = Dataset(path_dataset)
+    return dataset
