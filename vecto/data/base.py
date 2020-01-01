@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 # TODO: make config module-global
 # config = load_config()
 # TODO: get dataset dir from config
+# TODO: use pathlib everywhere
 dir_datasets = os.path.expanduser("~/.vecto/datasets")
 dir_temp = os.path.join(tempfile.gettempdir(), "vecto", "tmp")
 os.makedirs(dir_datasets, exist_ok=True)
@@ -58,7 +59,6 @@ def download_index():
 
 
 def gen_metadata_snippets(path):
-#    for name in os.listdir(path):
     for sub in path.iterdir():
         if sub.name == "metadata.json":
             yield sub
@@ -71,24 +71,20 @@ def load_dataset_infos():
         # print("visiting", f_meta.parent)
         metadata = load_json(f_meta)
         if "name" in metadata:
-            # print("name: ", metadata["name"])
             if "url" in metadata:
-                # print("url: ", metadata["url"])
-                # print("folder: ", f_meta.parent)
                 metadata["local_path"] = f_meta.parent
                 resources[metadata["name"]] = metadata
-                # check if files are not there
-                # fownload
-        print()
 
 def download_dataset_by_name(name):
     filename = resources[name]["url"].split("/")[-1]
     print("down", filename)
     path_download_archive = os.path.join(dir_temp,filename)
+    # TODO: uncomment
     # fetch_file(resources[name]["url"], path_download_archive)
-    # TODO: unzip
     with ZipFile(path_download_archive) as z:
         z.extractall(os.path.join(dir_temp, name))
+    # TODO: find
+
 
 def is_dataset_downloaded(path_dataset):
     for f in path_dataset.iterdir():
@@ -108,7 +104,6 @@ def get_dataset_by_name(name):
         path_dataset = resources[name]["local_path"]
     else:
         raise RuntimeError("Dataset %s not known" % name)
-    # TODO: refactor this into intuitive method
     if not is_dataset_downloaded(path_dataset):
         logger.info("only metadata is present, need to download")
         download_dataset_by_name(name)
