@@ -2,6 +2,7 @@ import fnmatch
 import os
 import pathlib
 import tarfile
+from zipfile import ZipFile
 import logging
 import tempfile
 # from vecto.config import load_config
@@ -67,18 +68,34 @@ def gen_metadata_snippets(path):
 
 def load_dataset_infos():
     for f_meta in gen_metadata_snippets(pathlib.Path(dir_datasets)):
-        print("visiting", f_meta.parent)
+        # print("visiting", f_meta.parent)
         metadata = load_json(f_meta)
         if "name" in metadata:
-            print("name: ", metadata["name"])
+            # print("name: ", metadata["name"])
             if "url" in metadata:
-                print("url: ", metadata["url"])
-                print("folder: ", f_meta.parent)
+                # print("url: ", metadata["url"])
+                # print("folder: ", f_meta.parent)
                 metadata["local_path"] = f_meta.parent
                 resources[metadata["name"]] = metadata
                 # check if files are not there
                 # fownload
         print()
+
+def download_dataset_by_name(name):
+    filename = resources[name]["url"].split("/")[-1]
+    print("down", filename)
+    path_download_archive = os.path.join(dir_temp,filename)
+    # fetch_file(resources[name]["url"], path_download_archive)
+    # TODO: unzip
+    with ZipFile(path_download_archive) as z:
+        z.extractall(os.path.join(dir_temp, name))
+
+def is_dataset_downloaded(path_dataset):
+    for f in path_dataset.iterdir():
+        if f.name.endswith("metadata.json"):
+            continue
+        return True
+    return False
 
 def get_dataset_by_name(name):
     load_dataset_infos()
@@ -86,22 +103,14 @@ def get_dataset_by_name(name):
         logger.info("index not found, forcing download")
         download_index()
         load_dataset_infos()
-
-    print(resources)
-
+    # print(resources)
     if name in resources:
         path_dataset = resources[name]["local_path"]
     else:
         raise RuntimeError("Dataset %s not known" % name)
-    for f in path_dataset.iterdir():
-        if f.name.endswith("metadata.json"):
-            continue
-        break
-    else:
+    # TODO: refactor this into intuitive method
+    if not is_dataset_downloaded(path_dataset):
         logger.info("only metadata is present, need to download")
-        filename = resources[name]["url"].split("/")[-1]
-        print("down", filename)
-        fetch_file(resources[name]["url"], os.path.join(dir_temp,filename))
-        # TODO: download
+        download_dataset_by_name(name)
     dataset = Dataset(path_dataset)
     return dataset
