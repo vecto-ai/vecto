@@ -1,10 +1,11 @@
 import fnmatch
 import os
-import pathlib
+from pathlib import Path
 import tarfile
 from zipfile import ZipFile
 import logging
 import tempfile
+import shutil
 # from vecto.config import load_config
 from vecto.utils.metadata import WithMetaData
 from vecto.utils.data import load_json
@@ -63,11 +64,11 @@ def gen_metadata_snippets(path):
         if sub.name == "metadata.json":
             yield sub
         else:
-            if os.path.isdir(sub):
+            if sub.is_dir():
                 yield from gen_metadata_snippets(sub)
 
 def load_dataset_infos():
-    for f_meta in gen_metadata_snippets(pathlib.Path(dir_datasets)):
+    for f_meta in gen_metadata_snippets(Path(dir_datasets)):
         # print("visiting", f_meta.parent)
         metadata = load_json(f_meta)
         if "name" in metadata:
@@ -75,15 +76,20 @@ def load_dataset_infos():
                 metadata["local_path"] = f_meta.parent
                 resources[metadata["name"]] = metadata
 
-def download_dataset_by_name(name):
+def download_dataset_by_name(name, path_dataset):
     filename = resources[name]["url"].split("/")[-1]
     print("down", filename)
-    path_download_archive = os.path.join(dir_temp,filename)
-    # TODO: uncomment
-    # fetch_file(resources[name]["url"], path_download_archive)
+    path_download_archive = Path(dir_temp) / filename
+    fetch_file(resources[name]["url"], path_download_archive)
+    path_extracted = Path(dir_temp) / name
     with ZipFile(path_download_archive) as z:
-        z.extractall(os.path.join(dir_temp, name))
-    # TODO: find
+        z.extractall(path_extracted)
+    # TODO: make sure this returns topmost entry from the tree
+    first_metadata_path = next(gen_metadata_snippets(path_extracted)).parent
+    print(first_metadata_path)
+    for f in first_metadata_path.iterdir():
+        if not (path_dataset / f.name).exists():
+            shutil.move(str(f), str(path_dataset))
 
 
 def is_dataset_downloaded(path_dataset):
@@ -106,6 +112,6 @@ def get_dataset_by_name(name):
         raise RuntimeError("Dataset %s not known" % name)
     if not is_dataset_downloaded(path_dataset):
         logger.info("only metadata is present, need to download")
-        download_dataset_by_name(name)
+        download_dataset_by_name(name, path_dataset)
     dataset = Dataset(path_dataset)
     return dataset
