@@ -17,22 +17,22 @@ class Tests(unittest.TestCase):
     def test_api(self):
         embs = load_from_dir(path_emb)
         language_modeling = Language_modeling(method='lstm')
-        result = language_modeling.get_result(embs)
+        result = language_modeling.run(embs)
         self.assertIsInstance(result[0], dict)
         print(result)
 
         language_modeling = Language_modeling(method='lr')
-        result = language_modeling.get_result(embs)
+        result = language_modeling.run(embs)
         self.assertIsInstance(result[0], dict)
         print(result)
 
         language_modeling = Language_modeling(method='2FFNN')
-        result = language_modeling.get_result(embs)
+        result = language_modeling.run(embs)
         self.assertIsInstance(result[0], dict)
         print(result)
 
         language_modeling = Language_modeling(method='rnn')
-        result = language_modeling.get_result(embs)
+        result = language_modeling.run(embs)
         self.assertIsInstance(result[0], dict)
         print(result)
 
