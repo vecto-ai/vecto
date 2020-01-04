@@ -13,14 +13,14 @@ class Benchmark():
     def __init__(self):
         raise NotImplementedError
 
-    @abc.abstractmethod
-    def get_result(self, embeddings, path_dataset):
-        raise NotImplementedError
+    # @abc.abstractmethod
+    # def get_result(self, embeddings, path_dataset):
+    #     raise NotImplementedError
 
     def run_with_args(self, args):
         embeddings = load_from_dir(args.embeddings)
         print("SHAPE:", embeddings.matrix.shape)
-        print("vocab sieze:", embeddings.vocabulary.cnt_words)
+        print("vocab size:", embeddings.vocabulary.cnt_words)
         results = self.get_result(embeddings, args.dataset)
         if args.path_out:
             if os.path.isdir(args.path_out) or args.path_out.endswith("/"):

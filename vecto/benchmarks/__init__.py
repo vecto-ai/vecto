@@ -25,7 +25,7 @@ def list_benhcmarks(benchmarks):
         print(i)
 
 
-def run_cli(args=None):
+def run_benchmarks_cli(args=None):
     # TODO: load benchmark names from modules themselves
     available_benchmarks = []
     available_benchmarks.append("analogy")
@@ -54,8 +54,8 @@ def run_cli(args=None):
     if args.name in available_benchmarks:
         print("running ", args.name)
         mod = importlib.import_module("vecto.benchmarks." + args.name)
-        run = getattr(mod, 'run')
-        run(unknownargs)
+        run_cli = getattr(mod, 'run_cli')
+        run_cli(unknownargs)
     else:
         print("unknown benchmark name", args.name)
         list_benhcmarks(available_benchmarks)
