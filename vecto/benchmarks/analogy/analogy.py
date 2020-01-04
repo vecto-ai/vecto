@@ -5,7 +5,6 @@ import logging
 import progressbar
 # from tqdm import tqdm
 import sklearn
-from vecto.data import Dataset
 from ..base import Benchmark
 from .io import get_pairs
 from .solvers import LinearOffset, LRCos, PairDistance

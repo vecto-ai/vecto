@@ -6,22 +6,16 @@
     analogy
 """
 
-import argparse
-import logging
-from .analogy import Analogy
-
-logging.basicConfig(level=logging.DEBUG)
+# import logging
+from .analogy import Analogy as Benchmark
 
 
-def run_cli(args):
-    parser = argparse.ArgumentParser()
+# logging.basicConfig(level=logging.DEBUG)
+
+
+def add_extra_args(parser):
     parser.add_argument("embeddings")
     parser.add_argument("dataset")
     parser.add_argument("--method",
                         help="analogy solving method",
                         default="LRCos")
-    parser.add_argument("--path_out",
-                        help="destination folder to save results")
-    args = parser.parse_args(args)
-    benchmark = Analogy(method=args.method)
-    benchmark.run_with_args(args)
