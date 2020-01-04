@@ -26,7 +26,7 @@ def list_benhcmarks(benchmarks):
 
 
 def run_cli(args=None):
-    # TODO: load them from modules themselves
+    # TODO: load benchmark names from modules themselves
     available_benchmarks = []
     available_benchmarks.append("analogy")
     available_benchmarks.append("categorization")
