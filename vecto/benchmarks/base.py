@@ -1,6 +1,6 @@
 import abc
 import os
-from vecto.utils.metadata import WithMetaData
+# from vecto.utils.metadata import WithMetaData
 from vecto.embeddings import load_from_dir
 from vecto.utils.data import save_json, print_json
 from vecto.utils import get_time_str
