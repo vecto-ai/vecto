@@ -4,7 +4,7 @@ import contextlib
 import unittest
 import io
 from os import path
-from vecto.benchmarks.language_modeling import *
+from vecto.benchmarks.language_modeling import Benchmark as Language_modeling
 from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
 from tests.test_setup import run_module

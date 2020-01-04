@@ -1,20 +1,12 @@
 """Tests for embeddings module."""
 
 import unittest
-import os
 import io
 import contextlib
 from tests.test_setup import run_module
-
 import vecto
-from vecto.benchmarks import text_classification
-from vecto.benchmarks.similarity import Similarity
-from vecto.benchmarks.sequence_labeling import Sequence_labeling
-from vecto.benchmarks.language_modeling import Language_modeling
-# from vecto.benchmarks.similarity import visualize as similarity_visualize
-from vecto.benchmarks.text_classification import Text_classification
-from vecto.embeddings import load_from_dir
-# from vecto.utils.fetch_benchmarks import fetch_benchmarks
+import vecto.benchmarks
+import vecto.benchmarks.base
 from os import path
 
 # from shutil import rmtree

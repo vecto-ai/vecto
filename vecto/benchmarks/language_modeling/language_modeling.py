@@ -244,8 +244,9 @@ class Language_modeling(Benchmark):
         self.out = tmpBasePath
         self.resume = ''
 
-    def get_result(self, embeddings, dataset="ptb"):
-
+    def run(self, embeddings, dataset):
+        # TODO: this is ugly hack 
+        dataset = "ptb"
         self.unit = embeddings.matrix.shape[1]
 
         if self.test:

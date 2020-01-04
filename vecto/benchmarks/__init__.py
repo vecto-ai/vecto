@@ -76,13 +76,18 @@ def run_benchmark_by_name(name, args):
                         default=None,
                         help="destination folder to save results")
     args = parser.parse_args(args)
-    embeddings = load_from_dir(args.embeddings)
-    dataset = Dataset(args.dataset)
-
     dict_args = vars(args)
+    embeddings = load_from_dir(args.embeddings)
+    # TODO: this is ugly hack, do subparsers or something
+    if name == "language_modeling":
+        dataset = Dataset("/tmp/")
+        dataset.name = "ptb"
+    else:
+        dataset = Dataset(args.dataset)
+        dict_args.pop("dataset")
+
     dict_args.pop("embeddings")
     # TODO: not sure if all banchmarks use dataset arg
-    dict_args.pop("dataset")
     path_out = dict_args.pop("path_out")
     Benchmark = getattr(mod, "Benchmark")
     benchmark = Benchmark(**dict_args)
