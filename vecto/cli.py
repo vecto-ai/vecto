@@ -29,8 +29,8 @@ The most commonly used vecto commands are:
         getattr(self, args.command)()
 
     def benchmark(self):
-        from vecto.benchmarks import _run
-        _run(self.unknownargs)
+        from vecto.benchmarks import run_cli
+        run_cli(self.unknownargs)
 
     def create_vocab(self):
         print("CLI for vocabulary routines not implemented yet")

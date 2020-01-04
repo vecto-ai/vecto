@@ -25,7 +25,7 @@ def list_benhcmarks(benchmarks):
         print(i)
 
 
-def _run(args=None):
+def run_cli(args=None):
     # TODO: load them from modules themselves
     available_benchmarks = []
     available_benchmarks.append("analogy")
