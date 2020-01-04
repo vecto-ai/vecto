@@ -75,14 +75,13 @@ def run_benchmark_by_name(name, args):
     parser.add_argument("--path_out",
                         default=None,
                         help="destination folder to save results")
-    # pop used keys
     args = parser.parse_args(args)
-    # return
     embeddings = load_from_dir(args.embeddings)
     dataset = Dataset(args.dataset)
 
     dict_args = vars(args)
     dict_args.pop("embeddings")
+    # TODO: not sure if all banchmarks use dataset arg
     dict_args.pop("dataset")
     path_out = dict_args.pop("path_out")
     Benchmark = getattr(mod, "Benchmark")
