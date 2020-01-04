@@ -261,4 +261,5 @@ class Sequence_labeling(Benchmark):
             name = "F1_score"
         out['experiment_setup']['default_measurement'] = name
 
-        return out
+        # TODO: make dict a valid result as well
+        return [out]
