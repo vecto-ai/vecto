@@ -109,6 +109,7 @@ class Categorization(Benchmark):
         result["experiment_setup"] = {}
         result["result"] = result['global_stats']['scores']
         result["experiment_setup"]['default_measurement'] = 'Purity'
+        result["experiment_setup"]["task"] = "categorization"
 
         return result
 
