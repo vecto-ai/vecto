@@ -43,8 +43,9 @@ class Relation_extraction(Benchmark):
         self.epoch = epoch
         self.position_dims = position_dims
 
-    def run(self, embeddings, path_dataset):
+    def run(self, embeddings, dataset):
         print("Load dataset")
+        path_dataset = dataset.path
         data = load_data(embeddings, path_dataset)
 
         yTrain, sentenceTrain, positionTrain1, positionTrain2 = data['train_set']

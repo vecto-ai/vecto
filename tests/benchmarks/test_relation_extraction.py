@@ -6,6 +6,7 @@ import io
 from os import path
 from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
+from vecto.data import Dataset
 from tests.test_setup import run_module
 
 
