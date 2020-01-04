@@ -12,6 +12,8 @@
 
 import argparse
 from .text_classification import Text_classification as Benchmark
+# TODO: figure out where to put it better
+from .text_classification import load_model, predict, get_vectors
 
 
 def add_extra_args(parser):

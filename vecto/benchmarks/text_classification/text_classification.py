@@ -96,7 +96,7 @@ class Text_classification(Benchmark):
         self.shrink = shrink
 
     # TODO: let all benchmarks set output path in init
-    def get_result(self, embeddings, path_dataset,
+    def run(self, embeddings, dataset,
                    path_output='/tmp/text_classification/'):
         self.out = path_output
         self.unit = embeddings.matrix.shape[1]
@@ -105,7 +105,7 @@ class Text_classification(Benchmark):
             os.makedirs(path_output)
 
         # TODO: move this to protonn ds management
-        self.path_dataset = path_dataset
+        # self.path_dataset = path_dataset
         # if self.path_dataset == 'dbpedia':
         #     train, test, vocab = text_datasets.get_dbpedia(
         #         char_based=self.char_based,
@@ -125,6 +125,9 @@ class Text_classification(Benchmark):
         #         vocab=embeddings.vocabulary.dic_words_ids,
         #         shrink=self.shrink)
         # else:  # finallly, if file is not downloadable, load from local path
+
+        # TODO: make sure dataset module support adapter.py
+        path_dataset = dataset.path
         print(path_dataset)
         path_adapter = os.path.join(path_dataset, "adapter.py")
         if os.path.isfile(path_adapter):

@@ -95,7 +95,7 @@ def run_benchmark_by_name(name, args):
             dataset = dataset.metadata["name"]
             timestamp = get_time_str()
             task = results[0]["experiment_setup"]["task"]
-            name_file_out = os.path.join(args.path_out,
+            name_file_out = os.path.join(path_out,
                                          task,
                                          dataset,
                                          timestamp,

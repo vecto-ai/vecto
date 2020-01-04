@@ -34,6 +34,9 @@ class Dataset(WithMetaData):
             raise FileNotFoundError("test dataset dir does not exist:" + path)
         super().__init__(path)
         self.path = path
+        if "name" not in self.metadata:
+            # TODO: use proper path magic
+            self.metadata["name"] = path.split("/")[-1]
 
     def file_iterator(self):
         for root, _, filenames in os.walk(self.path):
