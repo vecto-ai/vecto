@@ -94,6 +94,8 @@ def run_benchmark_by_name(name, args):
         if os.path.isdir(path_out) or path_out.endswith("/"):
             dataset = dataset.metadata["name"]
             timestamp = get_time_str()
+            print(results)
+            exit(1)
             task = results[0]["experiment_setup"]["task"]
             name_file_out = os.path.join(path_out,
                                          task,
