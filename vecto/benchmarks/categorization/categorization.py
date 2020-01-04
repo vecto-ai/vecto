@@ -1,12 +1,12 @@
 from ..base import Benchmark
 from vecto._version import VERSION
 from collections import defaultdict
-from sklearn import preprocessing
-from sklearn.cluster import KMeans, SpectralClustering
+# from sklearn import preprocessing
+from sklearn.cluster import KMeans
 from vecto.benchmarks.categorization.metrics import *
 from os import path, listdir
 import csv
-import numpy as np
+# import numpy as np
 from scipy.spatial import distance
 import os
 
@@ -125,7 +125,10 @@ class Categorization(Benchmark):
         data = self.read_test_set(path.join(path_to_dir, file_name))
         return dataset_name, data
 
-    def run(self, embs, path_dataset):
+    def run(self, embs, dataset):
+        path_dataset = dataset.path
+        if self.normalize:
+            embs.normalize()
         results = []
         datasets = self.read_datasets_from_dir(path_dataset)
         for dataset_name, dataset_data in datasets.items():
@@ -135,13 +138,6 @@ class Categorization(Benchmark):
             result['experiment_setup']['method'] = self.method
             result['experiment_setup']['vecto_version'] = VERSION
             results.append(result)
-        return results
-
-    def get_result(self, embeddings, path_dataset):
-        if self.normalize:
-            embeddings.normalize()
-
-        results = self.run(embeddings, path_dataset)
         return results
 
     def collect_stats(self, data, vectors, labels):
