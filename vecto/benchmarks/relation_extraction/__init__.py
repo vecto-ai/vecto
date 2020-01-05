@@ -1,9 +1,7 @@
-import argparse
-from .relation_extraction import Relation_extraction
+from .relation_extraction import Relation_extraction as Benchmark
 
 
-def run(extra_args):
-    parser = argparse.ArgumentParser()
+def add_extra_args(parser):
     parser.add_argument("embeddings")
     parser.add_argument("dataset")
 
@@ -19,14 +17,3 @@ def run(extra_args):
                         help='D')
     parser.add_argument('--position_dims', '-pd', type=int, default=100,
                         help='D')
-    parser.add_argument("--path_out",
-                        default=False,
-                        help="destination folder to save results")
-    args = parser.parse_args(extra_args)
-    relation_extraction = Relation_extraction(batchsize=args.batchsize,
-                                              epoch=args.epoch,
-                                              nb_filter=args.nb_filter,
-                                              filter_length=args.filter_length,
-                                              hidden_dims=args.hidden_dims,
-                                              position_dims=args.position_dims)
-    relation_extraction.run_with_args(args)

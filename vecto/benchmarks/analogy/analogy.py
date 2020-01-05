@@ -5,7 +5,6 @@ import logging
 import progressbar
 # from tqdm import tqdm
 import sklearn
-from vecto.data import Dataset
 from ..base import Benchmark
 from .io import get_pairs
 from .solvers import LinearOffset, LRCos, PairDistance
@@ -225,9 +224,9 @@ class Analogy(Benchmark):
         #self.embs.matrix = self.embs.matrix[:, 0:newdim]
         #self.embs.name = re.sub("_d(\d+)", "_d{}".format(newdim), self.embs.name)
 
-    def get_result(self, embeddings, path_dataset):  # , group_subcategory=False
-        if self.normalize:
-            embeddings.normalize()
-        dataset = Dataset(path_dataset)
-        results = self.run(embeddings, dataset)  #group_subcategory
-        return results
+    # def get_result(self, embeddings, path_dataset):  # , group_subcategory=False
+    #     if self.normalize:
+    #         embeddings.normalize()
+    #     dataset = Dataset(path_dataset)
+    #     results = self.run(embeddings, dataset)  #group_subcategory
+    #     return results

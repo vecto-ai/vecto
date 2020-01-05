@@ -183,7 +183,7 @@ class Sequence_labeling(Benchmark):
         if dataset == 'pos':
             eval_options = ['-r']
         res = self.get_perf(evalFile, eval_options)
-        print(res)
+        # print(res)
 
         out = {}
         out["result"] = []
@@ -202,8 +202,10 @@ class Sequence_labeling(Benchmark):
         out['details']['pred_test'] = pred_test
         return out
 
-    def _run(self, embs, path_dataset):
-
+    def run(self, embs, dataset):
+        if self.normalize:
+            embs.normalize()
+        path_dataset = dataset.path
         # specify the task (can be ner, pos or chunk)
         task = os.path.basename(path_dataset)
         dataset = task
@@ -259,9 +261,5 @@ class Sequence_labeling(Benchmark):
             name = "F1_score"
         out['experiment_setup']['default_measurement'] = name
 
-        return out
-
-    def get_result(self, embeddings, path_dataset):
-        if self.normalize:
-            embeddings.normalize()
-        return [self._run(embeddings, path_dataset)]
+        # TODO: make dict a valid result as well
+        return [out]

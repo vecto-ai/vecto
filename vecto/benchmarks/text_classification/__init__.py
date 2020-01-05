@@ -11,14 +11,12 @@
 """
 
 import argparse
-import os
-from vecto.utils.data import save_json, print_json
-from .text_classification import Text_classification
-from vecto.embeddings import load_from_dir
+from .text_classification import Text_classification as Benchmark
+# TODO: figure out where to put it better
+from .text_classification import load_model, predict, get_vectors
 
 
-def run(extra_args):
-    parser = argparse.ArgumentParser()
+def add_extra_args(parser):
     parser.add_argument("embeddings")
     parser.add_argument("dataset")
     parser.add_argument('--batchsize', '-b', type=int, default=64,
@@ -34,9 +32,8 @@ def run(extra_args):
     parser.add_argument('--model', '-model', default='cnn',
                         choices=['cnn', 'rnn', 'bow'],
                         help='Name of encoder model type')
-    parser.add_argument("--path_out", default=False, help="destination folder to save results")
-    args = parser.parse_args(extra_args)
-    embeddings = load_from_dir(args.embeddings)
-    text_classification = Text_classification(batchsize=args.batchsize, epoch=args.epoch, gpu=args.gpu,
-                                              layer=args.layer, dropout=args.dropout, model=args.model)
-    text_classification.run_with_args(args)
+    # args = parser.parse_args(extra_args)
+    # embeddings = load_from_dir(args.embeddings)
+    # text_classification = Text_classification(batchsize=args.batchsize, epoch=args.epoch, gpu=args.gpu,
+    #                                           layer=args.layer, dropout=args.dropout, model=args.model)
+    # text_classification.run_with_args(args)

@@ -4,9 +4,10 @@ import contextlib
 import unittest
 import io
 from os import path
-from vecto.benchmarks.sequence_labeling import *
+from vecto.benchmarks.sequence_labeling import Benchmark as Sequence_labeling
 from vecto.benchmarks import visualize
 from vecto.embeddings import load_from_dir
+from vecto.data import Dataset
 from tests.test_setup import run_module
 
 
@@ -22,7 +23,8 @@ class Tests(unittest.TestCase):
         for method in ['lr', '2FFNN']:
             sequence_labeling = Sequence_labeling(method=method)
             for subtask in ['chunk', 'pos', 'ner']:  # , 'chunk', 'pos', 'ner'
-                result = sequence_labeling.get_result(embs, path.join(path_sequence_labeling_dataset, subtask))
+                dataset = Dataset(path.join(path_sequence_labeling_dataset, subtask))
+                result = sequence_labeling.run(embs, dataset)
                 self.assertIsInstance(result[0], dict)
                 print(result)
 
