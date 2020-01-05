@@ -65,6 +65,23 @@ def choose_benchmark(args):
         exit(-1)
 
 
+def save_results(results, path_out, dataset_name):
+    if os.path.isdir(path_out) or path_out.endswith("/"):
+        timestamp = get_time_str()
+        if isinstance(results, list):
+            task = results[0]["experiment_setup"]["task"]
+        else:
+            task = results["experiment_setup"]["task"]
+        name_file_out = os.path.join(path_out,
+                                     task,
+                                     dataset_name,
+                                     timestamp,
+                                     "results.json")
+        save_json(results, name_file_out)
+    else:
+        save_json(results, path_out)
+
+
 def run_benchmark_by_name(name, args):
     print(name, args)
     print("running ", name)
@@ -96,21 +113,7 @@ def run_benchmark_by_name(name, args):
     print("vocab size:", embeddings.vocabulary.cnt_words)
     results = benchmark.run(embeddings, dataset)
     if path_out:
-        if os.path.isdir(path_out) or path_out.endswith("/"):
-            dataset = dataset.metadata["name"]
-            timestamp = get_time_str()
-            if isinstance(results, list):
-                task = results[0]["experiment_setup"]["task"]
-            else:
-                task = results["experiment_setup"]["task"]
-            name_file_out = os.path.join(path_out,
-                                         task,
-                                         dataset,
-                                         timestamp,
-                                         "results.json")
-            save_json(results, name_file_out)
-        else:
-            save_json(results, path_out)
+        save_results(results, path_out, dataset.metadata["name"])
     else:
         print_json(results)
 
