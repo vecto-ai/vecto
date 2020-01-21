@@ -2,7 +2,7 @@
     "class": "dataset",
         "task": "analogy",
         "language": ["english"],
-        "name": "TestAnalogy",
+        "name": "dummy_analogy",
         "description": "Test Analogy Set",
         "domain": "general",
         "date": "2016",
