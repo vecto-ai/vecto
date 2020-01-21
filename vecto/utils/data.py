@@ -42,4 +42,4 @@ def jsonify(data):
         return str(data)
     if type(data).__module__ == 'numpy':
         return data.tolist()
-    return data
+    return str(data)
