@@ -10,7 +10,7 @@ import shutil
 # from vecto.config import load_config
 from vecto.utils.metadata import WithMetaData
 from vecto.utils.data import load_json
-from .io import fetch_file
+from .io import fetch_file, read_first_col_is_label_format
 
 logger = logging.getLogger(__name__)
 # TODO: make config module-global
@@ -22,6 +22,7 @@ dir_temp = os.path.join(tempfile.gettempdir(), "vecto", "tmp")
 os.makedirs(dir_datasets, exist_ok=True)
 os.makedirs(dir_temp, exist_ok=True)
 resources = {}
+
 
 class Dataset(WithMetaData):
     """
@@ -45,6 +46,16 @@ class Dataset(WithMetaData):
                 if filename.endswith('json'):
                     continue
                 yield(os.path.join(root, filename))
+
+    def get_train(self):
+        # TODO: decide what to do with char_basrd
+        char_based = False
+        train = read_first_col_is_label_format(
+            os.path.join(self.path, 'train'), char_based=char_based)
+        #test = read_first_col_is_label_format(os.path.join(self.path, 'test'),
+        #                      char_based=char_based)
+        return train
+
 
 
 def download_index():
