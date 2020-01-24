@@ -1,3 +1,4 @@
+
 import fnmatch
 import os
 from pathlib import Path
@@ -70,26 +71,29 @@ def gen_metadata_snippets(path):
             if sub.is_dir():
                 yield from gen_metadata_snippets(sub)
 
+
 def load_dataset_infos():
     for f_meta in gen_metadata_snippets(Path(dir_datasets)):
         # print("visiting", f_meta.parent)
         metadata = load_json(f_meta)
         if "name" in metadata:
-            if "url" in metadata:
-                metadata["local_path"] = f_meta.parent
-                resources[metadata["name"]] = metadata
+            metadata["local_path"] = f_meta.parent
+            resources[metadata["name"]] = metadata
+
 
 def download_dataset_by_name(name, path_dataset):
     filename = resources[name]["url"].split("/")[-1]
-    print("down", filename)
+    logger.debug("downloading ", filename)
     path_download_archive = Path(dir_temp) / filename
+    if "url" not in resources[name]:
+        raise RuntimeError(f"no URL to download dataset {name}")
     fetch_file(resources[name]["url"], path_download_archive)
     path_extracted = Path(dir_temp) / name
     with ZipFile(path_download_archive) as z:
         z.extractall(path_extracted)
     # TODO: make sure this returns topmost entry from the tree
     first_metadata_path = next(gen_metadata_snippets(path_extracted)).parent
-    print(first_metadata_path)
+    # print(first_metadata_path)
     for f in first_metadata_path.iterdir():
         if not (path_dataset / f.name).exists():
             shutil.move(str(f), str(path_dataset))
@@ -101,6 +105,7 @@ def is_dataset_downloaded(path_dataset):
             continue
         return True
     return False
+
 
 def get_dataset_by_name(name):
     load_dataset_infos()
