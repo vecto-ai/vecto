@@ -4,8 +4,9 @@ import abc
 
 from vecto.utils.metadata import WithMetaData, get_full_typename
 
-nltk.download('punkt', quiet=True)
-nltk.download('stopwords', quiet=True)
+# TODO: ckeck id the data is there
+#nltk.download('punkt', quiet=True)
+#nltk.download('stopwords', quiet=True)
 
 _DEFAULT_WORD_SPLITTER = nltk.tokenize.WordPunctTokenizer().tokenize
 _WHITESPACE_TOKEN_SPLITTER = re.compile(r'[^\s]+').findall
@@ -64,7 +65,7 @@ class Tokenizer(BaseTokenizer):
                  token_splitter=_DEFAULT_WORD_SPLITTER,
                  token_normalizer=default_token_normalizer,
                  good_token_re=DEFAULT_GOOD_TOKEN_RE,
-                 min_token_len=3,
+                 min_token_len=1,
                  stopwords=nltk.corpus.stopwords.words('english')):
         # TODO: decide how to save stopwords to metadata
         super().__init__(normalizer=get_full_typename(token_normalizer),
