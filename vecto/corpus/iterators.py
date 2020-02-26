@@ -80,7 +80,8 @@ class TokenizedSequenceIterator(BaseIterator):
             # TODO: sentence may span over multiple lines, we should take this into account somehow
             # I think that it's better to ignore this here and write docs like:
             # "You should be aware of that and prepare your data accordingly, e.g. one line - one real doc"
-            for tokenized_sentence in self.tokenizer(line.strip()):
+            tokenized = self.tokenizer(line.strip())
+            for tokenized_sentence in tokenized:
                 yield tokenized_sentence
 
 
@@ -89,13 +90,13 @@ class TokenIterator(BaseIterator):
     Receives any corpus yielding text (e.g. `FileLineIterator`) and produces a sequence of tokens.
     """
 
-    def __init__(self, base_corpus, verbose=0):
-        super(TokenIterator, self).__init__(base_corpus=base_corpus.metadata,
+    def __init__(self, parent_iterator, verbose=0):
+        super(TokenIterator, self).__init__(parent_iterator=parent_iterator.metadata,
                                             verbose=verbose)
-        self.base_corpus = base_corpus
+        self.parent_iterator = parent_iterator
 
     def _generate_samples(self):
-        for tokenized_str in self.base_corpus:
+        for tokenized_str in self.parent_iterator:
             for token in tokenized_str:
                 yield token
 
