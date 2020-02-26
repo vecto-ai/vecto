@@ -71,8 +71,12 @@ class Vocabulary(WithMetaData):
         os.makedirs(path, exist_ok=True)
         f = open(os.path.join(path, "vocab.tsv"), "w", encoding="utf8")
         f.write("#word\tfrequency\n")
+        len_frequencies = len(self.lst_frequencies)
         for i in range(len(self.lst_words)):
-            f.write("{}\t{}\n".format(self.lst_words[i], self.lst_frequencies[i]))
+            if len_frequencies > 0:
+                f.write("{}\t{}\n".format(self.lst_words[i], self.lst_frequencies[i]))
+            else:
+                f.write("{}\t{}\n".format(self.lst_words[i], 0))
         f.close()
         self.save_metadata(path)
 
