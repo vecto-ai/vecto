@@ -38,6 +38,8 @@ class Vocabulary(WithMetaData):
             return -1
 
     def get_word_by_id(self, i):
+        if i < 0:
+            raise RuntimeError("word id can not be negative")
         return (self.lst_words[i])
 
     def get_frequency(self, i):
