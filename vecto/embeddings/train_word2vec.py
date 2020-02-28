@@ -160,7 +160,7 @@ class EmbedDumper(training.Extension):
     #     pass
 
     def __call__(self, trainer):
-        print("dumping embeddings")
+        # print("dumping embeddings")
         epoch = trainer.updater.epoch
         net = trainer.updater._optimizers["main"].target
         save_embeddings(self.params["path_out"],
