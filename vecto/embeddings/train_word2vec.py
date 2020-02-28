@@ -111,7 +111,7 @@ class SoftmaxCrossEntropyLoss(chainer.Chain):
         return F.softmax_cross_entropy(self.out(x), t)
 
 
-def create_model(args, net, vocab):
+def create_embeddings(args, net, vocab):
     model = WordEmbeddingsDense()
     model.vocabulary = vocab
     model.metadata["vocabulary"] = vocab.metadata
@@ -232,10 +232,10 @@ def train(args):
     trainer.extend(extensions.ProgressBar())
     trainer.extend(extensions.LogReport())
     trainer.run()
-    model = create_model(args, model, vocab)
+    embeddings = create_embeddings(args, model, vocab)
     time_end = timer()
-    model.metadata["execution_time"] = time_end - time_start
-    return model
+    embeddings.metadata["execution_time"] = time_end - time_start
+    return embeddings
 
 
 def run(args):
