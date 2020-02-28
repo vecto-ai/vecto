@@ -174,7 +174,7 @@ def save_embeddings(path, epoch, model, vocab, metadata, execution_time):
     path = Path(path)
     embeddings = WordEmbeddingsDense()
     embeddings.vocabulary = vocab
-    embeddings.metadata = metadata
+    embeddings.metadata.update(metadata)
     embeddings.metadata["vocabulary"] = vocab.metadata
     embeddings.metadata["epoch"] = epoch
     embeddings.metadata["vecto_version"] = vecto.__version__
