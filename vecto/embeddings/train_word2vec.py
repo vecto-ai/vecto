@@ -160,6 +160,21 @@ def get_model(args, loss_func, vocab, vocab_ngram_tokens, current_utils=utils.wo
     return model
 
 
+#@training.make_extension(trigger=(1, 'epoch'))
+#def dump_embs(trainer):
+#    print("dumping embeddings")
+class EmbedDumper(training.Extension):
+
+    def __init__(self, params):
+        self.params = params
+    def initialize(self, trainer):
+        pass
+
+    def __call__(self, trainer):
+        print("dumping embeddings")
+        print(trainer.updater.epoch)
+
+
 def train(args):
     time_start = timer()
     if args.subword == 'none':
@@ -231,6 +246,7 @@ def train(args):
         trainer.extend(extensions.PrintReport(['epoch', 'main/loss', 'elapsed_time']))
     trainer.extend(extensions.ProgressBar())
     trainer.extend(extensions.LogReport())
+    trainer.extend(EmbedDumper(vars(args)), trigger=(1, 'epoch'))
     trainer.run()
     embeddings = create_embeddings(args, model, vocab)
     time_end = timer()
