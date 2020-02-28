@@ -84,8 +84,14 @@ class DirWindowIterator(chainer.dataset.Iterator):
             self.context.append(-1)
 
         wordIds = self.context
-        words = [self.vocab.get_word_by_id(c) for c in wordIds]
+        # print("original context", self.context)
+        # words = [self.vocab.get_word_by_id(c) for c in wordIds if c >= 0]
+        # TODO: this is ugly hack to avoid <0 check in vocab
+        # should use normal ids for <unc> etc
+        words = [self.vocab.lst_words[c] for c in wordIds]
+        # print("words", words)
         tokenIdsListList = getTokenIdsListList(words, self.vocab_ngram_tokens, self.word2chars)
+        # print("#######3tokenIdsListList", self.center, self.context, tokenIdsListList)
 
         return self.center, self.context, tokenIdsListList
 
@@ -119,6 +125,7 @@ class DirWindowIterator(chainer.dataset.Iterator):
                     while len(tokenIds) < local_max_tokens_length:
                         tokenIds.append(-2)
 
+        # print(tokenIdsListList)
         tokenIdsListListList = np.array(tokenIdsListListList, dtype=np.int32)
         tokenIdsList_merged = np.reshape(tokenIdsListListList,
                                          (tokenIdsListListList.shape[0] * tokenIdsListListList.shape[1] *

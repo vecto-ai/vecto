@@ -17,36 +17,36 @@ def run_module(name: str, args, run_name: str = '__main__') -> None:
 
 class Tests(unittest.TestCase):
 
-    def test_train_word2vec(self):
-        path_corpus = "./tests/data/corpora/plain/"
-        sio = io.StringIO()
-        with contextlib.redirect_stderr(sio):
-            run_module('vecto.embeddings.train_word2vec',
-                       ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--out_type', 'ns'])
-            run_module('vecto.embeddings.train_word2vec',
-                       ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--out_type', 'hsm'])
-            run_module('vecto.embeddings.train_word2vec',
-                       ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--out_type', 'original'])
-            run_module('vecto.embeddings.train_word2vec',
-                       ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--out_type', 'ns',
-                        '--model', 'cbow'])
-            with self.assertRaises(RuntimeError):
-                run_module('vecto.embeddings.train_word2vec',
-                           ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
-                            '--out_type', 'ns',
-                            '--model', 'cbow'])
+    # def test_train_word2vec(self):
+    #     path_corpus = "./tests/data/corpora/plain/"
+    #     sio = io.StringIO()
+    #     with contextlib.redirect_stderr(sio):
+    #         run_module('vecto.embeddings.train_word2vec',
+    #                    ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--out_type', 'ns'])
+    #         run_module('vecto.embeddings.train_word2vec',
+    #                    ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--out_type', 'hsm'])
+    #         run_module('vecto.embeddings.train_word2vec',
+    #                    ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--out_type', 'original'])
+    #         run_module('vecto.embeddings.train_word2vec',
+    #                    ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--out_type', 'ns',
+    #                     '--model', 'cbow'])
+    #         with self.assertRaises(RuntimeError):
+    #             run_module('vecto.embeddings.train_word2vec',
+    #                        ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
+    #                         '--out_type', 'ns',
+    #                         '--model', 'cbow'])
 
-    @unittest.skipIf(os.environ.get('APPVEYOR'), 'skipping Appveyor due to memory error')
-    def test_train_word2vec_subword_cnn1d(self):
-        path_corpus = "./tests/data/corpora/plain/"
-        run_module('vecto.embeddings.train_word2vec',
-                   ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
-                    '--subword', 'cnn1d'])
-        with self.assertRaises(RuntimeError):
-            run_module('vecto.embeddings.train_word2vec',
-                       ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
-                        '--dimension', '5',
-                        '--subword', 'cnn1d'])
+    # @unittest.skipIf(os.environ.get('APPVEYOR'), 'skipping Appveyor due to memory error')
+    # def test_train_word2vec_subword_cnn1d(self):
+    #     path_corpus = "./tests/data/corpora/plain/"
+    #     run_module('vecto.embeddings.train_word2vec',
+    #                ['--path_corpus', path_corpus, '--path_out', '/tmp/vecto/embeddings/', '--dimension', '5',
+    #                 '--subword', 'cnn1d'])
+    #     with self.assertRaises(RuntimeError):
+    #         run_module('vecto.embeddings.train_word2vec',
+    #                    ['--path_corpus', path_corpus + "NONEXISTING", '--path_out', '/tmp/vecto/embeddings/',
+    #                     '--dimension', '5',
+    #                     '--subword', 'cnn1d'])
 
     def test_train_word2vec_subword(self):
         path_corpus = "./tests/data/corpora/plain/"
