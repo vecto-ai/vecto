@@ -15,6 +15,7 @@ from chainer.training import extensions
 import logging
 import os
 import vecto
+from pathlib import Path
 from vecto.embeddings.dense import WordEmbeddingsDense
 from vecto.vocabulary import Vocabulary
 from vecto.vocabulary.vocabulary import create_from_dir, create_ngram_tokens_from_dir, create_from_annotated_dir
@@ -111,20 +112,6 @@ class SoftmaxCrossEntropyLoss(chainer.Chain):
         return F.softmax_cross_entropy(self.out(x), t)
 
 
-def create_model(args, net, vocab):
-    model = WordEmbeddingsDense()
-    model.vocabulary = vocab
-    model.metadata["vocabulary"] = vocab.metadata
-    model.metadata.update(vars(args))
-    model.metadata["vsmlib_version"] = vecto.__version__
-    model.matrix = cuda.to_cpu(net.getEmbeddings(gpu=args.gpu))
-    if args.out_type == 'ns':
-        model.matrix_context = cuda.to_cpu(net.getEmbeddings_context())
-    else:
-        model.matrix_context = None
-    return model
-
-
 def get_loss_func(args, vocab_context):
     word_counts = vocab_context.lst_frequencies
     if args.out_type == 'hsm':
@@ -160,8 +147,53 @@ def get_model(args, loss_func, vocab, vocab_ngram_tokens, current_utils=utils.wo
     return model
 
 
+#@training.make_extension(trigger=(1, 'epoch'))
+#def dump_embs(trainer):
+#    print("dumping embeddings")
+class EmbedDumper(training.Extension):
+
+    def __init__(self, params, vocab):
+        self.params = params
+        self.vocab = vocab
+        self.time_start = timer()
+    # def initialize(self, trainer):
+    #     pass
+
+    def __call__(self, trainer):
+        print("dumping embeddings")
+        epoch = trainer.updater.epoch
+        net = trainer.updater._optimizers["main"].target
+        save_embeddings(self.params["path_out"],
+                        epoch,
+                        net,
+                        self.vocab, self.params,
+                        timer() - self.time_start)
+
+
+def save_embeddings(path, epoch, model, vocab, metadata, execution_time):
+    path = Path(path)
+    embeddings = WordEmbeddingsDense()
+    embeddings.vocabulary = vocab
+    embeddings.metadata.update(metadata)
+    embeddings.metadata["vocabulary"] = vocab.metadata
+    embeddings.metadata["epoch"] = epoch
+    embeddings.metadata["vecto_version"] = vecto.__version__
+    embeddings.matrix = cuda.to_cpu(model.getEmbeddings(gpu=metadata["gpu"]))
+    if metadata["out_type"] == 'ns':
+        model.matrix_context = cuda.to_cpu(model.getEmbeddings_context())
+    else:
+        model.matrix_context = None
+    embeddings.metadata["execution_time"] = execution_time #time_end - time_start
+    embeddings.metadata["embeddings_type"] = "vanilla"
+    path_out = path / f"ep_{epoch:03}"
+    embeddings.save_to_dir(path_out)
+    # if embeddings.matrix_context is not None:
+    #     embeddings.matrix = model.matrix_context
+    #     embeddings.metadata["embeddings_type"] = "context"
+    #     embeddings.save_to_dir(os.path.join(path_out, 'context'))
+
+
 def train(args):
-    time_start = timer()
     if args.subword == 'none':
         current_utils = utils.word
     else:
@@ -206,6 +238,7 @@ def train(args):
 
     optimizer = chainer.optimizers.Adam()
     optimizer.setup(model)
+    save_embeddings(args.path_out, 0, model, vocab, vars(args), 0)
 
     if os.path.isfile(args.path_corpus):
         # todo for file corpus
@@ -231,21 +264,13 @@ def train(args):
         trainer.extend(extensions.PrintReport(['epoch', 'main/loss', 'elapsed_time']))
     trainer.extend(extensions.ProgressBar())
     trainer.extend(extensions.LogReport())
+    trainer.extend(EmbedDumper(vars(args), vocab), trigger=(1, 'epoch'))
     trainer.run()
-    model = create_model(args, model, vocab)
-    time_end = timer()
-    model.metadata["execution_time"] = time_end - time_start
-    return model
 
 
 def run(args):
-    model = train(args)
-    model.metadata["embeddings_type"] = "vanilla"
-    model.save_to_dir(args.path_out)
-    if model.matrix_context is not None:
-        model.matrix = model.matrix_context
-        model.metadata["embeddings_type"] = "context"
-        model.save_to_dir(os.path.join(args.path_out, 'context'))
+    train(args)
+
     logger.info("model saved to " + args.path_out)
 
 

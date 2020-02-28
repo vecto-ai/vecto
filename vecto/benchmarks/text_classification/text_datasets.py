@@ -8,7 +8,7 @@ import tempfile
 
 import numpy
 
-import chainer
+#import chainer
 
 from vecto.benchmarks.text_classification.nlp_utils import normalize_text
 from vecto.corpus.tokenization import word_tokenize_txt
