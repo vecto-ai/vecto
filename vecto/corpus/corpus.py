@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import logging
 from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator, \
@@ -115,7 +116,10 @@ def load_file_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
     # specify what to do with missing words
     # replace numbers with special tokens
     result = []
-    ti = FileCorpus(path).get_token_iterator(tokenizer=tokenizer)
+    if os.path.isfile(path):
+        ti = FileCorpus(path).get_token_iterator(tokenizer=tokenizer)
+    else:
+        ti = DirCorpus(path).get_token_iterator(tokenizer=tokenizer)
     for token in ti:
         w = token  # specify what to do with missing words
         result.append(vocabulary.get_id(w))
