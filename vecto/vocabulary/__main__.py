@@ -1,6 +1,7 @@
 import os
 import argparse
-from .vocabulary import create_from_dir, create_ngram_tokens_from_dir, create_from_annotated_dir
+from .vocabulary import create_ngram_tokens_from_dir, create_from_annotated_dir
+from .vocabulary import create_from_path
 
 
 def parse_args():
@@ -28,7 +29,7 @@ def parse_args():
 def run(args):
     print(args.type)
     if args.type == "normal":
-        v = create_from_dir(args.path_corpus, args.min_frequency)
+        v = create_from_path(args.path_corpus, args.min_frequency)
         v.save_to_dir(os.path.join(args.path_out, args.type))
     if args.type == "annotated":
         v = create_from_annotated_dir(args.path_corpus, args.min_frequency, args.context_representation)

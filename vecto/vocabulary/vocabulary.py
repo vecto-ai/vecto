@@ -198,27 +198,29 @@ def _create_from_iterator(iterator, min_frequency=0):
     return v
 
 
-def create_from_dir(path, min_frequency=0, language='eng'):
+def create_from_path(path, min_frequency=0, language='eng'):
     """Collects vocabulary from a corpus by a given directory path.
     """
-    if not os.path.isdir(path):
-        raise RuntimeError("source directory does not exist")
+    tokenizer = Tokenizer(stopwords=[])
+    if os.path.isfile(path):
+        iter = FileCorpus(path, language).get_token_iterator(tokenizer=tokenizer)
+    else:
+        if os.path.isdir(path):
+            iter = DirCorpus(path, language).get_token_iterator(tokenizer)
+        else:
+            raise RuntimeError("source path can not be read")
     # TODO: add option for stopwords
-    tokenizer = Tokenizer(stopwords=[])
-    iter = DirCorpus(path, language).get_token_iterator(tokenizer)
     v = _create_from_iterator(iter, min_frequency)
     return v
 
 
+# TODO: mark as obsolete and remove later
 def create_from_file(path, min_frequency=0, language='eng'):
-    """Collects vocabulary from a corpus by a given file path.
-    """
-    if not os.path.isfile(path):
-        raise RuntimeError("source file does not exist")
-    tokenizer = Tokenizer(stopwords=[])
-    iter = FileCorpus(path, language).get_token_iterator(tokenizer=tokenizer)
-    v = _create_from_iterator(iter, min_frequency)
-    return v
+    return create_from_path(path, min_frequency, language)
+
+
+def create_from_dir(path, min_frequency=0, language='eng'):
+    return create_from_path(path, min_frequency, language)
 
 
 def parse_annotated_token(token):

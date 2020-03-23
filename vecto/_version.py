@@ -1,3 +1,3 @@
 """Version of vecto package."""
 
-VERSION = "0.2.4"
+VERSION = "0.2.5"
