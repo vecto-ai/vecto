@@ -11,7 +11,7 @@ import numpy
 #import chainer
 
 from vecto.benchmarks.text_classification.nlp_utils import normalize_text
-from vecto.corpus.tokenization import word_tokenize_txt
+# from vecto.corpus.tokenization import word_tokenize_txt
 from vecto.data.io import read_first_col_is_label_format
 # from vecto.benchmarks.text_classification.nlp_utils import split_text
 

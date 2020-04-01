@@ -47,20 +47,25 @@ class Dataset(WithMetaData):
                     continue
                 yield(os.path.join(root, filename))
 
-    def get_train(self):
+    def _load_tsv(self, names):
         # TODO: decide what to do with char_basrd
         char_based = False
-        for candidate_name in ["train", "train.tsv"]:
+        for candidate_name in names:
             path_full_candidate = os.path.join(self.path, candidate_name)
             print(path_full_candidate)
             if os.path.isfile(path_full_candidate):
-                #train = read_first_col_is_label_format(path_full_candidate, char_based=char_based)
+                # train = read_first_col_is_label_format(path_full_candidate, char_based=char_based)
                 train = read_tsv_label_last(path_full_candidate)
                 return train
-        #test = read_first_col_is_label_format(os.path.join(self.path, 'test'),
+        # test = read_first_col_is_label_format(os.path.join(self.path, 'test'),
         #                      char_based=char_based)
         raise RuntimeError("can not find dataset")
 
+    def get_train(self):
+        return self._load_tsv(["train", "train.tsv"])
+
+    def get_test(self):
+        return self._load_tsv(["dev", "dev.tsv"])
 
 
 def download_index():

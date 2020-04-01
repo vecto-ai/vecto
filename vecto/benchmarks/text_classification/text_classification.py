@@ -13,7 +13,9 @@ from vecto.benchmarks.text_classification import nets
 from vecto.benchmarks.text_classification import text_datasets
 from vecto.benchmarks.text_classification import nlp_utils
 from vecto.corpus.tokenization import word_tokenize_txt
+from vecto.data import Dataset
 from ..base import Benchmark
+from vecto.benchmarks.text_classification.nlp_utils import transform_to_array
 
 
 def load_model(model_path, wv):
@@ -130,6 +132,7 @@ class Text_classification(Benchmark):
         path_dataset = dataset.path
         print(path_dataset)
         path_adapter = os.path.join(path_dataset, "adapter.py")
+        # TODO: get arrray of ids for train and test here
         if os.path.isfile(path_adapter):
             spec = importlib.util.spec_from_file_location("ds_adapter", path_adapter)
             module = importlib.util.module_from_spec(spec)
@@ -140,11 +143,22 @@ class Text_classification(Benchmark):
             train = nlp_utils.transform_to_array(train, vocab)
             test = nlp_utils.transform_to_array(test, vocab)
 
-            # exit(0)
         else:
-            train, test, vocab = text_datasets.get_dataset_from_path(path_dataset,
-                            vocab=embeddings.vocabulary.dic_words_ids,
-                            char_based=self.char_based, shrink=self.shrink)
+            print("loading though DS")
+            ds = Dataset(path_dataset)
+            # print(ds)
+            # print(ds.metadata)
+            # TOKENUZE
+            train = ds.get_train()
+            # print(train)
+            train = [(word_tokenize_txt(i), j) for i, j in train]
+            test = ds.get_test()
+            vocab = embeddings.vocabulary.dic_words_ids
+            train = nlp_utils.transform_to_array(train, vocab)
+            test = nlp_utils.transform_to_array(test, vocab)
+            # train, test, vocab = text_datasets.get_dataset_from_path(path_dataset,
+            #                 vocab=embeddings.vocabulary.dic_words_ids,
+            #                 char_based=self.char_based, shrink=self.shrink)
 
         print('# cnt train samples: {}'.format(len(train)))
         print('# cnt test  samples: {}'.format(len(test)))
@@ -152,6 +166,7 @@ class Text_classification(Benchmark):
         n_class = len(set([int(d[1]) for d in train]))
         print('# cnt classes: {}'.format(n_class))
         # print(train[0])
+        #print("AAAAAAA")
         # exit(0)
 
         train_iter = chainer.iterators.SerialIterator(train, self.batchsize)
