@@ -24,6 +24,28 @@ def read_first_col_is_label_format(path, char_based=False):
             dataset.append((tokens, label))
     return dataset
 
+# TODO: detect where's lavel or specify format
+def read_tsv_label_last(path):
+    dataset = []
+    with open(path, encoding='utf-8', errors='ignore') as f:
+        for i, l in enumerate(f):
+            if len(l.strip()) < 3:
+                continue
+            text, label = l.strip().split("\t", 1)
+            # print(label)
+            if label == "label":
+                continue
+            # TODO: make lower-casing optional
+            text = normalize_text(text)
+            label = int(label)
+            # TODO: move tokenization to another layer
+#            if char_based:
+#                tokens = list(text)
+#            else:
+#                tokens = word_tokenize_txt(text)
+            dataset.append((text, label))
+    return dataset
+
 
 def fetch_file(url, path, chunk_size=512):
     myfile = get(url, allow_redirects=True)

@@ -10,7 +10,7 @@ import shutil
 # from vecto.config import load_config
 from vecto.utils.metadata import WithMetaData
 from vecto.utils.data import load_json
-from .io import fetch_file, read_first_col_is_label_format
+from .io import fetch_file, read_first_col_is_label_format, read_tsv_label_last
 
 logger = logging.getLogger(__name__)
 # TODO: make config module-global
@@ -50,11 +50,16 @@ class Dataset(WithMetaData):
     def get_train(self):
         # TODO: decide what to do with char_basrd
         char_based = False
-        train = read_first_col_is_label_format(
-            os.path.join(self.path, 'train'), char_based=char_based)
+        for candidate_name in ["train", "train.tsv"]:
+            path_full_candidate = os.path.join(self.path, candidate_name)
+            print(path_full_candidate)
+            if os.path.isfile(path_full_candidate):
+                #train = read_first_col_is_label_format(path_full_candidate, char_based=char_based)
+                train = read_tsv_label_last(path_full_candidate)
+                return train
         #test = read_first_col_is_label_format(os.path.join(self.path, 'test'),
         #                      char_based=char_based)
-        return train
+        raise RuntimeError("can not find dataset")
 
 
 
