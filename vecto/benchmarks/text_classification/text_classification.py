@@ -10,7 +10,7 @@ import numpy
 
 from vecto.utils.data import load_json
 from vecto.benchmarks.text_classification import nets
-from vecto.benchmarks.text_classification import text_datasets
+# from vecto.benchmarks.text_classification import text_datasets
 from vecto.benchmarks.text_classification import nlp_utils
 from vecto.corpus.tokenization import word_tokenize_txt
 from vecto.data import Dataset
@@ -85,7 +85,7 @@ class Text_classification(Benchmark):
 
     def __init__(self, batchsize=64, epoch=5,
                  gpu=-1, layer=1,
-                 dropout=0, model=['cnn', 'rnn', 'bow'][1],
+                 dropout=0, model=['cnn', 'rnn', 'bow'][2],
                  char_based=False, shrink=100):
         self.current_datetime = '{}'.format(datetime.datetime.today())
         self.batchsize = batchsize
@@ -146,28 +146,20 @@ class Text_classification(Benchmark):
         else:
             print("loading though DS")
             ds = Dataset(path_dataset)
-            # print(ds)
-            # print(ds.metadata)
-            # TOKENUZE
             train = ds.get_train()
-            # print(train)
             train = [(word_tokenize_txt(i), j) for i, j in train]
             test = ds.get_test()
+            test = [(word_tokenize_txt(i), j) for i, j in test]
             vocab = embeddings.vocabulary.dic_words_ids
             train = nlp_utils.transform_to_array(train, vocab)
             test = nlp_utils.transform_to_array(test, vocab)
-            # train, test, vocab = text_datasets.get_dataset_from_path(path_dataset,
-            #                 vocab=embeddings.vocabulary.dic_words_ids,
-            #                 char_based=self.char_based, shrink=self.shrink)
 
         print('# cnt train samples: {}'.format(len(train)))
         print('# cnt test  samples: {}'.format(len(test)))
         print('# size vocab: {}'.format(len(vocab)))
         n_class = len(set([int(d[1]) for d in train]))
         print('# cnt classes: {}'.format(n_class))
-        # print(train[0])
-        #print("AAAAAAA")
-        # exit(0)
+
 
         train_iter = chainer.iterators.SerialIterator(train, self.batchsize)
         test_iter = chainer.iterators.SerialIterator(test, self.batchsize,
