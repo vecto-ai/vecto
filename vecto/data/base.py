@@ -55,7 +55,7 @@ class Dataset(WithMetaData):
             print(path_full_candidate)
             if os.path.isfile(path_full_candidate):
                 # train = read_first_col_is_label_format(path_full_candidate, char_based=char_based)
-                train = read_tsv_label_last(path_full_candidate)
+                train = read_first_col_is_label_format(path_full_candidate)
                 return train
         # test = read_first_col_is_label_format(os.path.join(self.path, 'test'),
         #                      char_based=char_based)
@@ -65,7 +65,7 @@ class Dataset(WithMetaData):
         return self._load_tsv(["train", "train.tsv"])
 
     def get_test(self):
-        return self._load_tsv(["dev", "dev.tsv"])
+        return self._load_tsv(["dev", "dev.tsv", "test", "test.tsv"])
 
 
 def download_index():

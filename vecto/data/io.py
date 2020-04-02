@@ -11,17 +11,19 @@ def read_first_col_is_label_format(path, char_based=False):
     dataset = []
     with open(path, encoding='utf-8', errors='ignore') as f:
         for i, l in enumerate(f):
+            if i == 0:
+                continue
             if len(l.strip()) < 3:
                 continue
-            label, text = l.strip().split(None, 1)
+            label, text = l.strip().split("\t", 1)
             # TODO: make lower-casing optional
             text = normalize_text(text)
             label = int(label)
-            if char_based:
-                tokens = list(text)
-            else:
-                tokens = word_tokenize_txt(text)
-            dataset.append((tokens, label))
+            # if char_based:
+            #     tokens = list(text)
+            # else:
+            #     tokens = word_tokenize_txt(text)
+            dataset.append((text, label))
     return dataset
 
 # TODO: detect where's lavel or specify format
