@@ -113,8 +113,6 @@ def run_benchmark_by_name(name, args):
     print("vocab size:", embeddings.vocabulary.cnt_words)
     results = benchmark.run(embeddings, dataset)
     if path_out:
-        # extra unique path
-        print("AAAAAAAAAA SAVING")
         save_results(results, path_out, dataset.metadata["name"])
     else:
         print_json(results)

@@ -109,6 +109,8 @@ class Vocabulary(WithMetaData):
         for line in f:
             if line.startswith("#"):
                 continue
+            if len(line) < 2:
+                continue
             word, frequency = line.split("\t")
             self.lst_words.append(word)
             self.lst_frequencies.append(int(frequency))
