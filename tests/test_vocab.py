@@ -118,6 +118,14 @@ class Tests(unittest.TestCase):
         vocab.lst_frequencies = []
         vocab.get_frequency("apple")
 
+    def test_save_and_load(self):
+        vocab = Vocabulary()
+        vocab.load(path_vocab)
+        cnt_1 = vocab.cnt_words
+        vocab.save_to_dir("/tmp/vecto/vocab/save1")
+        vocab.load("/tmp/vecto/vocab/save1")
+        assert cnt_1 == vocab.cnt_words
+
     def test_cli(self):
         sio = io.StringIO()
         with contextlib.redirect_stderr(sio):
