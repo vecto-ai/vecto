@@ -18,7 +18,7 @@ import vecto
 from pathlib import Path
 from vecto.embeddings.dense import WordEmbeddingsDense
 from vecto.vocabulary import Vocabulary
-from vecto.vocabulary.vocabulary import create_from_dir, create_ngram_tokens_from_dir, create_from_annotated_dir
+from vecto.vocabulary.vocabulary import create_from_path, create_ngram_tokens_from_dir, create_from_annotated_dir
 from vecto.embeddings import utils
 
 logger = logging.getLogger(__name__)
@@ -205,7 +205,7 @@ def train(args):
         cuda.check_cuda_available()
 
     if args.path_vocab == '':
-        vocab = create_from_dir(args.path_corpus, language=args.language)
+        vocab = create_from_path(args.path_corpus, language=args.language)
     else:
         vocab = Vocabulary()
         vocab.load(args.path_vocab)
