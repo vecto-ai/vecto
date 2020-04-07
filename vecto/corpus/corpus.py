@@ -121,7 +121,7 @@ def load_path_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
         ti = FileCorpus(path).get_token_iterator(tokenizer=tokenizer)
     else:
         if os.path.isdir(path):
-            to = DirCorpus(path).get_token_iterator(tokenizer)
+            ti = DirCorpus(path).get_token_iterator(tokenizer)
         else:
             raise RuntimeError("source file does not exist")
     for token in ti:
