@@ -1,5 +1,6 @@
 import numpy as np
 import logging
+import os
 from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator, \
     TokenizedSequenceIterator, TokenIterator, SlidingWindowIterator
 from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
@@ -109,13 +110,20 @@ def corpus_chain(*corpuses):
 
 
 # TODO: make it a part of Corpus class
-def load_file_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
+def load_path_as_ids(path, vocabulary, tokenizer=DEFAULT_TOKENIZER):
     # use proper tokenizer from cooc
     # options to ignore sentence bounbdaries
     # specify what to do with missing words
     # replace numbers with special tokens
     result = []
-    ti = FileCorpus(path).get_token_iterator(tokenizer=tokenizer)
+    if os.path.isfile(path):
+        # TODO: why file corpus does not need language? 
+        ti = FileCorpus(path).get_token_iterator(tokenizer=tokenizer)
+    else:
+        if os.path.isdir(path):
+            to = DirCorpus(path, language).get_token_iterator(tokenizer)
+        else:
+            raise RuntimeError("source file does not exist")
     for token in ti:
         w = token  # specify what to do with missing words
         result.append(vocabulary.get_id(w))

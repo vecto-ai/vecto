@@ -3,7 +3,7 @@
 import unittest
 import numpy as np
 import json
-from vecto.corpus import FileCorpus, DirCorpus, corpus_chain, load_file_as_ids
+from vecto.corpus import FileCorpus, DirCorpus, corpus_chain, load_path_as_ids
 from vecto.vocabulary import Vocabulary
 
 # todo: use local vocab
@@ -139,7 +139,7 @@ class Tests(unittest.TestCase):
     def test_text_to_ids(self):
         v = Vocabulary()
         v.load(path_vocab)
-        doc = load_file_as_ids(path_text_file, v)
+        doc = load_path_as_ids(path_text_file, v)
         # assert doc.shape == (TEST_TEXT_LEN,)
         assert np.allclose(doc[:10], [-1, 40, -1, -1, -1, -1, -1, -1, 57, -1])
 
