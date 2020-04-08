@@ -26,7 +26,7 @@ class Vocabulary(WithMetaData):
         return len(self.lst_words)
 
     def tokens_to_ids(self, tokens):
-        ids = np.ones(len(tokens), dtype=np.int32) * -1
+        ids = np.zeros(len(tokens), dtype=np.int32)
         for i, t in enumerate(tokens):
             ids[i] = self.get_id(t)
         return ids
@@ -35,7 +35,7 @@ class Vocabulary(WithMetaData):
         try:
             return self.dic_words_ids[w]
         except KeyError:
-            return -1
+            return 0
 
     def get_word_by_id(self, i):
         if i < 0:
