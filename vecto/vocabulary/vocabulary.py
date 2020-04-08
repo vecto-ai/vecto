@@ -181,14 +181,16 @@ def _create_from_iterator(iterator, min_frequency=0):
         else:
             dic_freqs[w] = 1
     v = Vocabulary()
-    v.lst_frequencies = []
+    v.lst_frequencies = [0]
+    v.lst_words.append("[UNK]")
+    v.dic_words_ids["[UNK]"] = 0
     for i, word in enumerate(sorted(dic_freqs, key=dic_freqs.get, reverse=True)):
         frequency = dic_freqs[word]
         if frequency < min_frequency:
             break
         v.lst_frequencies.append(frequency)
         v.lst_words.append(word)
-        v.dic_words_ids[word] = i
+        v.dic_words_ids[word] = i + 1
     v.metadata["min_frequency"] = min_frequency
     v.metadata["cnt_words"] = v.cnt_words
     t_end = time.time()
