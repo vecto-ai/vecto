@@ -101,6 +101,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         self.matrix /= nrm[:, np.newaxis]
         # self.name += "_normalized"
         self.metadata["normalized"] = True
+        self.normalized = True
 
     def cache_normalized_copy(self):
         if hasattr(self, 'normalized') and self.normalized == True:

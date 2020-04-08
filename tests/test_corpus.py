@@ -141,7 +141,7 @@ class Tests(unittest.TestCase):
         v.load(path_vocab)
         doc = load_path_as_ids(path_text_file, v)
         # assert doc.shape == (TEST_TEXT_LEN,)
-        assert np.allclose(doc[:10], [-1, 40, -1, -1, -1, -1, -1, -1, 57, -1])
+        assert np.allclose(doc[:10], [0, 40, 0, 0, 0, 0, 0, 0, 57, 0])
 
 
     #def test_chain(self):
