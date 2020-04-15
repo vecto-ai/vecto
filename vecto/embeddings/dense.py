@@ -99,7 +99,7 @@ class WordEmbeddingsDense(WordEmbeddings):
         nrm = np.linalg.norm(self.matrix, axis=1)
         nrm[nrm == 0] = 1
         self.matrix /= nrm[:, np.newaxis]
-        # self.name += "_normalized"
+        self._normalized_matrix = self.matrix
         self.metadata["normalized"] = True
         self.normalized = True
 
