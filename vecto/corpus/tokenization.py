@@ -35,8 +35,8 @@ def word_tokenize_txt(txt,
     norm_tokens = map(token_normalizer, token_splitter(txt))
     return [token for token in norm_tokens
             if len(token) >= min_token_len and
-            (token not in stopwords) and
-            good_token_re.match(token)]
+            token not in stopwords]
+            # and good_token_re.match(token)]
 
 
 class BaseTokenizer(WithMetaData):

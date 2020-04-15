@@ -25,7 +25,7 @@ def count_words_and_collect_prefix(corpus, max_len=10):
 
 
 TEST_TEXT_LEN = 4207
-TEST_FIRST_10_WORDS = 'family|dashwood|long|settled|sussex|estate|large|residence|norland|park'
+TEST_FIRST_10_WORDS = 'family|dashwood|long|settled|sussex|.|estate|large|,|residence'
 
 
 TEST_RIGHT_METADATA = r'''
@@ -123,7 +123,7 @@ class Tests(unittest.TestCase):
         corpus = FileCorpus(path_text_file)
         sentence_iter = corpus.get_sentence_iterator(verbose=True)
         for s in sentence_iter:
-            assert s == ['family', 'dashwood', 'long', 'settled', 'sussex']
+            assert s == ['family', 'dashwood', 'long', 'settled', 'sussex', '.']
             break
 
     def test_sliding_window(self):
@@ -141,7 +141,7 @@ class Tests(unittest.TestCase):
         v.load(path_vocab)
         doc = load_path_as_ids(path_text_file, v)
         # assert doc.shape == (TEST_TEXT_LEN,)
-        assert np.allclose(doc[:10], [0, 40, 0, 0, 0, 0, 0, 0, 57, 0])
+        assert np.allclose(doc[:10], [0, 40, 0, 0, 0, 1, 0, 0, 0, 0])
 
 
     #def test_chain(self):
