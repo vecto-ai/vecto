@@ -96,13 +96,13 @@ class ContinuousBoW(chainer.Chain):
             self.loss_func = loss_func
 
     def getEmbeddings(self, gpu):
-        return self.embed.W.data[2:] # plus 2 to remove OOV and end symbol.
+        return self.embed.W.data[2:]  # plus 2 to remove OOV and end symbol.
 
     def getEmbeddings_context(self):
         return self.loss_func.W.data
 
     def __call__(self, x, context):
-        context = context + 2 # plus 2 for OOV and end symbol.
+        context = context + 2  # plus 2 for OOV and end symbol.
         e = self.embed(context)
         h = F.sum(e, axis=1) * (1. / context.shape[1])
         loss = self.loss_func(h, x)
