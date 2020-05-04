@@ -6,9 +6,9 @@ The metadata
 
 Vecto attempts to record and track as much information as possible about each embedding and each experiment you run. All the information about VSMs is stored in a `metadata.json` file in the same folder as the VSM itself.
 
-Vecto can be used to work with VSMs that were trained elsewhere and may not come with any metadata. However, even in this case, we encourage the users to try and find out and record as much of the metadata as possible,as soon as possible. We have all been in the situation where, long after you have published a paper and forgotten all about that project, you need to reuse some code or repeat an experiment - and that it's nigh impossible, because the code is unreadabe, filenames are criptic, and filepaths are long gone.
+Vecto can be used to work with VSMs that were trained elsewhere and may not come with any metadata. However, even in this case, we encourage the users to try and find out and record as much of the metadata as possible, as soon as possible. We have all been in the situation where, long after you have published a paper and forgotten all about that project, you need to reuse some code or repeat an experiment - and that it's nigh impossible, because the code is unreadable, filenames are cryptic, and filepaths are long gone.
 
-Moreover, keeping track of the metadata is also something that would force the researchers to be more aware of all these different hidden variables in their experiments. That would (1) prevent them from misinterpreting the properties of their models, and (2) provide some ideas about what could be tweaked. 
+Moreover, keeping track of the metadata is also something that would force the researchers to be more aware of all these different hidden variables in their experiments. That would (1) prevent them from misinterpreting the properties of their models, and (2) provide some ideas about what could be tweaked.
 
 The corpus metadata
 ~~~~~~~~~~~~~~~~~~~
@@ -82,10 +82,10 @@ Vecto records the following metadata:
    syntactic_parsing
       The syntactic parser that was used, if any (URL or path to the script, name, version).
 
-   Semantic_parsing
+   semantic_parsing
       The semantic parser that was used, if any (URL or path to the script, name, version).
 
-   Other_preprocessing
+   other_preprocessing
       Any other pre-processing that was performed, if any (URL or path to the script, name, version).
 
 :todo: the format section should link to the input of embedding models
@@ -260,7 +260,7 @@ The task datasets should be accompanied by the following metadata:
       The task for which the dataset is applicable, such as **word_analogy** or **word_relatedness**.
 
    language
-      A list containing the language codes for the corpus. There will be just one entry in case of monolingual corpora (e.g. _["en"]_), and for parallel or multilingual corpora there will be several (_["en", "de"]_).
+      A list containing the language codes for the corpus. There will be just one entry in case of monolingual corpora (e.g. ["en"]), and for parallel or multilingual corpora there will be several (["en", "de"]).
 
    name
       The (preferably short) name of the dataset, such as **WordSim353**.
@@ -278,7 +278,7 @@ The task datasets should be accompanied by the following metadata:
       The source of the resource (e.g. a modification of another dataset, or something created by the authors from scratch or on the basis of some data that was not previously used for the same task).
 
    project_page
-      The URL of the page describing the dataset (if any)
+      The URL of the page describing the dataset (if any).
 
    version
       The version of the dataset (useful when you are developing one).
