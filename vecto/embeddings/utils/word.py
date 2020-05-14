@@ -127,11 +127,15 @@ class SkipGram(chainer.Chain):
 
     def __call__(self, center, context):
         context = context + 2  # plus 2 for OOV and end symbol.
+        #print("context:", context.shape)
+        #print("center:", center.shape)
         emb_context = self.embed(context)
         shape = emb_context.shape
         center = F.broadcast_to(center[:, None], (shape[0], shape[1]))
         emb_context = F.reshape(emb_context, (shape[0] * shape[1], shape[2]))
         center = F.reshape(center, (shape[0] * shape[1],))
+        #print(emb_context.shape, center.shape)
+        #exit(1)
         loss = self.loss_func(emb_context, center)
         # shouldn't we divide loss by batch size?
         reporter.report({'loss': loss}, self)

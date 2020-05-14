@@ -182,15 +182,15 @@ def save_embeddings(path, epoch, model, vocab, metadata, execution_time):
     if metadata["out_type"] == 'ns':
         model.matrix_context = cuda.to_cpu(model.getEmbeddings_context())
     else:
-        model.matrix_context = None
+        model.matrix_context = cuda.to_cpu(model.loss_func.out.W.data)
     embeddings.metadata["execution_time"] = execution_time #time_end - time_start
     embeddings.metadata["embeddings_type"] = "vanilla"
     path_out = path / f"ep_{epoch:03}"
     embeddings.save_to_dir(path_out)
-    # if embeddings.matrix_context is not None:
-    #     embeddings.matrix = model.matrix_context
-    #     embeddings.metadata["embeddings_type"] = "context"
-    #     embeddings.save_to_dir(os.path.join(path_out, 'context'))
+
+    embeddings.matrix = model.matrix_context
+    embeddings.metadata["embeddings_type"] = "context"
+    embeddings.save_to_dir(os.path.join(path_out, 'context'))
 
 
 def train(args):
