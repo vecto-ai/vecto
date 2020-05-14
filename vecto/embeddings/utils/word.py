@@ -125,14 +125,14 @@ class SkipGram(chainer.Chain):
     def getEmbeddings_context(self):
         return self.loss_func.W.data
 
-    def __call__(self, x, context):
-        context = context + 2 # plus 2 for OOV and end symbol.
-        e = self.embed(context)
-        shape = e.shape
-        x = F.broadcast_to(x[:, None], (shape[0], shape[1]))
-        e = F.reshape(e, (shape[0] * shape[1], shape[2]))
-        x = F.reshape(x, (shape[0] * shape[1],))
-        loss = self.loss_func(e, x)
+    def __call__(self, center, context):
+        context = context + 2  # plus 2 for OOV and end symbol.
+        emb_context = self.embed(context)
+        shape = emb_context.shape
+        center = F.broadcast_to(center[:, None], (shape[0], shape[1]))
+        emb_context = F.reshape(emb_context, (shape[0] * shape[1], shape[2]))
+        center = F.reshape(center, (shape[0] * shape[1],))
+        loss = self.loss_func(emb_context, center)
         # shouldn't we divide loss by batch size?
         reporter.report({'loss': loss}, self)
         return loss
