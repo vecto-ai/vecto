@@ -13,4 +13,4 @@ coverage
 pylint
 chainer
 keras==2.3.1
-tensorflow==2.0.1
+tensorflow==2.0.3
