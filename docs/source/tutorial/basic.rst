@@ -19,7 +19,7 @@ Vecto is an open-source Python library for working with vector space models (VSM
 Why do you bother?
 --------------------
 
-There are a few other libraries for working with VSMs, including gensim and spacy. Vecto differs from them in that its primary goal is to facilitate pricipled, systematic research in providing **a framework for reproducible experiments** on VSMs.
+There are a few other libraries for working with VSMs, including gensim and spacy. Vecto differs from them in that its primary goal is to facilitate principled, systematic research in providing **a framework for reproducible experiments** on VSMs.
 
 From the academic perspective, this matters because this is the only way to understand more about what VSMs are and what kind of meaning representation they offer.
 
@@ -27,4 +27,4 @@ From the practical perspective, this matters because otherwise we can not tell w
 
 Furthermore, there is the important and unpleasant part of parameter tuning and optimizing for a particular task. `Levy et al. (2015) <http://www.aclweb.org/anthology/Q15-1016>`_ showed that the choice of hyperparameters may make more of a difference than the choice of model itself. Even more frustratingly, when you have a relatively comprehensive task covering a wide range of linguistic relations, you may find that the parameters beneficial to a part of the task are detrimental for another part `(Gladkova et al. 2016) <http://www.aclweb.org/anthology/N16-2002>`_.
 
-The neural parts of Vecto is implemented in `Chainer <https://www.chainer.org>`_, a new deep learning framework that is friendly to high-performace multi-GPU environments. This should make Vecto useful in both academic and industrial settings.
+The neural parts of Vecto is implemented in `Chainer <https://www.chainer.org>`_, a new deep learning framework that is friendly to high-performance multi-GPU environments. This should make Vecto useful in both academic and industrial settings.
