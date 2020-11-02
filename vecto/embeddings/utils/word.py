@@ -96,13 +96,13 @@ class ContinuousBoW(chainer.Chain):
             self.loss_func = loss_func
 
     def getEmbeddings(self, gpu):
-        return self.embed.W.data[2:] # plus 2 to remove OOV and end symbol.
+        return self.embed.W.data[2:]  # plus 2 to remove OOV and end symbol.
 
     def getEmbeddings_context(self):
         return self.loss_func.W.data
 
     def __call__(self, x, context):
-        context = context + 2 # plus 2 for OOV and end symbol.
+        context = context + 2  # plus 2 for OOV and end symbol.
         e = self.embed(context)
         h = F.sum(e, axis=1) * (1. / context.shape[1])
         loss = self.loss_func(h, x)
@@ -125,14 +125,18 @@ class SkipGram(chainer.Chain):
     def getEmbeddings_context(self):
         return self.loss_func.W.data
 
-    def __call__(self, x, context):
-        context = context + 2 # plus 2 for OOV and end symbol.
-        e = self.embed(context)
-        shape = e.shape
-        x = F.broadcast_to(x[:, None], (shape[0], shape[1]))
-        e = F.reshape(e, (shape[0] * shape[1], shape[2]))
-        x = F.reshape(x, (shape[0] * shape[1],))
-        loss = self.loss_func(e, x)
+    def __call__(self, center, context):
+        context = context + 2  # plus 2 for OOV and end symbol.
+        #print("context:", context.shape)
+        #print("center:", center.shape)
+        emb_context = self.embed(context)
+        shape = emb_context.shape
+        center = F.broadcast_to(center[:, None], (shape[0], shape[1]))
+        emb_context = F.reshape(emb_context, (shape[0] * shape[1], shape[2]))
+        center = F.reshape(center, (shape[0] * shape[1],))
+        #print(emb_context.shape, center.shape)
+        #exit(1)
+        loss = self.loss_func(emb_context, center)
         # shouldn't we divide loss by batch size?
         reporter.report({'loss': loss}, self)
         return loss

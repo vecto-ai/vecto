@@ -31,7 +31,8 @@ class Tests(unittest.TestCase):
         outliers = AveragePairwiseCosine()
         result = outliers.get_result(embs, path_outliers_dataset)['test']
         amount_of_categories = 2
-        amount_of_word_in_cats = 3
+        # TODO: refactor to be understandable, check if ok after covab to UNK
+        amount_of_word_in_cats = 4
 
         self.assertEqual(len(result.keys()), amount_of_categories)
         self.assertEqual(len(result['cats']), amount_of_word_in_cats)

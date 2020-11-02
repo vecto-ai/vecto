@@ -7,7 +7,7 @@ import os
 import sys
 import contextlib
 import json
-from vecto.vocabulary import create_from_dir, create_from_file, create_from_annotated_dir, create_ngram_tokens_from_dir, \
+from vecto.vocabulary import create_from_path, create_from_annotated_dir, create_ngram_tokens_from_dir, \
     Vocabulary
 
 path_text = "./tests/data/corpora/plain"
@@ -64,15 +64,15 @@ class Tests(unittest.TestCase):
 
     def test_create_from_dir(self):
         with self.assertRaises(RuntimeError):
-            create_from_dir("./random/empty/")
+            create_from_path("./random/empty/")
 
-        vocab = create_from_dir(path_text)
+        vocab = create_from_path(path_text)
         print("the:", vocab.get_id("the"))
         assert vocab.get_id("home") >= 0
         vocab.save_to_dir("/tmp/vecto/vocab")
         with self.assertRaises(RuntimeError):
-            create_from_file("./random/empty/file")
-        vocab = create_from_file(path_text_file)
+            create_from_path("./random/empty/file")
+        vocab = create_from_path(path_text_file)
         assert vocab.get_id("home") >= 0
 
     def test_create_from_annotated_dir(self):
@@ -118,6 +118,14 @@ class Tests(unittest.TestCase):
         vocab.lst_frequencies = []
         vocab.get_frequency("apple")
 
+    def test_save_and_load(self):
+        vocab = Vocabulary()
+        vocab.load(path_vocab)
+        cnt_1 = vocab.cnt_words
+        vocab.save_to_dir("/tmp/vecto/vocab/save1")
+        vocab.load("/tmp/vecto/vocab/save1")
+        assert cnt_1 == vocab.cnt_words
+
     def test_cli(self):
         sio = io.StringIO()
         with contextlib.redirect_stderr(sio):
@@ -130,7 +138,7 @@ class Tests(unittest.TestCase):
         # _LOG.info('%s', sio.getvalue())
 
     def test_metadata(self):
-        vocab = create_from_dir(path_text)
+        vocab = create_from_path(path_text)
         metadata = dict(vocab.metadata)
         if 'execution_time' in metadata:
             del metadata['execution_time']

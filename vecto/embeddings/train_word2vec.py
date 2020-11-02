@@ -18,7 +18,7 @@ import vecto
 from pathlib import Path
 from vecto.embeddings.dense import WordEmbeddingsDense
 from vecto.vocabulary import Vocabulary
-from vecto.vocabulary.vocabulary import create_from_dir, create_ngram_tokens_from_dir, create_from_annotated_dir
+from vecto.vocabulary.vocabulary import create_from_path, create_ngram_tokens_from_dir, create_from_annotated_dir
 from vecto.embeddings import utils
 
 logger = logging.getLogger(__name__)
@@ -160,7 +160,7 @@ class EmbedDumper(training.Extension):
     #     pass
 
     def __call__(self, trainer):
-        print("dumping embeddings")
+        # print("dumping embeddings")
         epoch = trainer.updater.epoch
         net = trainer.updater._optimizers["main"].target
         save_embeddings(self.params["path_out"],
@@ -182,15 +182,15 @@ def save_embeddings(path, epoch, model, vocab, metadata, execution_time):
     if metadata["out_type"] == 'ns':
         model.matrix_context = cuda.to_cpu(model.getEmbeddings_context())
     else:
-        model.matrix_context = None
+        model.matrix_context = cuda.to_cpu(model.loss_func.out.W.data)
     embeddings.metadata["execution_time"] = execution_time #time_end - time_start
     embeddings.metadata["embeddings_type"] = "vanilla"
     path_out = path / f"ep_{epoch:03}"
     embeddings.save_to_dir(path_out)
-    # if embeddings.matrix_context is not None:
-    #     embeddings.matrix = model.matrix_context
-    #     embeddings.metadata["embeddings_type"] = "context"
-    #     embeddings.save_to_dir(os.path.join(path_out, 'context'))
+
+    embeddings.matrix = model.matrix_context
+    embeddings.metadata["embeddings_type"] = "context"
+    embeddings.save_to_dir(os.path.join(path_out, 'context'))
 
 
 def train(args):
@@ -205,7 +205,7 @@ def train(args):
         cuda.check_cuda_available()
 
     if args.path_vocab == '':
-        vocab = create_from_dir(args.path_corpus, language=args.language)
+        vocab = create_from_path(args.path_corpus, language=args.language)
     else:
         vocab = Vocabulary()
         vocab.load(args.path_vocab)

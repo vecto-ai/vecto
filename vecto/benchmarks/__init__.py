@@ -66,20 +66,20 @@ def choose_benchmark(args):
 
 
 def save_results(results, path_out, dataset_name):
-    if os.path.isdir(path_out) or path_out.endswith("/"):
-        timestamp = get_time_str()
-        if isinstance(results, list):
-            task = results[0]["experiment_setup"]["task"]
-        else:
-            task = results["experiment_setup"]["task"]
-        name_file_out = os.path.join(path_out,
-                                     task,
-                                     dataset_name,
-                                     timestamp,
-                                     "results.json")
-        save_json(results, name_file_out)
+    # create subdirs unless explicitly asked to not do so
+    # TODO: add submodules to append to path
+    timestamp = get_time_str()
+    if isinstance(results, list):
+        task = results[0]["experiment_setup"]["task"]
     else:
-        save_json(results, path_out)
+        task = results["experiment_setup"]["task"]
+    task = task.replace(" ", "_")
+    name_file_out = os.path.join(path_out,
+                                 task,
+                                 dataset_name,
+                                 timestamp,
+                                 "results.json")
+    save_json(results, name_file_out)
 
 
 def run_benchmark_by_name(name, args):
