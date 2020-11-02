@@ -2,8 +2,7 @@
 
 import unittest
 import numpy as np
-import json
-from vecto.corpus import FileCorpus, DirCorpus, corpus_chain, load_path_as_ids
+from vecto.corpus import FileCorpus, DirCorpus, load_path_as_ids
 from vecto.vocabulary import Vocabulary
 
 # todo: use local vocab
@@ -11,6 +10,7 @@ path_vocab = "./tests/data/vocabs/plain"
 path_text = "./tests/data/corpora/plain"
 path_gzipped = "./tests/data/corpora/gzipped"
 path_bzipped = "./tests/data/corpora/bzipped"
+path_xzipped = "./tests/data/corpora/xzipped"
 path_text_file = "./tests/data/corpora/plain/sense_small.txt"
 
 
@@ -114,6 +114,13 @@ class Tests(unittest.TestCase):
 
     def test_dir_iter_bzipped(self):
         corpus = DirCorpus(path_bzipped)
+        tokens_iter = corpus.get_token_iterator()
+        total_words, words = count_words_and_collect_prefix(tokens_iter)
+        # assert total_words == TEST_TEXT_LEN
+        assert '|'.join(words) == TEST_FIRST_10_WORDS
+
+    def test_dir_iter_xzipped(self):
+        corpus = DirCorpus(path_xzipped)
         tokens_iter = corpus.get_token_iterator()
         total_words, words = count_words_and_collect_prefix(tokens_iter)
         # assert total_words == TEST_TEXT_LEN
