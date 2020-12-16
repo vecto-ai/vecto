@@ -10,7 +10,7 @@ from vecto.utils.metadata import WithMetaData
 logger = logging.getLogger(__name__)
 
 
-class Corpus(WithMetaData):
+class BaseCorpus(WithMetaData):
     """Cepresents a body of text in single or multiple files"""
 
     def __init__(self, path, language='eng'):
@@ -45,31 +45,47 @@ class Corpus(WithMetaData):
         return TokenizedSequenceIterator(self.get_line_iterator(verbose=verbose), tokenizer=tokenizer, verbose=verbose)
 
 
-# class DirCorpusNew(Corpus) #think of beter naming/renaming
+#class Corpus(BaseCorpus) #think of beter naming/renaming
     # def init() 
 
-    # def load_dir_strucute
-        # check all files, create falttened viw
-        # self.metadata is here
+ #self.metadata is here
 
     # either master does plits and send each worker each split
     # or first send whole thing, and each worker does split
     # def get_view(start, end)
         #  return viuew
 
-# class ViewCorpus():
-    # is returned from get_view from Corpus
-    # def get_line_iterator
-        # iterated this file/this offset to last-file last offset
+class SegmentIterator():
+    def __init__(self, tree):
+        # iterate from given file and offste
+        pass
 
-class FileCorpus(Corpus):
+
+class ViewCorpus(BaseCorpus):
+    # is returned from get_view from Corpus
+    def load_dir_strucute(self):
+        self.tree = []
+        for file in DirIterator(self.path):
+            # print(file)
+            self.tree.append((file, "size"))
+        # check all files, create falttened viw
+        self.size_total = 100500
+        print(self.tree)
+
+    def get_line_iterator(self):
+        # iterate over precomputed tree of files and sizes
+        # iterated this file/this offset to last-file last offset
+        pass
+
+
+class FileCorpus(BaseCorpus):
     """Cepresents a body of text in a single file"""
 
     def get_line_iterator(self, verbose=False):
         return FileLineIterator(FileIterator(self.path, verbose=verbose))
 
 
-class DirCorpus(Corpus):
+class DirCorpus(BaseCorpus):
     """Cepresents a body of text in a directory"""
 
     def get_line_iterator(self, verbose=False):
