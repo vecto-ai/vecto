@@ -66,9 +66,10 @@ class ViewCorpus(BaseCorpus):
     def load_dir_strucute(self):
         self.tree = []
         for file in DirIterator(self.path):
-            # print(file)
+            # TODO: estimage file contenst size
+            # TODO: prefix sum for binary search?
             self.tree.append((file, "size"))
-        # check all files, create falttened viw
+        # TODO: total size
         self.size_total = 100500
         print(self.tree)
 
