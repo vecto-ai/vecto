@@ -45,6 +45,23 @@ class Corpus(WithMetaData):
         return TokenizedSequenceIterator(self.get_line_iterator(verbose=verbose), tokenizer=tokenizer, verbose=verbose)
 
 
+# class DirCorpusNew(Corpus) #think of beter naming/renaming
+    # def init() 
+
+    # def load_dir_strucute
+        # check all files, create falttened viw
+        # self.metadata is here
+
+    # either master does plits and send each worker each split
+    # or first send whole thing, and each worker does split
+    # def get_view(start, end)
+        #  return viuew
+
+# class ViewCorpus():
+    # is returned from get_view from Corpus
+    # def get_line_iterator
+        # iterated this file/this offset to last-file last offset
+
 class FileCorpus(Corpus):
     """Cepresents a body of text in a single file"""
 
