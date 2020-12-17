@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import logging
-import os
+from collections import namedtuple
 from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator, \
     TokenizedSequenceIterator, TokenIterator, SlidingWindowIterator
 from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
@@ -66,6 +66,7 @@ def get_uncompressed_size(path):
         size = f.seek(0, 2)
     return size
 
+TreeElement = namedtuple('TreeElement', ["filename", "bytes"])
 
 class ViewCorpus(BaseCorpus):
     # is returned from get_view from Corpus
@@ -76,22 +77,31 @@ class ViewCorpus(BaseCorpus):
             self.accumulated_size += get_uncompressed_size(file)
             self.tree.append((file, self.accumulated_size))
         # print(self.tree)
-        # self.tree = [("file1", 10), ("file2", 15), ("file3", 20)]
+        # TODO: use named tuples here
+        self.tree = [TreeElement("file1", 10), TreeElement("file2", 15), TreeElement("file3", 20)]
 
-    def get_file_and_offset(self, global_position):
+    def get_file_and_offset(self, global_position, jump_to_next=True):
         assert global_position < self.accumulated_size
         lo = 0
         hi = len(self.tree)
         while (True):
             pos = (lo + hi) // 2
-            # print(f"lo {lo}, hi {hi}, pos {pos}")
+            print(f"lo {lo}, hi {hi}, pos {pos}")
             if lo == hi:
-                return pos
-            if self.tree[pos][1] > global_position:
+                if jump_to_next:
+                    # TODO: use some epsilone here
+                    if self.tree[pos].bytes == global_position:
+                        if pos < len(self.tree) - 1:
+                            pos += 1
+                if pos > 0:
+                    offset = global_position - self.tree[pos - 1].bytes
+                else:
+                    offset = global_position
+                return pos, offset
+            if self.tree[pos].bytes >= global_position:
                 hi = pos
-            if self.tree[pos][1] <= global_position:
+            if self.tree[pos].bytes < global_position:
                 lo = pos + 1
-        # TODO:  do binary search
 
     def get_line_iterator(self):
         # iterate over precomputed tree of files and sizes
