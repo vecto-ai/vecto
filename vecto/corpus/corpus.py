@@ -61,16 +61,21 @@ class SegmentIterator():
         pass
 
 
+def get_uncompressed_size(path):
+    return 1000
+
+
 class ViewCorpus(BaseCorpus):
     # is returned from get_view from Corpus
     def load_dir_strucute(self):
         self.tree = []
+        self.accumulated_size = 0
         for file in DirIterator(self.path):
             # TODO: estimage file contenst size
             # TODO: prefix sum for binary search?
-            self.tree.append((file, "size"))
+            self.accumulated_size += get_uncompressed_size(file)
+            self.tree.append((file, self.accumulated_size))
         # TODO: total size
-        self.size_total = 100500
         print(self.tree)
 
     def get_line_iterator(self):
