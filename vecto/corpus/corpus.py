@@ -103,7 +103,7 @@ class ViewCorpus(BaseCorpus):
             if self.tree[pos].bytes < global_position:
                 lo = pos + 1
 
-    def get_line_iterator(self):
+    def get_line_iterator(self, rank, size):
         # iterate over precomputed tree of files and sizes
         # iterated this file/this offset to last-file last offset
         pass
