@@ -6,7 +6,7 @@ from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator,
     TokenizedSequenceIterator, TokenIterator, SlidingWindowIterator
 from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
 from vecto.utils.metadata import WithMetaData
-
+from vecto.utils.data import detect_archive_format_and_open
 logger = logging.getLogger(__name__)
 
 
@@ -62,7 +62,9 @@ class SegmentIterator():
 
 
 def get_uncompressed_size(path):
-    return 1000
+    with detect_archive_format_and_open(path) as f:
+        size = f.seek(0, 2)
+    return size
 
 
 class ViewCorpus(BaseCorpus):
