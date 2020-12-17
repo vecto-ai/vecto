@@ -86,7 +86,7 @@ class ViewCorpus(BaseCorpus):
         hi = len(self.tree)
         while (True):
             pos = (lo + hi) // 2
-            print(f"lo {lo}, hi {hi}, pos {pos}")
+            # print(f"lo {lo}, hi {hi}, pos {pos}")
             if lo >= hi:
                 if pos > 0:
                     offset = max(global_position - self.tree[pos - 1].bytes, 0)
