@@ -3,6 +3,10 @@ from vecto.corpus import ViewCorpus
 path = "./tests/data/corpora/"
 corpus = ViewCorpus(path)
 corpus.load_dir_strucute()
+search = 29
+print("searching ", search, "in", corpus.tree)
+pos = corpus.get_file_and_offset(search)
+print("final pos", pos)
 # rank 0 creates corpus from dir
 # corpus has inside all file list and sizes
 # use manually splits sends metadata of corpus : tree of dirs and files with uncompressed sizes to all workers

@@ -75,11 +75,23 @@ class ViewCorpus(BaseCorpus):
         for file in DirIterator(self.path):
             self.accumulated_size += get_uncompressed_size(file)
             self.tree.append((file, self.accumulated_size))
-        print(self.tree)
+        # print(self.tree)
+        # self.tree = [("file1", 10), ("file2", 15), ("file3", 20)]
 
     def get_file_and_offset(self, global_position):
         assert global_position < self.accumulated_size
-        # TODO: implemetn the rest
+        lo = 0
+        hi = len(self.tree)
+        while (True):
+            pos = (lo + hi) // 2
+            # print(f"lo {lo}, hi {hi}, pos {pos}")
+            if lo == hi:
+                return pos
+            if self.tree[pos][1] > global_position:
+                hi = pos
+            if self.tree[pos][1] <= global_position:
+                lo = pos + 1
+        # TODO:  do binary search
 
     def get_line_iterator(self):
         # iterate over precomputed tree of files and sizes
