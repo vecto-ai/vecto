@@ -94,11 +94,9 @@ class ViewCorpus(BaseCorpus):
                     offset = global_position
                 if start_of_range:
                     if self.tree[pos].bytes - global_position < epsilon:
-                        print("WE ARE JUMPING to next")
                         if pos < len(self.tree) - 1:
                             pos += 1
                 else:
-                    print("WE ARE JUMPING to prev")
                     if pos > 0:
                         if global_position - self.tree[pos - 1].bytes < epsilon:
                             pos -= 1
