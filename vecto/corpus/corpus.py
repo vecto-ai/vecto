@@ -76,10 +76,10 @@ class ViewCorpus(BaseCorpus):
         accumulated_size = 0
         for file in DirIterator(self.path):
             accumulated_size += get_uncompressed_size(file)
-            self.tree.append((file, accumulated_size))
+            self.tree.append(TreeElement(file, accumulated_size))
         # print(self.tree)
         # TODO: use named tuples here
-        self.tree = [TreeElement("file1", 10), TreeElement("file2", 15)]
+        # self.tree = [TreeElement("file1", 10), TreeElement("file2", 15)]
 
     @property
     def total_bytes(self):

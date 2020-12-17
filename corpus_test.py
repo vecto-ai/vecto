@@ -21,6 +21,8 @@ cnt_workers = 2
 for i in range(cnt_workers):
     iterator = corpus.get_line_iterator(i, cnt_workers)
     print("worker", i, iterator)
+    for line in iterator:
+        print("line", line)
 
 # rank 0 creates corpus from dir
 # corpus has inside all file list and sizes

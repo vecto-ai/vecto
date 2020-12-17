@@ -62,6 +62,19 @@ class FileLineIterator(BaseIterator):
                         yield line
 
 
+def seek_unicode(fp, position, direction=-1):
+    while position >= 0:
+        fp.seek(position)
+        try:
+            fp.seek(position)
+            fp.read(1)
+            fp.seek(position)
+            return
+        except UnicodeDecodeError:
+            position += direction
+    raise UnicodeDecodeError("File not decodable")
+
+
 class ViewLineIterator(BaseIterator):
     def __init__(self, tree, start, end, verbose):
         # TODO: sort this stuff from parent class out
@@ -75,8 +88,11 @@ class ViewLineIterator(BaseIterator):
         # if first - junmp to offset
         # open
         # yield line until EOF of offset if last
-        for filename in self.base_corpus:
+        for i in range(self.start[0], self.end[0] + 1):
+            filename = self.tree[i].filename
             with detect_archive_format_and_open(filename) as file_in:
+                if i == self.start[0]:
+                    seek_unicode(file_in, self.start[1])
                 for line in file_in:
                     line = line.strip()
                     if line:
