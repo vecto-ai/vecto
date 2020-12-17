@@ -85,7 +85,7 @@ class ViewCorpus(BaseCorpus):
         return self.tree[-1].bytes
 
     def get_file_and_offset(self, global_position, start_of_range=True, epsilon=0):
-        assert global_position < self.total_bytes
+        assert global_position <= self.total_bytes
         lo = 0
         hi = len(self.tree)
         while (True):
@@ -120,12 +120,15 @@ class ViewCorpus(BaseCorpus):
         return start, end
 
     def get_line_iterator(self, rank, size):
-        pos = self.rank_and_size_to_pos(rank, size)
-        print(pos)
+        byte_start, byte_end = self.rank_and_size_to_pos(rank, size)
+        # TODO: read epsilon from config ^_^
+        node_start = self.get_file_and_offset(byte_start, start_of_range=True, epsilon=0)
+        node_end = self.get_file_and_offset(byte_end, start_of_range=False, epsilon=0)
+        # CREATE ITERATOR HERE
         # iterate over precomputed tree of files and sizes
         # iterated this file/this offset to last-file last offset
-        pass
-
+        return node_start, node_end
+        # return Iterator(node_start, node_end)
 
 class FileCorpus(BaseCorpus):
     """Cepresents a body of text in a single file"""
