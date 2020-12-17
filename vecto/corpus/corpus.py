@@ -73,11 +73,8 @@ class ViewCorpus(BaseCorpus):
         self.tree = []
         self.accumulated_size = 0
         for file in DirIterator(self.path):
-            # TODO: estimage file contenst size
-            # TODO: prefix sum for binary search?
             self.accumulated_size += get_uncompressed_size(file)
             self.tree.append((file, self.accumulated_size))
-        # TODO: total size
         print(self.tree)
 
     def get_line_iterator(self):
