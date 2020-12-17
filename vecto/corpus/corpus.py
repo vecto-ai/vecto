@@ -77,6 +77,10 @@ class ViewCorpus(BaseCorpus):
             self.tree.append((file, self.accumulated_size))
         print(self.tree)
 
+    def get_file_and_offset(self, global_position):
+        assert global_position < self.accumulated_size
+        # TODO: implemetn the rest
+
     def get_line_iterator(self):
         # iterate over precomputed tree of files and sizes
         # iterated this file/this offset to last-file last offset
