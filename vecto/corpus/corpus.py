@@ -72,16 +72,20 @@ class ViewCorpus(BaseCorpus):
     # is returned from get_view from Corpus
     def load_dir_strucute(self):
         self.tree = []
-        self.accumulated_size = 0
+        accumulated_size = 0
         for file in DirIterator(self.path):
-            self.accumulated_size += get_uncompressed_size(file)
-            self.tree.append((file, self.accumulated_size))
+            accumulated_size += get_uncompressed_size(file)
+            self.tree.append((file, accumulated_size))
         # print(self.tree)
         # TODO: use named tuples here
         self.tree = [TreeElement("file1", 10), TreeElement("file2", 15)]
 
+    @property
+    def total_bytes(self):
+        return self.tree[-1].bytes
+
     def get_file_and_offset(self, global_position, start_of_range=True, epsilon=0):
-        assert global_position < self.accumulated_size
+        assert global_position < self.total_bytes
         lo = 0
         hi = len(self.tree)
         while (True):
@@ -109,7 +113,15 @@ class ViewCorpus(BaseCorpus):
             if self.tree[current].bytes < global_position:
                 lo = current + 1
 
+    def rank_and_size_to_pos(self, rank, size):
+        assert rank < size
+        start = self.total_bytes * rank // size
+        end = self.total_bytes * (rank + 1) // size
+        return start, end
+
     def get_line_iterator(self, rank, size):
+        pos = self.rank_and_size_to_pos(rank, size)
+        print(pos)
         # iterate over precomputed tree of files and sizes
         # iterated this file/this offset to last-file last offset
         pass
