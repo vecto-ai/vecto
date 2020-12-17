@@ -13,7 +13,9 @@ for q in [9, 11]:
         print("pos", pos, ", offset", offset, "\n")
 
 print("testing get get_line_iterator")
-corpus.get_line_iterator(0, 2)
+for i in range(2):
+    print("worker", i)
+    corpus.get_line_iterator(i, 2)
 
 # rank 0 creates corpus from dir
 # corpus has inside all file list and sizes
