@@ -5,7 +5,7 @@ corpus = ViewCorpus(path)
 corpus.load_dir_strucute()
 search = 11
 print("searching ", search, "in", corpus.tree)
-pos, offset = corpus.get_file_and_offset(search, start_of_range=False, epsilone=2)
+pos, offset = corpus.get_file_and_offset(search, start_of_range=False, epsilon=2)
 print("final pos", pos, ", offset", offset)
 # rank 0 creates corpus from dir
 # corpus has inside all file list and sizes
