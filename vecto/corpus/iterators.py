@@ -93,10 +93,14 @@ class ViewLineIterator(BaseIterator):
             with detect_archive_format_and_open(filename) as file_in:
                 if i == self.start[0]:
                     seek_unicode(file_in, self.start[1])
-                for line in file_in:
+                line = file_in.readline()
+                while(line):
                     line = line.strip()
-                    if line:
-                        yield line
+                    yield line
+                    if i >= self.end[0]:
+                        if file_in.tell() > self.end[1]:
+                            break
+                    line = file_in.readline()
 
 
 class TokenizedSequenceIterator(BaseIterator):
