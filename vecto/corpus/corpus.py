@@ -78,23 +78,27 @@ class ViewCorpus(BaseCorpus):
             self.tree.append((file, self.accumulated_size))
         # print(self.tree)
         # TODO: use named tuples here
-        self.tree = [TreeElement("file1", 10), TreeElement("file2", 15), TreeElement("file3", 20)]
+        self.tree = [TreeElement("file1", 10), TreeElement("file2", 15)]
 
-    def get_file_and_offset(self, global_position, jump_to_next=True):
+    def get_file_and_offset(self, global_position, start_of_range=True, epsilone=0):
         assert global_position < self.accumulated_size
         lo = 0
         hi = len(self.tree)
         while (True):
             pos = (lo + hi) // 2
             print(f"lo {lo}, hi {hi}, pos {pos}")
-            if lo == hi:
-                if jump_to_next:
-                    # TODO: use some epsilone here
-                    if self.tree[pos].bytes == global_position:
+            if lo >= hi:
+                if abs(self.tree[pos].bytes - global_position) <= epsilone:
+                    print("WE ARE TOO CLOSE")
+                    # TODO: this works ony for the end of the range
+                    if start_of_range:
                         if pos < len(self.tree) - 1:
                             pos += 1
+                    else:
+                        if pos > 0:
+                            pos -= 1
                 if pos > 0:
-                    offset = global_position - self.tree[pos - 1].bytes
+                    offset = max(global_position - self.tree[pos - 1].bytes, 0)
                 else:
                     offset = global_position
                 return pos, offset
