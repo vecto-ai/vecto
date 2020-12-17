@@ -99,7 +99,7 @@ class ViewCorpus(BaseCorpus):
                             offset = 0
                 else:
                     if pos > 0:
-                        if global_position - self.tree[pos - 1].bytes < epsilon:
+                        if offset < epsilon:
                             offset = self.tree[pos - 1].bytes - (self.tree[pos - 2].bytes if pos > 1 else 0)
                             pos -= 1
                 return pos, offset
