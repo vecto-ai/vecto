@@ -2,8 +2,9 @@ import os
 import numpy as np
 import logging
 from collections import namedtuple
-from .iterators import FileIterator, DirIterator, DirIterator, FileLineIterator, \
-    TokenizedSequenceIterator, TokenIterator, SlidingWindowIterator
+from .iterators import FileIterator, DirIterator
+from .iterators import FileLineIterator, ViewLineIterator
+from .iterators import TokenizedSequenceIterator, TokenIterator, SlidingWindowIterator
 from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
 from vecto.utils.metadata import WithMetaData
 from vecto.utils.data import detect_archive_format_and_open
@@ -127,7 +128,8 @@ class ViewCorpus(BaseCorpus):
         # CREATE ITERATOR HERE
         # iterate over precomputed tree of files and sizes
         # iterated this file/this offset to last-file last offset
-        return node_start, node_end
+        iterator = ViewLineIterator(self.tree, verbose=False, start=node_start, end=node_end)
+        return iterator
         # return Iterator(node_start, node_end)
 
 class FileCorpus(BaseCorpus):

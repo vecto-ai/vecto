@@ -62,6 +62,27 @@ class FileLineIterator(BaseIterator):
                         yield line
 
 
+class ViewLineIterator(BaseIterator):
+    def __init__(self, tree, start, end, verbose):
+        # TODO: sort this stuff from parent class out
+        super().__init__(base_corpus=None, verbose=verbose)
+        self.tree = tree
+        self.start = start
+        self.end = end
+
+    def _generate_samples(self):
+        # for node in list
+        # if first - junmp to offset
+        # open
+        # yield line until EOF of offset if last
+        for filename in self.base_corpus:
+            with detect_archive_format_and_open(filename) as file_in:
+                for line in file_in:
+                    line = line.strip()
+                    if line:
+                        yield line
+
+
 class TokenizedSequenceIterator(BaseIterator):
     """
     Receives any corpus yielding text (e.g. `FileLineIterator`) and produces tokenized sequences.

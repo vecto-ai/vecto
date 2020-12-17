@@ -16,12 +16,11 @@ pos, offset = corpus.get_file_and_offset(15, start_of_range=False, epsilon=2)
 print("pos", pos, ", offset", offset, "\n")
 
 
-
 print("testing get get_line_iterator")
 cnt_workers = 2
 for i in range(cnt_workers):
-    start, end = corpus.get_line_iterator(i, cnt_workers)
-    print("worker", i, start, end)
+    iterator = corpus.get_line_iterator(i, cnt_workers)
+    print("worker", i, iterator)
 
 # rank 0 creates corpus from dir
 # corpus has inside all file list and sizes
