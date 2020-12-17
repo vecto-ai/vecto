@@ -85,29 +85,29 @@ class ViewCorpus(BaseCorpus):
         lo = 0
         hi = len(self.tree)
         while (True):
-            pos = (lo + hi) // 2
+            current = (lo + hi) // 2
             # print(f"lo {lo}, hi {hi}, pos {pos}")
             if lo >= hi:
-                if pos > 0:
-                    offset = max(global_position - self.tree[pos - 1].bytes, 0)
+                if current > 0:
+                    offset = max(global_position - self.tree[current - 1].bytes, 0)
                 else:
                     offset = global_position
                 if start_of_range:
-                    if self.tree[pos].bytes - global_position < epsilon:
-                        if pos < len(self.tree) - 1:
-                            pos += 1
+                    if self.tree[current].bytes - global_position < epsilon:
+                        if current < len(self.tree) - 1:
+                            current += 1
                             offset = 0
                 else:
-                    if pos > 0:
+                    if current > 0:
                         if offset < epsilon:
-                            offset = self.tree[pos - 1].bytes - (self.tree[pos - 2].bytes if pos > 1 else 0)
-                            pos -= 1
-                return pos, offset
+                            offset = self.tree[current - 1].bytes - (self.tree[current - 2].bytes if current > 1 else 0)
+                            current -= 1
+                return current, offset
 
-            if self.tree[pos].bytes >= global_position:
-                hi = pos
-            if self.tree[pos].bytes < global_position:
-                lo = pos + 1
+            if self.tree[current].bytes >= global_position:
+                hi = current
+            if self.tree[current].bytes < global_position:
+                lo = current + 1
 
     def get_line_iterator(self, rank, size):
         # iterate over precomputed tree of files and sizes
