@@ -1,6 +1,6 @@
 from vecto.corpus import ViewCorpus
 
-path = "./tests/data/corpora/"
+path = "./tests/data/corpora/multiple_small"
 corpus = ViewCorpus(path)
 corpus.load_dir_strucute()
 print("three is ", corpus.tree)

@@ -84,14 +84,11 @@ class ViewLineIterator(BaseIterator):
         self.end = end
 
     def _generate_samples(self):
-        # for node in list
-        # if first - junmp to offset
-        # open
-        # yield line until EOF of offset if last
         for i in range(self.start[0], self.end[0] + 1):
             filename = self.tree[i].filename
             with detect_archive_format_and_open(filename) as file_in:
                 if i == self.start[0]:
+                    # TODO: conside seek to beginning of line
                     seek_unicode(file_in, self.start[1])
                 line = file_in.readline()
                 while(line):
