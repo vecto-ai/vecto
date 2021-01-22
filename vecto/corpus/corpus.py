@@ -15,6 +15,7 @@ class BaseCorpus(WithMetaData):
     """Cepresents a body of text in single or multiple files"""
 
     def __init__(self, path, language='eng'):
+        super().__init__(path)
         self.path = path
         self.language = language
 
