@@ -1,18 +1,18 @@
-import json
-import gzip
 import bz2
-import os
+import gzip
+import json
 import lzma
+import os
 
 
 def detect_archive_format_and_open(path):
     if path.endswith(".xz"):
-        return lzma.open(path, mode='rt')
+        return lzma.open(path, mode="rt", encoding="utf-8", errors="replace")
     if path.endswith(".bz2"):
-        return bz2.open(path, mode='rt')
+        return bz2.open(path, mode="rt", encoding="utf-8", errors="replace")
     if path.endswith(".gz"):
-        return gzip.open(path, mode='rt')
-    return open(path, encoding='utf8')
+        return gzip.open(path, mode="rt", encoding="utf-8", errors="replace")
+    return open(path, encoding="utf8", errors="replace")
 
 
 def print_json(data):
@@ -23,7 +23,7 @@ def save_json(data, path):
     basedir = os.path.dirname(path)
     os.makedirs(basedir, exist_ok=True)
     str_data = json.dumps(data, ensure_ascii=False, indent=4, sort_keys=False)
-    file_out = open(path, 'w')
+    file_out = open(path, "w")
     file_out.write(str_data)
     file_out.close()
 
@@ -43,6 +43,6 @@ def jsonify(data):
         return {jsonify(key): jsonify(value) for key, value in data.items()}
     if isinstance(data, int):
         return str(data)
-    if type(data).__module__ == 'numpy':
+    if type(data).__module__ == "numpy":
         return data.tolist()
     return str(data)
