@@ -124,15 +124,19 @@ class TokenizedSequenceIterator(BaseIterator):
 
 
 class SequenceIterator(BaseIterator):
-    def __init__(self, line_terator, sequence_length):
+    def __init__(self, line_terator, sequence_length, tokenizer):
         super().__init__()
         self.line_iterator = line_terator
         self.sequence_length = sequence_length
-        self.buffer = ""
+        self.tokenizer = tokenizer
+        self.buffer = []
 
     def _generate_samples(self):
+        # TODO: consider removing too small chunks of sentences at the end
+        # TODO: consider leveraging sentence iterator is corpus has mark-up
         for line in self.line_iterator:
-            self.buffer += line
+            tokens = self.tokenizer(line)
+            self.buffer += tokens
             while len(self.buffer) > self.sequence_length:
                 s = self.buffer[: self.sequence_length]
                 self.buffer = self.buffer[self.sequence_length:]

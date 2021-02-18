@@ -56,8 +56,10 @@ class BaseCorpus(WithMetaData):
                                          tokenizer=tokenizer,
                                          verbose=verbose)
 
-    def get_sequence_iterator(self, sequence_length):
-        return SequenceIterator(self.get_line_iterator(), sequence_length=sequence_length)
+    def get_sequence_iterator(self, sequence_length, tokenizer):
+        return SequenceIterator(self.get_line_iterator(),
+                                sequence_length=sequence_length,
+                                tokenizer=tokenizer)
 
 
 class Corpus(BaseCorpus):
