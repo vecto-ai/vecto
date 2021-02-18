@@ -234,3 +234,11 @@ class SlidingWindowIterator(BaseIterator):
 #    def _generate_samples(self):
 #        for s in self.samples:
 #            yield s
+
+
+class SequenceIterator(BaseIterator):
+    def __init__(self, line_terator):
+        self.line_terator = line_terator
+
+    def __iter__(self):
+        return self.line_terator

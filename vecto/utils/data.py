@@ -15,6 +15,12 @@ def detect_archive_format_and_open(path):
     return open(path, encoding="utf8", errors="replace")
 
 
+def get_uncompressed_size(path):
+    with detect_archive_format_and_open(path) as f:
+        size = f.seek(0, 2)
+    return size
+
+
 def print_json(data):
     print(json.dumps(data, ensure_ascii=False, indent=4, sort_keys=False))
 
