@@ -14,7 +14,7 @@ install:
   - pip install -U coveralls
   - pip install -U coverage
   - pip install -U pylint
-  - pip install -r test_requirements.txt
+  - pip install -U -r test_requirements.txt
 
 # before_script: # configure a headless display to test plot generation
 # - "export DISPLAY=:99.0"
