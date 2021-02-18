@@ -48,7 +48,7 @@ class BaseCorpus(WithMetaData):
         return TokenizedSequenceIterator(self.get_line_iterator(verbose=verbose), tokenizer=tokenizer, verbose=verbose)
 
     def get_sequence_iterator(self):
-        return SequenceIterator(self.get_line_iterator)
+        return SequenceIterator(self.get_line_iterator())
 
 #class Corpus(BaseCorpus) #think of beter naming/renaming
     # def init() 

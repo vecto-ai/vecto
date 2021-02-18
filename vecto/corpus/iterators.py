@@ -123,6 +123,15 @@ class TokenizedSequenceIterator(BaseIterator):
                 yield tokenized_sentence
 
 
+class SequenceIterator(BaseIterator):
+    def __init__(self, line_terator):
+        super().__init__()
+        self.line_iterator = line_terator
+
+    def _generate_samples(self):
+        return self.line_iterator
+
+
 class TokenIterator(BaseIterator):
     """
     Receives any corpus yielding text (e.g. `FileLineIterator`) and produces a sequence of tokens.
@@ -234,11 +243,3 @@ class SlidingWindowIterator(BaseIterator):
 #    def _generate_samples(self):
 #        for s in self.samples:
 #            yield s
-
-
-class SequenceIterator(BaseIterator):
-    def __init__(self, line_terator):
-        self.line_terator = line_terator
-
-    def __iter__(self):
-        return self.line_terator
