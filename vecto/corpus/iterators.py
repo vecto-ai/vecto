@@ -124,12 +124,19 @@ class TokenizedSequenceIterator(BaseIterator):
 
 
 class SequenceIterator(BaseIterator):
-    def __init__(self, line_terator):
+    def __init__(self, line_terator, sequence_length):
         super().__init__()
         self.line_iterator = line_terator
+        self.sequence_length = sequence_length
+        self.buffer = ""
 
     def _generate_samples(self):
-        return self.line_iterator
+        for line in self.line_iterator:
+            self.buffer += line
+            while len(self.buffer) > self.sequence_length:
+                s = self.buffer[: self.sequence_length]
+                self.buffer = self.buffer[self.sequence_length:]
+                yield s
 
 
 class TokenIterator(BaseIterator):

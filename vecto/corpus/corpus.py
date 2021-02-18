@@ -45,15 +45,19 @@ class BaseCorpus(WithMetaData):
                 tokenizer = DEFAULT_JAP_TOKENIZER
             else:
                 tokenizer = DEFAULT_SENT_TOKENIZER
-        return TokenizedSequenceIterator(self.get_line_iterator(verbose=verbose), tokenizer=tokenizer, verbose=verbose)
+        return TokenizedSequenceIterator(self.get_line_iterator(verbose=verbose),
+                                         tokenizer=tokenizer,
+                                         verbose=verbose)
 
-    def get_sequence_iterator(self):
-        return SequenceIterator(self.get_line_iterator())
+    def get_sequence_iterator(self, sequence_length):
+        return SequenceIterator(self.get_line_iterator(), sequence_length=sequence_length)
 
-#class Corpus(BaseCorpus) #think of beter naming/renaming
-    # def init() 
 
- #self.metadata is here
+# class Corpus(BaseCorpus) #think of beter naming/renaming
+    # def init()
+
+
+# self.metadata is here
 
     # either master does plits and send each worker each split
     # or first send whole thing, and each worker does split
