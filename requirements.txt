@@ -7,7 +7,7 @@ pandas
 progressbar2
 matplotlib
 scipy
-sklearn
+scikit-learn
 system-query
 tables
 traitlets
