@@ -5,10 +5,14 @@ from collections import namedtuple
 from .iterators import FileIterator, DirIterator
 from .iterators import FileLineIterator, ViewLineIterator
 from .iterators import TokenizedSequenceIterator, TokenIterator, SlidingWindowIterator
+from .iterators import SequenceIterator
 from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
 from vecto.utils.metadata import WithMetaData
-from vecto.utils.data import detect_archive_format_and_open
+from vecto.utils.data import get_uncompressed_size
 logger = logging.getLogger(__name__)
+
+
+TreeElement = namedtuple('TreeElement', ["filename", "bytes"])
 
 
 class BaseCorpus(WithMetaData):
@@ -19,7 +23,11 @@ class BaseCorpus(WithMetaData):
         self.path = path
         self.language = language
 
-    def get_sliding_window_iterator(self, left_ctx_size=2, right_ctx_size=2, tokenizer=None, verbose=0):
+    def get_sliding_window_iterator(self,
+                                    left_ctx_size=2,
+                                    right_ctx_size=2,
+                                    tokenizer=None,
+                                    verbose=0):
         if tokenizer is None:
             if self.language == 'jap':
                 tokenizer = DEFAULT_JAP_TOKENIZER
@@ -44,34 +52,17 @@ class BaseCorpus(WithMetaData):
                 tokenizer = DEFAULT_JAP_TOKENIZER
             else:
                 tokenizer = DEFAULT_SENT_TOKENIZER
-        return TokenizedSequenceIterator(self.get_line_iterator(verbose=verbose), tokenizer=tokenizer, verbose=verbose)
+        return TokenizedSequenceIterator(self.get_line_iterator(verbose=verbose),
+                                         tokenizer=tokenizer,
+                                         verbose=verbose)
+
+    def get_sequence_iterator(self, sequence_length, tokenizer):
+        return SequenceIterator(self.get_line_iterator(),
+                                sequence_length=sequence_length,
+                                tokenizer=tokenizer)
 
 
-#class Corpus(BaseCorpus) #think of beter naming/renaming
-    # def init() 
-
- #self.metadata is here
-
-    # either master does plits and send each worker each split
-    # or first send whole thing, and each worker does split
-    # def get_view(start, end)
-        #  return viuew
-
-class SegmentIterator():
-    def __init__(self, tree):
-        # iterate from given file and offste
-        pass
-
-
-def get_uncompressed_size(path):
-    with detect_archive_format_and_open(path) as f:
-        size = f.seek(0, 2)
-    return size
-
-TreeElement = namedtuple('TreeElement', ["filename", "bytes"])
-
-class ViewCorpus(BaseCorpus):
-    # is returned from get_view from Corpus
+class Corpus(BaseCorpus):
     def load_dir_strucute(self):
         self.tree = []
         accumulated_size = 0
@@ -116,24 +107,32 @@ class ViewCorpus(BaseCorpus):
             if self.tree[current].bytes < global_position:
                 lo = current + 1
 
-    def rank_and_size_to_pos(self, rank, size):
-        assert rank < size
-        start = self.total_bytes * rank // size
-        end = self.total_bytes * (rank + 1) // size
-        return start, end
 
-    def get_line_iterator(self, rank, size):
-        byte_start, byte_end = self.rank_and_size_to_pos(rank, size)
+class CorpusView(BaseCorpus):
+    def __init__(self, file_corpus, rank, size):
+        self.corpus = file_corpus
+        self.rank = rank
+        self.size = size
+
+    def get_line_iterator(self):
+        byte_start, byte_end = self.rank_and_size_to_pos(self.rank, self.size)
         # TODO: read epsilon from config ^_^
-        node_start = self.get_file_and_offset(byte_start, start_of_range=True, epsilon=0)
-        node_end = self.get_file_and_offset(byte_end, start_of_range=False, epsilon=0)
+        node_start = self.corpus.get_file_and_offset(byte_start, start_of_range=True, epsilon=0)
+        node_end = self.corpus.get_file_and_offset(byte_end, start_of_range=False, epsilon=0)
         # CREATE ITERATOR HERE
         # iterate over precomputed tree of files and sizes
         # iterated this file/this offset to last-file last offset
-        iterator = ViewLineIterator(self.tree, verbose=False, start=node_start, end=node_end)
+        iterator = ViewLineIterator(self.corpus.tree, verbose=False, start=node_start, end=node_end)
         return iterator
-        # return Iterator(node_start, node_end)
 
+    def rank_and_size_to_pos(self, rank, size):
+        assert rank < size
+        start = self.corpus.total_bytes * rank // size
+        end = self.corpus.total_bytes * (rank + 1) // size
+        return start, end
+
+
+# TODO: make this deprecated and use Corpus instead
 class FileCorpus(BaseCorpus):
     """Cepresents a body of text in a single file"""
 
