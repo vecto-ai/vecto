@@ -2,7 +2,7 @@ vecto
 *****
 
 .. image:: https://api.travis-ci.com/vecto-ai/vecto.svg?branch=master
-    :target: https://travis-ci.org/vecto-ai/vecto
+    :target: https://travis-ci.com/vecto-ai/vecto
     :alt: build status from Travis CI
 
 .. image:: https://ci.appveyor.com/api/projects/status/github/vecto-ai/vecto?branch=master&svg=true
