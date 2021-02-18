@@ -8,8 +8,11 @@ from .iterators import TokenizedSequenceIterator, TokenIterator, SlidingWindowIt
 from .iterators import SequenceIterator
 from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
 from vecto.utils.metadata import WithMetaData
-from vecto.utils.data import detect_archive_format_and_open, get_uncompressed_size
+from vecto.utils.data import get_uncompressed_size
 logger = logging.getLogger(__name__)
+
+
+TreeElement = namedtuple('TreeElement', ["filename", "bytes"])
 
 
 class BaseCorpus(WithMetaData):
@@ -20,7 +23,11 @@ class BaseCorpus(WithMetaData):
         self.path = path
         self.language = language
 
-    def get_sliding_window_iterator(self, left_ctx_size=2, right_ctx_size=2, tokenizer=None, verbose=0):
+    def get_sliding_window_iterator(self,
+                                    left_ctx_size=2,
+                                    right_ctx_size=2,
+                                    tokenizer=None,
+                                    verbose=0):
         if tokenizer is None:
             if self.language == 'jap':
                 tokenizer = DEFAULT_JAP_TOKENIZER
@@ -51,21 +58,6 @@ class BaseCorpus(WithMetaData):
 
     def get_sequence_iterator(self, sequence_length):
         return SequenceIterator(self.get_line_iterator(), sequence_length=sequence_length)
-
-
-# class Corpus(BaseCorpus) #think of beter naming/renaming
-    # def init()
-
-
-# self.metadata is here
-
-    # either master does plits and send each worker each split
-    # or first send whole thing, and each worker does split
-    # def get_view(start, end)
-        #  return viuew
-
-
-TreeElement = namedtuple('TreeElement', ["filename", "bytes"])
 
 
 class Corpus(BaseCorpus):
@@ -138,6 +130,7 @@ class CorpusView(BaseCorpus):
         return start, end
 
 
+# TODO: make this deprecated and use Corpus instead
 class FileCorpus(BaseCorpus):
     """Cepresents a body of text in a single file"""
 
