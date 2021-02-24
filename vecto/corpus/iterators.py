@@ -37,7 +37,7 @@ class DirIterator(BaseIterator):
 
     def _generate_samples(self):
         for root, _, files in os.walk(self.dirname, followlinks=True):
-            for good_fname in fnmatch.filter(files, "*"):
+            for good_fname in sorted(fnmatch.filter(files, "*")):
                 full_file_path = os.path.join(root, good_fname)
                 logger.info("processing " + full_file_path)
                 yield full_file_path
