@@ -1,6 +1,6 @@
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import adjusted_rand_score, v_measure_score, homogeneity_score, completeness_score, \
-    mutual_info_score, fowlkes_mallows_score, silhouette_score, calinski_harabaz_score
+    mutual_info_score, fowlkes_mallows_score, silhouette_score, calinski_harabasz_score
 import numpy as np
 
 
