@@ -109,11 +109,12 @@ class Corpus(BaseCorpus):
 
     def get_line_iterator(self, verbose=False):
         # TODO: can be more optimal w/o using view
-        return CorpusView(self, 1, 0).get_line_iterator()
+        return CorpusView(self, 0, 1).get_line_iterator()
 
 
 class CorpusView(BaseCorpus):
     def __init__(self, file_corpus, rank, size):
+        assert rank < size
         self.corpus = file_corpus
         self.rank = rank
         self.size = size
