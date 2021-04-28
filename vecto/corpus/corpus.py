@@ -107,6 +107,10 @@ class Corpus(BaseCorpus):
             if self.tree[current].bytes < global_position:
                 lo = current + 1
 
+    def get_line_iterator(self, verbose=False):
+        # TODO: can be more optimal w/o using view
+        return CorpusView(self, 1, 0).get_line_iterator()
+
 
 class CorpusView(BaseCorpus):
     def __init__(self, file_corpus, rank, size):
@@ -114,7 +118,7 @@ class CorpusView(BaseCorpus):
         self.rank = rank
         self.size = size
 
-    def get_line_iterator(self):
+    def get_line_iterator(self, verbose=False):
         byte_start, byte_end = self.rank_and_size_to_pos(self.rank, self.size)
         # TODO: read epsilon from config ^_^
         node_start = self.corpus.get_file_and_offset(byte_start, start_of_range=True, epsilon=0)
