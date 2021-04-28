@@ -46,6 +46,9 @@ class BaseCorpus(WithMetaData):
                 tokenizer = DEFAULT_TOKENIZER
         return TokenIterator(self.get_sentence_iterator(tokenizer, verbose))
 
+    def get_character_iterator(self, verbose=False):
+        return TokenIterator(self.get_line_iterator(verbose))
+
     def get_sentence_iterator(self, tokenizer=None, verbose=False):
         if tokenizer is None:
             if self.language == 'jap':

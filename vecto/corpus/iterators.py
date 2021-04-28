@@ -143,15 +143,15 @@ class SequenceIterator(BaseIterator):
                 yield s
 
 
-class TokenIterator(BaseIterator):
-    """
-    Receives any corpus yielding text (e.g. `FileLineIterator`) and produces a sequence of tokens.
-    """
-
+class BaseNestedIterator(BaseIterator):
     def __init__(self, parent_iterator, verbose=0):
-        super(TokenIterator, self).__init__(parent_iterator=parent_iterator.metadata,
+        # TODO: this .metadata seems strange
+        super().__init__(parent_iterator=parent_iterator.metadata,
                                             verbose=verbose)
         self.parent_iterator = parent_iterator
+
+
+class TokenIterator(BaseNestedIterator):
 
     def _generate_samples(self):
         for tokenized_str in self.parent_iterator:
