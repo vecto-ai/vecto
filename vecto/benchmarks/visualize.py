@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 import pandas
 from pandas.io.json import json_normalize
 from vecto.utils.data import load_json
@@ -99,7 +100,7 @@ def plot_accuracy(path, key_primary="experiment_setup.method",
 
 
 if __name__ == "__main__":
-    plot_accuracy("/mnt/work/scratch",
+    plot_accuracy(sys.argv[1],
                   key_primary="experiment_setup.task",
                   key_secondary="experiment_setup.embeddings.name")
     from matplotlib import pyplot as plt
