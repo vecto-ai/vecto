@@ -90,14 +90,13 @@ class ViewLineIterator(BaseIterator):
                 if i == self.start[0]:
                     # TODO: conside seek to beginning of line
                     seek_unicode(file_in, self.start[1])
-                line = file_in.readline()
-                while(line):
+                cnt_bytes_read = self.start[0] if self.start[0] == self.end[0] else 0
+                for line in file_in:
+                    cnt_bytes_read += len(line)
                     line = line.strip()
+                    if cnt_bytes_read > self.end[1]:
+                        break
                     yield line
-                    if i >= self.end[0]:
-                        if file_in.tell() > self.end[1]:
-                            break
-                    line = file_in.readline()
 
 
 class TokenizedSequenceIterator(BaseIterator):
