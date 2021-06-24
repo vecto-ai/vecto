@@ -121,7 +121,7 @@ class Corpus(BaseCorpus):
 
     def get_line_iterator(self, verbose=False):
         # TODO: can be more optimal w/o using view
-        return CorpusView(self, 0, 1).get_ine_iterator()
+        return CorpusView(self, 0, 1).get_line_iterator()
 
     def get_looped_line_iterator(self, rank=0, size=1):
         assert rank < size
