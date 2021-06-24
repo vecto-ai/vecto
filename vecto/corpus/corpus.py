@@ -68,6 +68,11 @@ class BaseCorpus(WithMetaData):
                                 sequence_length=sequence_length,
                                 tokenizer=tokenizer)
 
+    def get_looped_sequence_iterator(self, sequence_length, tokenizer, rank, size):
+        return SequenceIterator(self.get_looped_line_iterator(rank, size),
+                                sequence_length=sequence_length,
+                                tokenizer=tokenizer)
+
 
 class Corpus(BaseCorpus):
     def load_dir_strucute(self):
