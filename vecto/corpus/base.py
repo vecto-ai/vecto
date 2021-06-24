@@ -11,7 +11,7 @@ class BaseIterator(WithMetaData):
     iteration, tqdm progressbar etc.
     """
 
-    def __init__(self, verbose=0, **metadata_kwargs):
+    def __init__(self, verbose=False, **metadata_kwargs):
         super(BaseIterator, self).__init__(**metadata_kwargs)
         self._verbose = verbose
 

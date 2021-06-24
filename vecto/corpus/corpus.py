@@ -1,14 +1,18 @@
-import os
-import numpy as np
 import logging
+import os
 from collections import namedtuple
-from .iterators import FileIterator, DirIterator
-from .iterators import FileLineIterator, ViewLineIterator
-from .iterators import TokenizedSequenceIterator, TokenIterator, SlidingWindowIterator
-from .iterators import SequenceIterator
-from .tokenization import DEFAULT_TOKENIZER, DEFAULT_SENT_TOKENIZER, DEFAULT_JAP_TOKENIZER
-from vecto.utils.metadata import WithMetaData
+
+import numpy as np
 from vecto.utils.data import get_uncompressed_size
+from vecto.utils.metadata import WithMetaData
+
+from .iterators import (DirIterator, FileIterator, FileLineIterator,
+                        LoopedLineIterator, SequenceIterator,
+                        SlidingWindowIterator, TokenIterator,
+                        TokenizedSequenceIterator, ViewLineIterator)
+from .tokenization import (DEFAULT_JAP_TOKENIZER, DEFAULT_SENT_TOKENIZER,
+                           DEFAULT_TOKENIZER)
+
 logger = logging.getLogger(__name__)
 
 
@@ -64,6 +68,11 @@ class BaseCorpus(WithMetaData):
                                 sequence_length=sequence_length,
                                 tokenizer=tokenizer)
 
+    def get_looped_sequence_iterator(self, sequence_length, tokenizer, rank, size):
+        return SequenceIterator(self.get_looped_line_iterator(rank, size),
+                                sequence_length=sequence_length,
+                                tokenizer=tokenizer)
+
 
 class Corpus(BaseCorpus):
     def load_dir_strucute(self):
@@ -113,6 +122,13 @@ class Corpus(BaseCorpus):
     def get_line_iterator(self, verbose=False):
         # TODO: can be more optimal w/o using view
         return CorpusView(self, 0, 1).get_line_iterator()
+
+    def get_looped_line_iterator(self, rank=0, size=1):
+        assert rank < size
+        byte_start = self.total_bytes * rank // size
+        node_start = self.get_file_and_offset(byte_start, start_of_range=True, epsilon=0)
+        iterator = LoopedLineIterator(self.tree, node_start)
+        return iterator
 
 
 class CorpusView(BaseCorpus):
