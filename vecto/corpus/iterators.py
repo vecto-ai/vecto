@@ -100,12 +100,13 @@ class ViewLineIterator(BaseIterator):
 
 class LoopedLineIterator(BaseIterator):
     def __init__(self, tree, start):
+        super().__init__()
         self.tree = tree
         self.id_file = start[0]
         self.start_offset = start[1]
 
     def _generate_samples(self):
-        filename = self.tree[self.id_file]
+        filename = self.tree[self.id_file][0]
         file_in = detect_archive_format_and_open(filename)
         seek_unicode(file_in, self.start_offset)
         while True:
@@ -116,7 +117,7 @@ class LoopedLineIterator(BaseIterator):
             self.id_file += 1
             if self.id_file >= len(self.tree):
                 self.id_file = 0
-            file_in = detect_archive_format_and_open(self.tree[self.id_file])
+            file_in = detect_archive_format_and_open(self.tree[self.id_file][0])
 
 
 class TokenizedSequenceIterator(BaseIterator):
