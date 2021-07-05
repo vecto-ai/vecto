@@ -104,6 +104,7 @@ class LoopedLineIterator(BaseIterator):
         self.tree = tree
         self.id_file = start[0]
         self.start_offset = start[1]
+        self._cnt_restarts = 0
 
     def _generate_samples(self):
         filename = self.tree[self.id_file][0]
@@ -117,7 +118,12 @@ class LoopedLineIterator(BaseIterator):
             self.id_file += 1
             if self.id_file >= len(self.tree):
                 self.id_file = 0
+                self._cnt_restarts += 1
             file_in = detect_archive_format_and_open(self.tree[self.id_file][0])
+
+    @property
+    def cnt_restarts(self):
+        return self._cnt_restarts
 
 
 class TokenizedSequenceIterator(BaseIterator):
@@ -161,6 +167,12 @@ class SequenceIterator(BaseIterator):
                 s = self.buffer[: self.sequence_length]
                 self.buffer = self.buffer[self.sequence_length:]
                 yield s
+
+    @property
+    def cnt_restarts(self):
+        # TODO: this will fail with non-looped line iterator,
+        # maybe there's a way to do it more gracefully
+        return self.line_iterator.cnt_restarts
 
 
 class BaseNestedIterator(BaseIterator):
