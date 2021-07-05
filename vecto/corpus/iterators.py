@@ -104,6 +104,7 @@ class LoopedLineIterator(BaseIterator):
         self.tree = tree
         self.id_file = start[0]
         self.start_offset = start[1]
+        self._cnt_restarts = 0
 
     def _generate_samples(self):
         filename = self.tree[self.id_file][0]
@@ -117,6 +118,7 @@ class LoopedLineIterator(BaseIterator):
             self.id_file += 1
             if self.id_file >= len(self.tree):
                 self.id_file = 0
+                self._cnt_restarts += 1
             file_in = detect_archive_format_and_open(self.tree[self.id_file][0])
 
 
