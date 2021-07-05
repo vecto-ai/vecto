@@ -168,6 +168,12 @@ class SequenceIterator(BaseIterator):
                 self.buffer = self.buffer[self.sequence_length:]
                 yield s
 
+    @property
+    def cnt_restarts(self):
+        # TODO: this will fail with non-looped line iterator,
+        # maybe there's a way to do it more gracefully
+        return self.line_iterator.cnt_restarts
+
 
 class BaseNestedIterator(BaseIterator):
     def __init__(self, parent_iterator, verbose=0):
