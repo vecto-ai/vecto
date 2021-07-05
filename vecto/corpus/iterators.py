@@ -121,6 +121,10 @@ class LoopedLineIterator(BaseIterator):
                 self._cnt_restarts += 1
             file_in = detect_archive_format_and_open(self.tree[self.id_file][0])
 
+    @property
+    def cnt_restarts(self):
+        return self._cnt_restarts
+
 
 class TokenizedSequenceIterator(BaseIterator):
     """
