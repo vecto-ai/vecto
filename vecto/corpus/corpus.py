@@ -68,10 +68,12 @@ class BaseCorpus(WithMetaData):
                                 sequence_length=sequence_length,
                                 tokenizer=tokenizer)
 
-    def get_looped_sequence_iterator(self, sequence_length, tokenizer, rank, size):
+    def get_looped_sequence_iterator(self, sequence_length, tokenizer, rank, size, minimal_length=0):
         return SequenceIterator(self.get_looped_line_iterator(rank, size),
                                 sequence_length=sequence_length,
-                                tokenizer=tokenizer)
+                                tokenizer=tokenizer,
+                                minimal_length=minimal_length,
+                                reset_on_new_line=True)
 
 
 class Corpus(BaseCorpus):
