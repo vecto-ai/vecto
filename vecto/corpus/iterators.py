@@ -150,7 +150,7 @@ class TokenizedSequenceIterator(BaseIterator):
 
 
 class SequenceIterator(BaseIterator):
-    def __init__(self, line_terator, sequence_length, tokenizer, minimal_length=0, reset_on_new_line=True):
+    def __init__(self, line_terator, sequence_length, tokenizer, minimal_length=0, reset_on_new_line=False):
         super().__init__()
         self.line_iterator = line_terator
         self.sequence_length = sequence_length
@@ -166,8 +166,10 @@ class SequenceIterator(BaseIterator):
             tokens = self.tokenizer(line)
             if self.reset_on_new_line:
                 self.buffer = []
+            elif len(self.buffer) < self.minimal_length:
+                self.buffer = []
             self.buffer += tokens
-            while len(self.buffer) > self.minimal_length:
+            while len(self.buffer) > self.sequence_length - self.minimal_length:
                 s = self.buffer[: self.sequence_length]
                 self.buffer = self.buffer[self.sequence_length:]
                 yield s
