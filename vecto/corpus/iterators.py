@@ -190,11 +190,18 @@ class BaseNestedIterator(BaseIterator):
 
 
 class TokenIterator(BaseNestedIterator):
-
     def _generate_samples(self):
         for tokenized_str in self.parent_iterator:
             for token in tokenized_str:
                 yield token
+
+
+class CharIterator(BaseNestedIterator):
+    def _generate_samples(self):
+        for line in self.parent_iterator:
+            for c in line:
+                yield c
+            yield " "
 
 
 def iter_sliding_window(seq, left_ctx_size, right_ctx_size):

@@ -29,13 +29,16 @@ def sentence_iter(char_iter):
     size_buffer = 10000
     buffer = [" "] * size_buffer
     pos = 0
+    prev_char = " "
     for c in char_iter:
-        buffer[pos] = c
-        pos += 1
-        if c in delimiters:
+        if c == " " and prev_char in delimiters:
             yield "".join(buffer[: pos])
             buffer = [" "] * size_buffer
             pos = 0
+            continue
+        prev_char = c
+        buffer[pos] = c
+        pos += 1
     if pos > 0:
         yield "".join(buffer[: pos])
 
@@ -53,7 +56,7 @@ def main():
     # for s in samples:
     #     tokenized = sentencize(s)
     #     print(tokenized)
-    path = "/home/blackbird/Projects_heavy/NLP/langmo/data/sense_small"
+    path = "./tests/data/corpora/sentencise"
     corpus = Corpus(path)
     corpus.load_dir_strucute()
     char_iter = corpus.get_character_iterator()
