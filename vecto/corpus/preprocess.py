@@ -1,7 +1,7 @@
 # import spacy
 # import numpy as np
 # from nltk.tokenize import sent_tokenize
-import nltk
+# import nltk
 from vecto.corpus import Corpus
 
 
@@ -22,22 +22,46 @@ def simple_char_iter(text):
 # TODO: ok let's do streaming sentence splitter
 # ingest character by character
 # append to sentence, unles
-delimiters = {".", "?"}
+other_delimiters = {"?", "!", "。"}
+
+known_abbreviations = {"md", "bs"}
+
+
+def is_abbreviation(token):
+    if "." in token:
+        return True
+    if token.lower() in known_abbreviations:
+        return True
+    return False
 
 
 def sentence_iter(char_iter):
     size_buffer = 10000
     buffer = [" "] * size_buffer
     pos = 0
-    prev_char = " "
+    prev_char = ""
+    prev_token = ""
     for c in char_iter:
-        if c == " " and prev_char in delimiters:
-            yield "".join(buffer[: pos])
+        is_sentence_end = False
+        if c == " " and prev_char == ".":
+            # print(prev_token)
+            if not is_abbreviation(prev_token[:-1]):
+                is_sentence_end = True
+        if c in other_delimiters:
+            is_sentence_end = True
+            buffer[pos] = c
+            pos += 1
+        if is_sentence_end:
+            if pos > 0:
+                yield "".join(buffer[: pos]).strip()
             buffer = [" "] * size_buffer
             pos = 0
             continue
         prev_char = c
         buffer[pos] = c
+        prev_token += c
+        if c == " ":
+            prev_token = ""
         pos += 1
     if pos > 0:
         yield "".join(buffer[: pos])
@@ -49,10 +73,10 @@ def preprocess():
 
 
 def main():
-    samples = []
-    samples.append("Hey how do you do? M.D. Bob is my friend. Mr. John too.")
-    samples.append("А по-русски слабо? Что делать с гос. служащими?")
-    samples.append("富士山が見える。こんにちは")
+    # samples = []
+    # samples.append("Hey how do you do? M.D. Bob is my friend. Mr. John too.")
+    # samples.append("А по-русски слабо? Что делать с гос. служащими?")
+    # samples.append("富士山が見える。こんにちは")
     # for s in samples:
     #     tokenized = sentencize(s)
     #     print(tokenized)
