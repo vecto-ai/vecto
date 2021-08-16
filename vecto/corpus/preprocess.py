@@ -30,6 +30,8 @@ known_abbreviations = {"md", "bs"}
 def is_abbreviation(token):
     if "." in token:
         return True
+    if len(token) == 1:
+        return True
     if token.lower() in known_abbreviations:
         return True
     return False
@@ -81,13 +83,18 @@ def main():
     #     tokenized = sentencize(s)
     #     print(tokenized)
     path = "./tests/data/corpora/sentencise"
+    path = "/mnt/storage/Data/NLP/corpora/wiki_clean.txt"
     corpus = Corpus(path)
     corpus.load_dir_strucute()
     char_iter = corpus.get_character_iterator()
     sent_iter = sentence_iter(char_iter)
+    cnt = 0
     for line in sent_iter:
         print(line)
         print()
+        if cnt > 100:
+            break
+        cnt += 1
 
 
 if __name__ == "__main__":

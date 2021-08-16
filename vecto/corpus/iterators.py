@@ -35,11 +35,14 @@ class DirIterator(BaseIterator):
         self.dirname = dirname
 
     def _generate_samples(self):
-        for root, _, files in os.walk(self.dirname, followlinks=True):
-            for good_fname in sorted(fnmatch.filter(files, "*")):
-                full_file_path = os.path.join(root, good_fname)
-                logger.info("processing " + full_file_path)
-                yield full_file_path
+        if os.path.isfile(self.dirname):
+            yield self.dirname
+        else:
+            for root, _, files in os.walk(self.dirname, followlinks=True):
+                for good_fname in sorted(fnmatch.filter(files, "*")):
+                    full_file_path = os.path.join(root, good_fname)
+                    logger.info("processing " + full_file_path)
+                    yield full_file_path
 
 
 class FileLineIterator(BaseIterator):
