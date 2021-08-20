@@ -2,6 +2,9 @@
 # import numpy as np
 # from nltk.tokenize import sent_tokenize
 # import nltk
+import json
+import sys
+
 from transformers import AutoTokenizer
 from vecto.corpus import Corpus
 
@@ -25,7 +28,7 @@ def simple_char_iter(text):
 # append to sentence, unles
 other_delimiters = {"?", "!", "。"}
 
-known_abbreviations = {"md", "bs"}
+known_abbreviations = {"md", "bs", "mr", "ms"}
 
 
 def is_abbreviation(token):
@@ -85,30 +88,33 @@ def main():
     #     print(tokenized)
     path = "./tests/data/corpora/sentencise"
     path = "/mnt/storage/Data/NLP/corpora/wiki_clean.txt"
-    path = "/mnt/storage/Data/NLP/corpora/toronto_clean.txt"
-    path = "./quotes/13th_Reality-1.txt"
+    # path = "/mnt/storage/Data/NLP/corpora/toronto_clean.txt"
+    # path = "./quotes/13th_Reality-1.txt"
     name_tokenizer = "roberta-base"
     tokenizer = AutoTokenizer.from_pretrained(name_tokenizer)
     corpus = Corpus(path)
     corpus.load_dir_strucute()
     char_iter = corpus.get_character_iterator()
     sent_iter = sentence_iter(char_iter)
-    cnt = 0
+    # cnt = 0
     sample = []
     max_length = 128
-    for line in sent_iter:
-        tokens = tokenizer(line, return_attention_mask=False)["input_ids"]
-        if len(sample) + len(tokens) > max_length:
-            sample = sample[:max_length]
-            print(len(sample))
-            sample = []
-        sample += tokens
-        # print(tokenizer.convert_ids_to_tokens(tokens))
-        # print(line)
-        # print()
-        if cnt > 100:
-            break
-        cnt += 1
+    with open("lines.jsonl", "w") as f_out:
+        for line in sent_iter:
+            tokens = tokenizer(line, return_attention_mask=False)["input_ids"]
+            if len(sample) + len(tokens) > max_length:
+                sample = sample[:max_length]
+                # print(len(sample))
+                f_out.write(json.dumps(sample))
+                f_out.write("\n")
+                sample = []
+            sample += tokens
+            # print(tokenizer.convert_ids_to_tokens(tokens))
+            # print(line)
+            # print()
+            # if cnt > 100:
+                # break
+            # cnt += 1
 
 
 if __name__ == "__main__":
