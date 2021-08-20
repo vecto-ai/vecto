@@ -2,6 +2,7 @@
 # import numpy as np
 # from nltk.tokenize import sent_tokenize
 # import nltk
+from transformers import AutoTokenizer
 from vecto.corpus import Corpus
 
 
@@ -49,10 +50,10 @@ def sentence_iter(char_iter):
             # print(prev_token)
             if not is_abbreviation(prev_token[:-1]):
                 is_sentence_end = True
-        if c in other_delimiters:
+        if prev_char in other_delimiters and c != "\"":
             is_sentence_end = True
-            buffer[pos] = c
-            pos += 1
+            #buffer[pos] = c
+            #pos += 1
         if is_sentence_end:
             if pos > 0:
                 yield "".join(buffer[: pos]).strip()
@@ -84,14 +85,27 @@ def main():
     #     print(tokenized)
     path = "./tests/data/corpora/sentencise"
     path = "/mnt/storage/Data/NLP/corpora/wiki_clean.txt"
+    path = "/mnt/storage/Data/NLP/corpora/toronto_clean.txt"
+    path = "./quotes/13th_Reality-1.txt"
+    name_tokenizer = "roberta-base"
+    tokenizer = AutoTokenizer.from_pretrained(name_tokenizer)
     corpus = Corpus(path)
     corpus.load_dir_strucute()
     char_iter = corpus.get_character_iterator()
     sent_iter = sentence_iter(char_iter)
     cnt = 0
+    sample = []
+    max_length = 128
     for line in sent_iter:
-        print(line)
-        print()
+        tokens = tokenizer(line, return_attention_mask=False)["input_ids"]
+        if len(sample) + len(tokens) > max_length:
+            sample = sample[:max_length]
+            print(len(sample))
+            sample = []
+        sample += tokens
+        # print(tokenizer.convert_ids_to_tokens(tokens))
+        # print(line)
+        # print()
         if cnt > 100:
             break
         cnt += 1
