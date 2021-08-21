@@ -113,6 +113,7 @@ class LoopedLineIterator(BaseIterator):
         filename = self.tree[self.id_file][0]
         file_in = detect_archive_format_and_open(filename)
         seek_unicode(file_in, self.start_offset)
+        file_in.readline()
         while True:
             for line in file_in:
                 line = line.strip()
