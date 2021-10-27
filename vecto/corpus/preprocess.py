@@ -64,6 +64,11 @@ def sentence_iter(char_iter):
             pos = 0
             continue
         prev_char = c
+        if pos >= len(buffer):
+            print("buffer overflow:")
+            # print("".join(buffer[:100]))
+            print("".join(buffer[-100:]))
+            pos = 0
         buffer[pos] = c
         prev_token += c
         if c == " ":
@@ -87,8 +92,8 @@ def main():
     #     tokenized = sentencize(s)
     #     print(tokenized)
     path = "./tests/data/corpora/sentencise"
-    path = "/mnt/storage/Data/NLP/corpora/wiki_clean.txt"
-    # path = "/mnt/storage/Data/NLP/corpora/toronto_clean.txt"
+    # path = "/mnt/storage/Data/NLP/corpora/wiki_clean.txt"
+    path = "/mnt/storage/Data/NLP/corpora/toronto_clean.txt"
     # path = "./quotes/13th_Reality-1.txt"
     name_tokenizer = "roberta-base"
     tokenizer = AutoTokenizer.from_pretrained(name_tokenizer)
