@@ -88,7 +88,7 @@ def main():
     #     tokenized = sentencize(s)
     #     print(tokenized)
     # path = "./tests/data/corpora/sentencise"
-    path = sys.argv(1)
+    path = sys.argv[1]
     # path = "/mnt/storage/Data/NLP/corpora/wiki_clean.txt"
     # path = "/mnt/storage/Data/NLP/corpora/toronto_clean.txt"
     # path = "./quotes/13th_Reality-1.txt"
