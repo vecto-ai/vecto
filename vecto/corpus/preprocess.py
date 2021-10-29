@@ -3,6 +3,7 @@
 # from nltk.tokenize import sent_tokenize
 # import nltk
 import json
+import random
 import sys
 
 from transformers import AutoTokenizer
@@ -78,11 +79,6 @@ def sentence_iter(char_iter):
         yield "".join(buffer[: pos])
 
 
-def preprocess():
-    pass
-    # TODO: ok read line by line, for time being let's ignore 
-
-
 def main():
     # samples = []
     # samples.append("Hey how do you do? M.D. Bob is my friend. Mr. John too.")
@@ -91,29 +87,49 @@ def main():
     # for s in samples:
     #     tokenized = sentencize(s)
     #     print(tokenized)
-    path = "./tests/data/corpora/sentencise"
+    # path = "./tests/data/corpora/sentencise"
+    path = sys.argv(1)
     # path = "/mnt/storage/Data/NLP/corpora/wiki_clean.txt"
-    path = "/mnt/storage/Data/NLP/corpora/toronto_clean.txt"
+    # path = "/mnt/storage/Data/NLP/corpora/toronto_clean.txt"
     # path = "./quotes/13th_Reality-1.txt"
-    name_tokenizer = "roberta-base"
+    name_tokenizer = "bert-base-uncased"
     tokenizer = AutoTokenizer.from_pretrained(name_tokenizer)
     corpus = Corpus(path)
     corpus.load_dir_strucute()
     char_iter = corpus.get_character_iterator()
     sent_iter = sentence_iter(char_iter)
     # cnt = 0
-    sample = []
+    sample = [tokenizer.cls_token_id]
     max_length = 128
+    # cnt = 0
+    proba_shortening = 0.1
     with open("lines.jsonl", "w") as f_out:
         for line in sent_iter:
-            tokens = tokenizer(line, return_attention_mask=False)["input_ids"]
-            if len(sample) + len(tokens) > max_length:
-                sample = sample[:max_length]
-                # print(len(sample))
-                f_out.write(json.dumps(sample))
-                f_out.write("\n")
-                sample = []
+            tokens = tokenizer(line,
+                               add_special_tokens=False,
+                               return_attention_mask=False,)["input_ids"]
             sample += tokens
+            if len(sample) > max_length - 10:
+                sample = sample[:max_length - 1]
+                min_length = 5
+                if random.random() < proba_shortening:
+                    sample = sample[: random.randint(min_length, len(sample))]
+                sample += [tokenizer.sep_token_id]
+                sample += [tokenizer.pad_token_id] * (max_length - len(sample))
+                # print(len(sample))
+                serialized = json.dumps(sample) 
+                if ":" in serialized:
+                    print(sample)
+                    print(serialized)
+                f_out.write(serialized)
+                f_out.write("\n")
+                #print(tokenizer.decode(sample))
+                #print(len(sample))
+                #print()
+                sample = [tokenizer.cls_token_id]
+            # cnt += 1
+            # if cnt > 20:
+            #     break
             # print(tokenizer.convert_ids_to_tokens(tokens))
             # print(line)
             # print()
