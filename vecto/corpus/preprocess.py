@@ -92,7 +92,7 @@ def main():
     # path = "/mnt/storage/Data/NLP/corpora/wiki_clean.txt"
     # path = "/mnt/storage/Data/NLP/corpora/toronto_clean.txt"
     # path = "./quotes/13th_Reality-1.txt"
-    name_tokenizer = "bert-base-uncased"
+    name_tokenizer = "roberta-base"
     tokenizer = AutoTokenizer.from_pretrained(name_tokenizer)
     corpus = Corpus(path)
     corpus.load_dir_strucute()
