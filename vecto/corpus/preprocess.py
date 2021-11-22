@@ -101,7 +101,7 @@ def main():
     # cnt = 0
     sample = [tokenizer.cls_token_id]
     max_length = 128
-    # cnt = 0
+    cnt = 0
     proba_shortening = 0.1
     with open("lines.jsonl", "w") as f_out:
         for line in sent_iter:
@@ -127,9 +127,9 @@ def main():
                 #print(len(sample))
                 #print()
                 sample = [tokenizer.cls_token_id]
-            # cnt += 1
-            # if cnt > 20:
-            #     break
+            cnt += 1
+            if cnt % 10000 == 0:
+                print(cnt, "last line", len(tokens))
             # print(tokenizer.convert_ids_to_tokens(tokens))
             # print(line)
             # print()
