@@ -13,3 +13,4 @@ tables
 traitlets
 tqdm
 requests
+docutils
