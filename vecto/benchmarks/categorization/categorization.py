@@ -31,7 +31,8 @@ def purity_score(y_true, y_pred):
 
 
 class Categorization(Benchmark):
-    def __init__(self, normalize=True,
+    def __init__(self, 
+                 normalize=True,
                  ignore_oov=True,
                  do_top5=True,
                  need_subsample=False,
@@ -55,14 +56,14 @@ class Categorization(Benchmark):
         self.cnt_total_correct = 0
         self.cnt_total_total = 0
 
-        # this are some hard-coded bits which will be implemented later
+        # TODO: this are some hard-coded bits which will be implemented later
         self.result_miss = {
             'rank': -1,
             'reason': 'missing words'
         }
 
     @property
-    def method(self):
+    def benchmark_type_name(self):
         return type(self).__name__
 
     def read_test_set(self, path):
@@ -108,25 +109,29 @@ class Categorization(Benchmark):
         results = self.round_scores(results)
         return results
 
-    def evaluate(self, embs, data):
+    def evaluate(self, embeddings, data):
         vectors = []
         labels = []
         new_data = defaultdict(lambda: [])
+        
         for key, value in data.items():
             for word in value:
-                if embs.has_word(word):
-                    vectors.append(embs.get_vector(word))
+                if embeddings.has_word(word):
+                    vectors.append(embeddings.get_vector(word))
                     labels.append(list(data.keys()).index(key))
                     new_data[key].append(word)
+        
         if len(data.keys()) > len(vectors):
             raise Exception('Too poor vocabulary')
+        
         word_stats, global_stats = self.collect_stats(
             new_data, vectors, labels)
+        
         result = {}
         result['word_stats'] = word_stats
         result['global_stats'] = global_stats
 
-        # add experiment_setup and result entry for result
+        # TODO: add experiment_setup and result entry for result
         result["experiment_setup"] = {}
         result["result"] = result['global_stats']['scores']
         result["experiment_setup"]['default_measurement'] = 'Purity'
@@ -134,49 +139,20 @@ class Categorization(Benchmark):
 
         return result
 
-    def read_datasets_from_dir(self, path_to_dir):
-        datasets = defaultdict(lambda: {})
-        for file in os.listdir(path_to_dir):
-            dataset_name, dataset_data = self.read_single_dataset(
-                path_to_dir, file)
-            if type != OTHER_EXT:
-                datasets[dataset_name] = dataset_data
-        return datasets
-
-    def read_single_dataset(self, path_to_dir, file_name):
-        dataset_name, file_extension = os.path.splitext(file_name)
-        data = self.read_test_set(os.path.join(path_to_dir, file_name))
-        return dataset_name, data
-
-    def run_on_single_dataset(self, embs, dataset_path):
+    def run_on_single_dataset(self, embeddings, dataset_path):
         dataset = self.read_test_set(dataset_path)
         if self.normalize:
-            embs.normalize()
+            embeddings.normalize()
         results = []
-        result = self.evaluate(embs, dataset)
+        result = self.evaluate(embeddings, dataset)
         result['experiment_setup']['dataset'] = os.path.basename(
             os.path.normpath(dataset_path))
-        result['experiment_setup']['embeddings'] = embs.metadata
-        result['experiment_setup']['method'] = self.method
+        result['experiment_setup']['embeddings'] = embeddings.metadata
+        result['experiment_setup']['method'] = self.benchmark_type_name
         result['experiment_setup']['vecto_version'] = VERSION
         results.append(result)
         return results
 
-    def run(self, embs, dataset):
-        path_dataset = dataset.path
-        if self.normalize:
-            embs.normalize()
-        results = []
-        datasets = self.read_datasets_from_dir(path_dataset)
-        for dataset_name, dataset_data in datasets.items():
-            result = self.evaluate(embs, dataset_data)
-            result['experiment_setup']['dataset'] = os.path.basename(
-                os.path.normpath(path_dataset))
-            result['experiment_setup']['embeddings'] = embs.metadata
-            result['experiment_setup']['method'] = self.method
-            result['experiment_setup']['vecto_version'] = VERSION
-            results.append(result)
-        return results
 
     def collect_stats(self, data, vectors, labels):
         word_stats = defaultdict(lambda: {})
@@ -240,9 +216,3 @@ class KMeansCategorization(Categorization):
             int(label) for label in predicted_labels)
         global_stats['true_labels'] = list(int(label) for label in true_labels)
         return global_stats
-
-# class SpectralCategorization(Categorization):
-#     def compute_labels(self, data, vectors, labels):
-#         return SpectralClustering(n_clusters=len(data.keys()),
-#                                   random_state=self.random_state).fit_predict(vectors,
-#                                                                                                            labels)
