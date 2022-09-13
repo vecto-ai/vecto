@@ -18,6 +18,31 @@ from vecto.vocabulary import Vocabulary
 
 logger = logging.getLogger(__name__)
 
+def load_from_file(f):
+    result = vecto.embeddings.dense.WordEmbeddingsDense()
+    if os.path.isfile(f):
+        logger.info("The file is embedding!")
+    if f.endswith(".gz") or f.endswith(".bz") or f.endswith(".txt") or f.endswith(".vec"):
+        logger.info(f + "Detected plain text format")
+        result.load_from_text(f)
+        result.load_metadata(f)
+        return result
+    if f.endswith(".npy"):
+        logger.info("Detected numpy format")
+        result.matrix = np.load(f)
+        result.vocabulary = Vocabulary()
+        result.vocabulary.load(f)
+        result.load_metadata(f)
+        # TODO: remove this hack after we re-train w2v without OOV rows
+        result.matrix = result.matrix[:result.vocabulary.cnt_words]
+        return result
+    if any(file.endswith('bin') for file in os.listdir(f)):
+        result = ModelW2V()
+        logger.info("Detected w2v original binary format")
+        result.load_from_dir(f)
+        result.load_metadata(f)
+        return result
+
 
 def load_from_dir(path):
     """Automatically detects embeddings format and loads
