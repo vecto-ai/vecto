@@ -5,11 +5,11 @@ import logging
 import progressbar
 # from tqdm import tqdm
 import sklearn
-from ..base import Benchmark
-from .io import get_pairs
-from .solvers import LinearOffset, LRCos, PairDistance
-from .solvers import ThreeCosAvg, ThreeCosMul, ThreeCosMul2
-from .solvers import SimilarToAny, SimilarToB
+from vecto.benchmarks.base import Benchmark
+from vecto.benchmarks.analogy.io import get_pairs
+from vecto.benchmarks.analogy.solvers import LinearOffset, LRCos, PairDistance
+from vecto.benchmarks.analogy.solvers import ThreeCosAvg, ThreeCosMul, ThreeCosMul2
+from vecto.benchmarks.analogy.solvers import SimilarToAny, SimilarToB
 
 
 logger = logging.getLogger(__name__)
