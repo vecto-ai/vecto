@@ -35,11 +35,14 @@ class DirIterator(BaseIterator):
         self.dirname = dirname
 
     def _generate_samples(self):
-        for root, _, files in os.walk(self.dirname, followlinks=True):
-            for good_fname in sorted(fnmatch.filter(files, "*")):
-                full_file_path = os.path.join(root, good_fname)
-                logger.info("processing " + full_file_path)
-                yield full_file_path
+        if os.path.isfile(self.dirname):
+            yield self.dirname
+        else:
+            for root, _, files in os.walk(self.dirname, followlinks=True):
+                for good_fname in sorted(fnmatch.filter(files, "*")):
+                    full_file_path = os.path.join(root, good_fname)
+                    logger.info("processing " + full_file_path)
+                    yield full_file_path
 
 
 class FileLineIterator(BaseIterator):
@@ -110,6 +113,7 @@ class LoopedLineIterator(BaseIterator):
         filename = self.tree[self.id_file][0]
         file_in = detect_archive_format_and_open(filename)
         seek_unicode(file_in, self.start_offset)
+        file_in.readline()
         while True:
             for line in file_in:
                 line = line.strip()
@@ -150,20 +154,26 @@ class TokenizedSequenceIterator(BaseIterator):
 
 
 class SequenceIterator(BaseIterator):
-    def __init__(self, line_terator, sequence_length, tokenizer):
+    def __init__(self, line_terator, sequence_length, tokenizer, minimal_length=0, reset_on_new_line=False):
         super().__init__()
         self.line_iterator = line_terator
         self.sequence_length = sequence_length
         self.tokenizer = tokenizer
         self.buffer = []
+        self.minimal_length = minimal_length
+        self.reset_on_new_line = reset_on_new_line
 
     def _generate_samples(self):
         # TODO: consider removing too small chunks of sentences at the end
         # TODO: consider leveraging sentence iterator is corpus has mark-up
         for line in self.line_iterator:
             tokens = self.tokenizer(line)
+            if self.reset_on_new_line:
+                self.buffer = []
+            elif len(self.buffer) < self.minimal_length:
+                self.buffer = []
             self.buffer += tokens
-            while len(self.buffer) > self.sequence_length:
+            while len(self.buffer) > self.sequence_length - self.minimal_length:
                 s = self.buffer[: self.sequence_length]
                 self.buffer = self.buffer[self.sequence_length:]
                 yield s
@@ -184,11 +194,18 @@ class BaseNestedIterator(BaseIterator):
 
 
 class TokenIterator(BaseNestedIterator):
-
     def _generate_samples(self):
         for tokenized_str in self.parent_iterator:
             for token in tokenized_str:
                 yield token
+
+
+class CharIterator(BaseNestedIterator):
+    def _generate_samples(self):
+        for line in self.parent_iterator:
+            for c in line:
+                yield c
+            yield " "
 
 
 def iter_sliding_window(seq, left_ctx_size, right_ctx_size):

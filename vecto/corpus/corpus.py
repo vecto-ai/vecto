@@ -6,8 +6,8 @@ import numpy as np
 from vecto.utils.data import get_uncompressed_size
 from vecto.utils.metadata import WithMetaData
 
-from .iterators import (DirIterator, FileIterator, FileLineIterator,
-                        LoopedLineIterator, SequenceIterator,
+from .iterators import (CharIterator, DirIterator, FileIterator,
+                        FileLineIterator, LoopedLineIterator, SequenceIterator,
                         SlidingWindowIterator, TokenIterator,
                         TokenizedSequenceIterator, ViewLineIterator)
 from .tokenization import (DEFAULT_JAP_TOKENIZER, DEFAULT_SENT_TOKENIZER,
@@ -51,7 +51,7 @@ class BaseCorpus(WithMetaData):
         return TokenIterator(self.get_sentence_iterator(tokenizer, verbose))
 
     def get_character_iterator(self, verbose=False):
-        return TokenIterator(self.get_line_iterator(verbose))
+        return CharIterator(self.get_line_iterator(verbose))
 
     def get_sentence_iterator(self, tokenizer=None, verbose=False):
         if tokenizer is None:
@@ -68,10 +68,12 @@ class BaseCorpus(WithMetaData):
                                 sequence_length=sequence_length,
                                 tokenizer=tokenizer)
 
-    def get_looped_sequence_iterator(self, sequence_length, tokenizer, rank, size):
+    def get_looped_sequence_iterator(self, sequence_length, tokenizer, rank, size, min_length=0, reset_on_new_line=False):
         return SequenceIterator(self.get_looped_line_iterator(rank, size),
                                 sequence_length=sequence_length,
-                                tokenizer=tokenizer)
+                                tokenizer=tokenizer,
+                                minimal_length=min_length,
+                                reset_on_new_line=reset_on_new_line)
 
 
 class Corpus(BaseCorpus):
